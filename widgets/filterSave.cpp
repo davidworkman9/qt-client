@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -54,6 +54,10 @@ void filterSave::set(const ParameterList &pParams)
   param = pParams.value("shared", &valid);
   if (valid)
     _shared->setChecked(true);
+
+  param = pParams.value("columns", &valid);
+  if (valid)
+    _columns = param.toString();
 
   param = pParams.value("disableshare", &valid);
   if (valid && _shared->isChecked())
@@ -118,6 +122,7 @@ void filterSave::save()
     filterid = qry.value("filter_id").toInt();
     query = QString("update filter set "
                     "  filter_value=:value, "
+                    "  filter_columns=:columns, "
                     "  filter_username=%1 "
                     "where filter_id=:filter_id;").arg(user);
   }
@@ -127,8 +132,9 @@ void filterSave::save()
     qry.exec();
     qry.first();
     filterid = qry.value("result").toInt();
-    query = QString("insert into filter (filter_id, filter_screen, filter_name, filter_value, filter_username) "
-            " values (:filter_id, :screen, :name, :value, %1); ").arg(user);
+    query = QString("insert into filter (filter_id, filter_screen, filter_name, filter_value, "
+                    " filter_username, filter_columns) "
+            " values (:filter_id, :screen, :name, :value, %1, :columns); ").arg(user);
   }
 
   qry.prepare(query);
@@ -136,6 +142,7 @@ void filterSave::save()
   qry.bindValue(":screen", _classname);
   qry.bindValue(":value", _filter);
   qry.bindValue(":name", _filterName->text() );
+  qry.bindValue(":columns", _columns);
 
   if (qry.exec())
     done(filterid);

@@ -87,7 +87,6 @@ private:
 class XTUPLEWIDGETS_EXPORT ContactWidget : public VirtualCluster
 {
   Q_OBJECT
-  Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible);
   Q_PROPERTY(bool     ownerVisible          READ ownerVisible           WRITE setOwnerVisible);
   Q_PROPERTY(bool     ownerEnabled          READ ownerEnabled           WRITE setOwnerEnabled);
   Q_PROPERTY(bool     activeVisible         READ activeVisible        	WRITE setActiveVisible);
@@ -140,7 +139,6 @@ public:
   inline virtual bool    ownerEnabled()   const { return _owner->isEnabled(); }
   inline virtual bool    numberVisible()  const { return _number->isVisible(); }
   inline virtual bool    activeVisible()  const { return _active->isVisible(); }
-  inline virtual bool    accountVisible() const { return _crmAcct->isVisible(); }
   inline virtual bool    addressVisible() const { return _address->isVisible(); }
   inline virtual int     addressId()	  const { return _address->id(); }
   inline virtual QString change()         const { return _change->text(); }
@@ -155,14 +153,13 @@ public:
   inline virtual bool    minimalLayout()  const { return _minimalLayout; }
   Q_INVOKABLE virtual Mode    mode()      const { return _mode; }
   inline virtual QString notes()	  const { return _notes; }
-  inline virtual bool    phonesVisible()  const { return _phone->isVisible(); }
+  inline virtual bool    phonesVisible()  const { return _number->isVisible(); }
   inline virtual int     searchAcct()	  const { return _searchAcctId; }
   inline virtual bool    webaddrVisible() const { return _webaddr->isVisible(); }
 
   Q_INVOKABLE virtual bool    active()		const { return _active->isChecked(); }
   Q_INVOKABLE virtual int     id()	        const { return _id; }
   Q_INVOKABLE virtual QString emailAddress()	const { return _email->currentText(); }
-  Q_INVOKABLE virtual QString fax()		const { return _fax->text(); }
   Q_INVOKABLE virtual QString first()		const { return _first->text(); }
   Q_INVOKABLE virtual QString honorific()       const { return _honorific->currentText(); }
   Q_INVOKABLE virtual QString initials()        const { return _initials->text(); }
@@ -170,8 +167,6 @@ public:
   Q_INVOKABLE virtual QString name()            const;
   Q_INVOKABLE virtual QString number()          const { return _number->text(); }
   Q_INVOKABLE virtual QString ownerUsername()   const { return _owner->username(); }
-  Q_INVOKABLE virtual QString phone()		const { return _phone->text(); }
-  Q_INVOKABLE virtual QString phone2()		const { return _phone2->text(); }
   Q_INVOKABLE virtual QString title()           const { return _title->text(); }
   Q_INVOKABLE virtual QString webAddress()	const { return _webaddr->text(); }
   Q_INVOKABLE virtual QString suffix()		const { return _suffix->text(); }
@@ -221,7 +216,7 @@ public slots:
   inline virtual void setAddress(const int p)           { _address->setId(p); }
   inline virtual void setActive(const bool p)           { _active->setChecked(p); }
          virtual void setChange(QString p);
-  inline virtual void setCrmAcctId(const int p)         { _crmAcct->setId(p); }
+  inline virtual void setCrmAcctId(const int p)         { _crmacctid = p; }
   inline virtual void setDescription(const QString&)    { }
   inline virtual void setEmailAddress(const QString& p) { _email->setText(p); }
   inline virtual void setFax(const QString& p)	        { _fax->setText(p); }
@@ -257,7 +252,6 @@ public slots:
   virtual void  setOwnerVisible(const bool);
   virtual void  setOwnerEnabled(const bool);
   virtual void  setNumberVisible(const bool);
-  virtual void	setAccountVisible(const bool);
   virtual void	setActiveVisible(const bool);
   virtual void	setAddressVisible(const bool);
   virtual void	setEmailVisible(const bool);
@@ -268,6 +262,10 @@ public slots:
   virtual void	setPhonesVisible(const bool);
   virtual void	setSearchAcct(const int);
   virtual void	setWebaddrVisible(const bool);
+  virtual void  sBuildPhones();
+  virtual void  sAddNewPhoneRow();
+  virtual void  sRemovePhone();
+  virtual QString sBuildPhoneJson();
 
   //Set Data Mapping
   virtual void setDataWidgetMap(XDataWidgetMapper* m);
@@ -334,15 +332,18 @@ protected:
   XLineEdit* _phone2;
   QLabel* _faxLit;
   XLineEdit* _fax;
+  QHBoxLayout* _emailBox;
   QLabel* _emailLit;
   XComboBox* _email;
+  QCheckBox* _emailopt;
   QLabel* _webaddrLit;
   XLineEdit* _webaddr;
   QCheckBox* _active;
   QString _addressChange;
   AddressCluster* _address;
   UsernameCluster* _owner;
-
+  QGridLayout* _phoneGrid;
+  QPushButton *_add;
   QString _extraClause;
   QString _query;
   int _searchAcctId;
@@ -401,6 +402,8 @@ private:
   QString  _fieldNameCountry;
   QString  _subjText;
   QString  _bodyText;
+  int      _rowId;
+  QMap<QString, int> cmap;
 };
 
 void setupContactWidget(QScriptEngine *engine);

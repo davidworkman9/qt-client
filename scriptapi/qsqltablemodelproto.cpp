@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qsqltablemodelproto.h"
 
 QScriptValue EditStrategyToScriptValue(QScriptEngine *engine,
@@ -33,7 +34,6 @@ void QSqlTableModelFromScriptValue(const QScriptValue &obj, QSqlTableModel* &ite
 
 QScriptValue constructQSqlTableModel(QScriptContext *context, QScriptEngine *engine)
 {
-#if QT_VERSION >= 0x050000
   QSqlTableModel *model = 0;
 
   if (context->argumentCount() == 0)
@@ -51,9 +51,6 @@ QScriptValue constructQSqlTableModel(QScriptContext *context, QScriptEngine *eng
                         QString("Could not find an appropriate QSqlTableModel constructor"));
 
   return engine->toScriptValue(model);
-#else
-  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
-#endif
 }
 
 void setupQSqlTableModelProto(QScriptEngine *engine)
@@ -66,8 +63,11 @@ void setupQSqlTableModelProto(QScriptEngine *engine)
     QScriptValue ctor = engine->newFunction(constructQSqlTableModel);
     QScriptValue meta = engine->newQMetaObject(&QSqlTableModel::staticMetaObject, ctor);
 
-    engine->globalObject().setProperty("QSqlTableModel", meta,
-                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("QSqlTableModel", meta, ENUMPROPFLAGS);
+
+    ctor.setProperty("OnFieldChange",  QScriptValue(engine, QSqlTableModel::OnFieldChange),  ENUMPROPFLAGS);
+    ctor.setProperty("OnRowChange",    QScriptValue(engine, QSqlTableModel::OnRowChange),    ENUMPROPFLAGS);
+    ctor.setProperty("OnManualSubmit", QScriptValue(engine, QSqlTableModel::OnManualSubmit), ENUMPROPFLAGS);
   }
 }
 

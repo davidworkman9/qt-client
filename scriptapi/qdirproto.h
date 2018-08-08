@@ -21,7 +21,9 @@ Q_DECLARE_METATYPE(QDir)
 Q_DECLARE_METATYPE(QDir*)
 
 Q_DECLARE_METATYPE(enum QDir::Filter);
+Q_DECLARE_METATYPE(QDir::Filters);
 Q_DECLARE_METATYPE(enum QDir::SortFlag);
+Q_DECLARE_METATYPE(QDir::SortFlags);
 
 void setupQDirProto(QScriptEngine *engine);
 QScriptValue constructQDir(QScriptContext *context, QScriptEngine *engine);

@@ -93,7 +93,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
                  "       cust_salesrep_id, cust_shipform_id, cust_shipvia, cust_shipchrg_id, "
                  "       crmacct_id "
                  "FROM custinfo "
-                 "  JOIN crmacct ON (cust_id=crmacct_cust_id) "
+                 "  JOIN crmacct ON (cust_crmacct_id=crmacct_id) "
                  "WHERE (cust_id=:cust_id);" );
       cust.bindValue(":cust_id", _custid);
       cust.exec();
@@ -286,7 +286,7 @@ void shipTo::populate()
                 "       crmacct_id "
                 "FROM shiptoinfo "
                 "  LEFT OUTER JOIN custinfo ON (shipto_cust_id=cust_id) "
-                "  LEFT OUTER JOIN crmacct ON (cust_id=crmacct_cust_id) "
+                "  LEFT OUTER JOIN crmacct ON (cust_crmacct_id=crmacct_id) "
                 "WHERE (shipto_id=:shipto_id);" );
   popq.bindValue(":shipto_id", _shiptoid);
   popq.exec();

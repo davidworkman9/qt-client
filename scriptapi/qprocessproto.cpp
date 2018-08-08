@@ -1,13 +1,14 @@
 /*
  *This file is part of the xTuple ERP: PostBooks Edition, a free and
  *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ *Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  *It is licensed to you under the Common Public Attribution License
  *version 1.0, the full text of which(including xTuple-specific Exhibits)
  *is available at www.xtuple.com/CPAL.  By using this software, you agree
  *to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qprocessproto.h"
 
 /** \ingroup scriptapi
@@ -27,6 +28,11 @@ void QProcessfromScriptValue(const QScriptValue &obj, QProcess* &item)
 void ExitStatusfromScriptValue(const QScriptValue &obj, enum QProcess::ExitStatus &p)
 { p = (enum QProcess::ExitStatus)obj.toInt32(); }
 QScriptValue ExitStatustoScriptValue(QScriptEngine *engine, const enum QProcess::ExitStatus &p)
+{ return QScriptValue(engine, (int)p); }
+
+void InputChannelModefromScriptValue(const QScriptValue &obj, enum QProcess::InputChannelMode &p)
+{ p = (enum QProcess::InputChannelMode)obj.toInt32(); }
+QScriptValue InputChannelModetoScriptValue(QScriptEngine *engine, const enum QProcess::InputChannelMode &p)
 { return QScriptValue(engine, (int)p); }
 
 void ProcessChannelfromScriptValue(const QScriptValue &obj, enum QProcess::ProcessChannel &p)
@@ -61,38 +67,36 @@ void setupQProcessProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QProcess",  constructor);
 
   qScriptRegisterMetaType(engine, ExitStatustoScriptValue, ExitStatusfromScriptValue);
-  constructor.setProperty("NormalExit", QScriptValue(engine, QProcess::NormalExit), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("CrashExit", QScriptValue(engine, QProcess::CrashExit), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  constructor.setProperty("NormalExit", QScriptValue(engine, QProcess::NormalExit), ENUMPROPFLAGS);
+  constructor.setProperty("CrashExit",  QScriptValue(engine, QProcess::CrashExit),  ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, InputChannelModetoScriptValue, InputChannelModefromScriptValue);
+  constructor.setProperty("ManagedInputChannel",   QScriptValue(engine, QProcess::ManagedInputChannel),   ENUMPROPFLAGS);
+  constructor.setProperty("ForwardedInputChannel", QScriptValue(engine, QProcess::ForwardedInputChannel), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, ProcessChanneltoScriptValue, ProcessChannelfromScriptValue);
-  constructor.setProperty("StandardOutput", QScriptValue(engine, QProcess::StandardOutput), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("StandardError", QScriptValue(engine, QProcess::StandardError), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  constructor.setProperty("StandardOutput", QScriptValue(engine, QProcess::StandardOutput), ENUMPROPFLAGS);
+  constructor.setProperty("StandardError",  QScriptValue(engine, QProcess::StandardError),  ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, ProcessChannelModetoScriptValue, ProcessChannelModefromScriptValue);
-  constructor.setProperty("SeparateChannels", QScriptValue(engine, QProcess::SeparateChannels), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("MergedChannels", QScriptValue(engine, QProcess::MergedChannels), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("ForwardedChannels", QScriptValue(engine, QProcess::ForwardedChannels), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  constructor.setProperty("SeparateChannels",  QScriptValue(engine, QProcess::SeparateChannels),  ENUMPROPFLAGS);
+  constructor.setProperty("MergedChannels",    QScriptValue(engine, QProcess::MergedChannels),    ENUMPROPFLAGS);
+  constructor.setProperty("ForwardedChannels", QScriptValue(engine, QProcess::ForwardedChannels), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, ProcessErrortoScriptValue, ProcessErrorfromScriptValue);
-  constructor.setProperty("FailedToStart", QScriptValue(engine, QProcess::FailedToStart), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("Crashed", QScriptValue(engine, QProcess::Crashed), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("Timedout", QScriptValue(engine, QProcess::Timedout), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("WriteError", QScriptValue(engine, QProcess::WriteError), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("ReadError", QScriptValue(engine, QProcess::ReadError), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("UnknownError", QScriptValue(engine, QProcess::UnknownError), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  constructor.setProperty("FailedToStart", QScriptValue(engine, QProcess::FailedToStart), ENUMPROPFLAGS);
+  constructor.setProperty("Crashed",       QScriptValue(engine, QProcess::Crashed),       ENUMPROPFLAGS);
+  constructor.setProperty("Timedout",      QScriptValue(engine, QProcess::Timedout),      ENUMPROPFLAGS);
+  constructor.setProperty("WriteError",    QScriptValue(engine, QProcess::WriteError),    ENUMPROPFLAGS);
+  constructor.setProperty("ReadError",     QScriptValue(engine, QProcess::ReadError),     ENUMPROPFLAGS);
+  constructor.setProperty("UnknownError",  QScriptValue(engine, QProcess::UnknownError),  ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, ProcessStatetoScriptValue, ProcessStatefromScriptValue);
-  constructor.setProperty("NotRunning", QScriptValue(engine, QProcess::NotRunning), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("Starting", QScriptValue(engine, QProcess::Starting), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("Running", QScriptValue(engine, QProcess::Running), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  constructor.setProperty("NotRunning", QScriptValue(engine, QProcess::NotRunning), ENUMPROPFLAGS);
+  constructor.setProperty("Starting",   QScriptValue(engine, QProcess::Starting),   ENUMPROPFLAGS);
+  constructor.setProperty("Running",    QScriptValue(engine, QProcess::Running),    ENUMPROPFLAGS);
 
 }
-
-Q_DECLARE_METATYPE(enum QProcess::ExitStatus);
-Q_DECLARE_METATYPE(enum QProcess::ProcessChannel);
-Q_DECLARE_METATYPE(enum QProcess::ProcessChannelMode);
-Q_DECLARE_METATYPE(enum QProcess::ProcessError);
-Q_DECLARE_METATYPE(enum QProcess::ProcessState);
 
 QScriptValue constructQProcess(QScriptContext *context, QScriptEngine *engine)
 {

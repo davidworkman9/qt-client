@@ -27,12 +27,12 @@ printStatementsByCustomerGroup::printStatementsByCustomerGroup(QWidget* parent, 
   setDoctype("AR");
   setReportKey("custgrp_id");
 
-  _docinfoQueryString = "SELECT custgrp_id       AS docid, custgrp_id,"
-                        "       custgrp_name     AS docnumber,"
+  _docinfoQueryString = "SELECT groups_id       AS docid, groups_id,"
+                        "       groups_name     AS docnumber,"
                         "       false            AS printed,"
                         "       'StatementbyCustomerGroup' AS reportname"
                         "  FROM custgrp"
-                        " WHERE (custgrp_id=<? value('docid') ?>);";
+                        " WHERE (groups_id=<? value('docid') ?>);";
 
   connect(_custgrp,        SIGNAL(newID(int)), this, SLOT(setId(int)));
   connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));

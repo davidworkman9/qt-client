@@ -12,12 +12,6 @@
 #include "qwebsecurityoriginproto.h"
 #include <QScriptValueIterator>
 
-#if QT_VERSION < 0x050000
-void setupQWebSecurityOriginProto(QScriptEngine *engine)
-{
-  Q_UNUSED(engine);
-}
-#else
 /*
 QScriptValue QWebSecurityOriginToScriptValue(QScriptEngine *engine, QWebSecurityOrigin const &item)
 {
@@ -122,6 +116,7 @@ QScriptValue removeLocalSchemeForJS(QScriptContext* context, QScriptEngine* engi
 
 void setupQWebSecurityOriginProto(QScriptEngine *engine)
 {
+  scriptDeprecated("QWebSecurityOrigin will not be available in Qt 5.9");
   //qScriptRegisterMetaType(engine, QWebSecurityOriginToScriptValue, QWebSecurityOriginFromScriptValue);
   qScriptRegisterMetaType(engine, QWebSecurityOriginPointerToScriptValue, QWebSecurityOriginPointerFromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
@@ -267,5 +262,3 @@ void QWebSecurityOriginProto::setDatabaseQuota(qint64 quota)
   if (item)
     item->setDatabaseQuota(quota);
 }
-
-#endif

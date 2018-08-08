@@ -11,12 +11,6 @@
 #include "scriptapi_internal.h"
 #include "qwebsettingsproto.h"
 
-#if QT_VERSION < 0x050000
-void setupQWebSettingsProto(QScriptEngine *engine)
-{
-  Q_UNUSED(engine);
-}
-#else
 QScriptValue FontFamilyToScriptValue(QScriptEngine *engine, const QWebSettings::FontFamily &item)
 {
   return engine->newVariant(item);
@@ -251,12 +245,11 @@ QScriptValue webGraphicForJS(QScriptContext* context, QScriptEngine* engine)
 
 void setupQWebSettingsProto(QScriptEngine *engine)
 {
+  scriptDeprecated("QWebSettings will not be available in Qt 5.9");
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebSettingsProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSettings*>(), proto);
-  // TODO: QWebSettings is private.
-  //engine->setDefaultPrototype(qMetaTypeId<QWebSettings>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSettings, proto);
   engine->globalObject().setProperty("QWebSettings", constructor);
@@ -569,4 +562,3 @@ QUrl QWebSettingsProto::userStyleSheetUrl() const
 }
 */
 
-#endif

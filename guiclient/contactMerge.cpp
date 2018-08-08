@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -44,9 +44,7 @@ contactMerge::contactMerge(QWidget* parent, const char* name, Qt::WindowFlags fl
   _cntct->addColumn(tr("Last"),            -1, Qt::AlignLeft, true,  "cntct_last_name");
   _cntct->addColumn(tr("Suffix"),          80, Qt::AlignLeft, false, "cntct_suffix");
   _cntct->addColumn(tr("Initials"),        80, Qt::AlignLeft, false, "cntct_initials");
-  _cntct->addColumn(tr("Phone"),          100, Qt::AlignLeft, true,  "cntct_phone");
-  _cntct->addColumn(tr("Alt. Phone"),     100, Qt::AlignLeft, false, "cntct_phone2");
-  _cntct->addColumn(tr("Fax"),            100, Qt::AlignLeft, true,  "cntct_fax");
+  _cntct->addColumn(tr("Phone #s"),        -1, Qt::AlignLeft, true,  "contact_phones");
   _cntct->addColumn(tr("Email"),          100, Qt::AlignLeft, true,  "cntct_email");
   _cntct->addColumn(tr("Web"),            100, Qt::AlignLeft, false, "cntct_webaddr");
   _cntct->addColumn(tr("Title"),          100, Qt::AlignLeft, true,  "cntct_title");
@@ -70,9 +68,7 @@ contactMerge::contactMerge(QWidget* parent, const char* name, Qt::WindowFlags fl
   _srccntct->addColumn(tr("Last"),            -1, Qt::AlignLeft, true,  "cntct_last_name");
   _srccntct->addColumn(tr("Suffix"),          80, Qt::AlignLeft, false, "cntct_suffix");
   _srccntct->addColumn(tr("Initials"),        80, Qt::AlignLeft, false, "cntct_initials");
-  _srccntct->addColumn(tr("Phone"),          100, Qt::AlignLeft, true,  "cntct_phone");
-  _srccntct->addColumn(tr("Alt. Phone"),     100, Qt::AlignLeft, false, "cntct_phone2");
-  _srccntct->addColumn(tr("Fax"),            100, Qt::AlignLeft, true,  "cntct_fax");
+  _srccntct->addColumn(tr("Phone #s"),        -1, Qt::AlignLeft, true,  "contact_phones");
   _srccntct->addColumn(tr("Email"),          100, Qt::AlignLeft, true,  "cntct_email");
   _srccntct->addColumn(tr("Web"),            100, Qt::AlignLeft, false, "cntct_webaddr");
   _srccntct->addColumn(tr("Title"),          100, Qt::AlignLeft, true,  "cntct_title");
@@ -86,10 +82,14 @@ contactMerge::contactMerge(QWidget* parent, const char* name, Qt::WindowFlags fl
   _srccntct->addColumn(tr("Postal"),          80, Qt::AlignLeft, false, "addr_postalcode");
   _srccntct->addColumn(tr("Country"),        100, Qt::AlignLeft, false, "addr_country");
 
-  _target->setAccountVisible(true);
   _target->setOwnerVisible(true);
   _target->setActiveVisible(false);
   _target->setInitialsVisible(false);
+
+  // Column list must match the _srccntct column numbers/positions
+  _colMap << "NA" << "NA" << "crmacct_id" << "crmacct_id" <<  "honorific" << "first_name" << "middle"
+          << "last_name" << "suffix" << "initials" << "phones" << "email"
+          << "webaddr" << "title" << "owner_username" << "notes" << "addr_id";
   
   sPopulateSources();
   sPopulateTarget();
@@ -420,41 +420,13 @@ void contactMerge::sPopulateSrcMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int pC
   QString col = "";
   QString menuStr;
 
-  if (pCol == 2 || pCol == 3)
-    col = tr("Account");
-  else if (pCol == 4)
-    col = tr("Honorific");
-  else if (pCol == 5)
-    col = tr("First Name");
-  else if (pCol == 6)
-    col = tr("Middle Initial");
-  else if (pCol == 7)
-    col = tr("Last Name");
-  else if (pCol == 8)
-    col = tr("Suffix");
-  else if (pCol == 9)
-    col = tr("Initials");
-  else if (pCol == 10)
-    col = tr("Phone");
-  else if (pCol == 11)
-    col = tr("Alt. Phone");
-  else if (pCol == 12)
-    col = tr("Fax");
-  else if (pCol == 13)
-    col = tr("Email");
-  else if (pCol == 14)
-    col = tr("Web Address");
-  else if (pCol == 15)
-    col = tr("Title");
-  else if (pCol == 16)
-    col = tr("Owner");
-  else if (pCol == 17)
-    col = tr("Notes");
-  else if (pCol >= 18)
-    col = tr("Address");
+  QTreeWidgetItem* header = _srccntct->headerItem();
+
+  if (pCol > 1)
+    col = header->text(pCol); 
 
   menuStr = tr("Merge ") + col + tr(" to target");
-  _selectCol = pCol;
+  _selectCol = pCol > 18 ? 18 : pCol;
 
   menuItem = pMenu->addAction(tr("Deselect"), this, SLOT(sDeselectSource()));
 
@@ -504,6 +476,7 @@ void contactMerge::sPopulateTarget()
   if (contactPopulateTarget.first())
   {
     _target->setId(contactPopulateTarget.value("cntct_id").toInt());
+    _target->sBuildPhones();
     _targetGroup->setTitle(grpTitle + " (#" + contactPopulateTarget.value("cntct_number").toString() + ")");
   }
   else
@@ -623,7 +596,7 @@ void contactMerge::sSelectCol()
 
   ParameterList params;
   params.append("cntct_id", _srccntct->id());
-  params.append("col_number", _selectCol);
+  params.append("col_name", _colMap[_selectCol]);
   contactSelectCol = mql.toQuery(params);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Processing Requested Action"),
                                 contactSelectCol, __FILE__, __LINE__))

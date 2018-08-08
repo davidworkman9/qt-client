@@ -1,21 +1,36 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qhostaddressproto.h"
 
-#if QT_VERSION < 0x050000
-void setupQHostAddressProto(QScriptEngine *engine)
+#if QT_VERSION >= 0x050800
+QScriptValue ConversionModeToScriptValue(QScriptEngine *engine, const QHostAddress::ConversionMode &item)
 {
-  Q_UNUSED(engine);
+  return engine->newVariant((int)item);
 }
-#else
+void ConversionModeFromScriptValue(const QScriptValue &obj, QHostAddress::ConversionMode &item)
+{
+  item = (QHostAddress::ConversionMode)obj.toInt32();
+}
+
+QScriptValue ConversionModeFlagToScriptValue(QScriptEngine *engine, const QHostAddress::ConversionModeFlag &item)
+{
+  return engine->newVariant((int)item);
+}
+void ConversionModeFlagFromScriptValue(const QScriptValue &obj, QHostAddress::ConversionModeFlag &item)
+{
+  item = (QHostAddress::ConversionModeFlag)obj.toInt32();
+}
+#endif
+
 QScriptValue SpecialAddressToScriptValue(QScriptEngine *engine, const QHostAddress::SpecialAddress &item)
 {
   return engine->newVariant(item);
@@ -46,8 +61,6 @@ void QPairQHostAddressintFromScriptValue(const QScriptValue &obj, QPair<QHostAdd
 
 void setupQHostAddressProto(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-
   QScriptValue proto = engine->newQObject(new QHostAddressProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QHostAddress*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QHostAddress>(),  proto);
@@ -55,14 +68,25 @@ void setupQHostAddressProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQHostAddress, proto);
   engine->globalObject().setProperty("QHostAddress",  constructor);
 
+#if QT_VERSION >= 0x050800
+  qScriptRegisterMetaType(engine, ConversionModeFlagToScriptValue, ConversionModeFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, ConversionModeToScriptValue,     ConversionModeFromScriptValue);
+  constructor.setProperty("StrictConversion",          QScriptValue(engine, QHostAddress::StrictConversion),          ENUMPROPFLAGS);
+  constructor.setProperty("ConvertV4MappedToIPv4",     QScriptValue(engine, QHostAddress::ConvertV4MappedToIPv4),     ENUMPROPFLAGS);
+  constructor.setProperty("ConvertV4CompatToIPv4",     QScriptValue(engine, QHostAddress::ConvertV4CompatToIPv4),     ENUMPROPFLAGS);
+  constructor.setProperty("ConvertLocalHost",          QScriptValue(engine, QHostAddress::ConvertLocalHost),          ENUMPROPFLAGS);
+  constructor.setProperty("ConvertUnspecifiedAddress", QScriptValue(engine, QHostAddress::ConvertUnspecifiedAddress), ENUMPROPFLAGS);
+  constructor.setProperty("TolerantConversion",        QScriptValue(engine, QHostAddress::TolerantConversion),        ENUMPROPFLAGS);
+#endif
+
   qScriptRegisterMetaType(engine, SpecialAddressToScriptValue, SpecialAddressFromScriptValue);
-  constructor.setProperty("Null", QScriptValue(engine, QHostAddress::Null), permanent);
-  constructor.setProperty("LocalHost", QScriptValue(engine, QHostAddress::LocalHost), permanent);
-  constructor.setProperty("LocalHostIPv6", QScriptValue(engine, QHostAddress::LocalHostIPv6), permanent);
-  constructor.setProperty("Broadcast", QScriptValue(engine, QHostAddress::Broadcast), permanent);
-  constructor.setProperty("AnyIPv4", QScriptValue(engine, QHostAddress::AnyIPv4), permanent);
-  constructor.setProperty("AnyIPv6", QScriptValue(engine, QHostAddress::AnyIPv6), permanent);
-  constructor.setProperty("Any", QScriptValue(engine, QHostAddress::Any), permanent);
+  constructor.setProperty("Null",          QScriptValue(engine, QHostAddress::Null),          ENUMPROPFLAGS);
+  constructor.setProperty("LocalHost",     QScriptValue(engine, QHostAddress::LocalHost),     ENUMPROPFLAGS);
+  constructor.setProperty("LocalHostIPv6", QScriptValue(engine, QHostAddress::LocalHostIPv6), ENUMPROPFLAGS);
+  constructor.setProperty("Broadcast",     QScriptValue(engine, QHostAddress::Broadcast),     ENUMPROPFLAGS);
+  constructor.setProperty("AnyIPv4",       QScriptValue(engine, QHostAddress::AnyIPv4),       ENUMPROPFLAGS);
+  constructor.setProperty("AnyIPv6",       QScriptValue(engine, QHostAddress::AnyIPv6),       ENUMPROPFLAGS);
+  constructor.setProperty("Any",           QScriptValue(engine, QHostAddress::Any),           ENUMPROPFLAGS);
 
   QScriptValue parseSubnet = engine->newFunction(parseSubnetForJS);
   constructor.setProperty("parseSubnet", parseSubnet);
@@ -235,4 +259,3 @@ QString QHostAddressProto::toString() const
   return QString("[QHostAddress(unknown)]");
 }
 
-#endif

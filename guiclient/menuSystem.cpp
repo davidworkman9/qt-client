@@ -47,8 +47,7 @@
 #include "customCommands.h"
 #include "employee.h"
 #include "employees.h"
-#include "empGroup.h"
-#include "empGroups.h"
+#include "crmGroups.h"
 #include "searchForEmp.h"
 #include "groups.h"
 #include "images.h"
@@ -328,7 +327,12 @@ void menuSystem::sSearchEmployees()
 
 void menuSystem::sEmployeeGroups()
 {
-  omfgThis->handleNewWindow(new empGroups());
+  ParameterList params;
+  params.append("groupType", crmGroups::Employee);
+
+  crmGroups *newdlg = new crmGroups();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSystem::sErrorLog()

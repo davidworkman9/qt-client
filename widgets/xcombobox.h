@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -51,19 +51,20 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     Q_ENUM(Defaults)
     enum XComboBoxTypes
       {
-      AddressCommentTypes, Adhoc,
+      AddressCommentTypes, AddressGroups, Adhoc,
       APBankAccounts,	APTerms, ARBankAccounts,
       ARCMReasonCodes, ARDMReasonCodes,
-      ARTerms, AccountingPeriods, Agent,
+      ARTerms, AccountGroups, AccountingPeriods, Agent,
       AllCommentTypes, AllProjects,
       BBOMHeadCommentTypes, BBOMItemCommentTypes,
       BOMHeadCommentTypes, BOMItemCommentTypes,
       BOOHeadCommentTypes, BOOItemCommentTypes,
       CRMAccounts, CRMAccountCommentTypes,
+      CRMRoleAddress, CRMRoleContact, CRMRolePhone, CRMRoleEmail,
       ClassCodes,	Companies, ContactCommentTypes,
-      Contracts, CostCategories, Countries,
+      ContactGroups, Contracts, CostCategories, Countries,
       Currencies,	CurrenciesNotBase, CustomerCommentTypes,
-      CustomerGroups,	CustomerTypes,
+      CustomerGroups,	CustomerTypes, EmployeeGroups,
       EmployeeCommentTypes, ExchangeRateCommentTypes, ExpenseCategories,
       FinancialLayouts,	FiscalYears, FreightClasses, Honorifics,
       IncidentCategory, IncidentCommentTypes,
@@ -73,8 +74,8 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       LocaleCountries,  LocaleLanguages,
       LocationCommentTypes, LotSerialCommentTypes, OpportunityCommentTypes,
       OpportunityStages, OpportunitySources, OpportunityTypes,
-      PlannerCodes,	PoProjects, ProductCategories,
-      ProfitCenters,	ProjectCommentTypes,
+      PlannerCodes,	PoProjects, ProductCategories, ProspectGroups,
+      ProfitCenters,	ProjectCommentTypes, ProspectCommentTypes,
       PurchaseOrderCommentTypes, PurchaseOrderItemCommentTypes,
       ReasonCodes, RegistrationTypes, Reports, ReturnReasonCodes,
       ReturnAuthCommentTypes, ReturnAuthItemCommentTypes,
@@ -170,6 +171,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     void         wheelEvent(QWheelEvent *);
 
     bool              _allowNull;
+    int               _lastid;
     XComboBoxPrivate *_data;
     void init();
 

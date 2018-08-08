@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -32,7 +32,6 @@
 #include "salesOrderItem.h"
 #include "storedProcErrorLookup.h"
 #include "purchaseOrderItem.h"
-#include "todoItem.h"
 #include "incident.h"
 #include "task.h"
 #include "errorReporter.h"
@@ -183,7 +182,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
   {
     menu->addSeparator();
 
-    menuItem = menu->addAction(tr("View Todo Item..."), this, SLOT(sViewTodoItem()));
+    menuItem = menu->addAction(tr("View Task..."), this, SLOT(sViewTask()));
   }
 
   else if (_event->currentItem()->rawValue("evnttype_name").toString() == "IncidentAlarm")
@@ -389,17 +388,6 @@ void eventManager::sDeleteWorkOrder()
   }
 }
 
-void eventManager::sViewTodoItem()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("todoitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
-      
-  todoItem newdlg(this, "", true);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void eventManager::sViewIncident()
 {
   ParameterList params;
@@ -415,7 +403,7 @@ void eventManager::sViewTask()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("prjtask_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+  params.append("task_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
       
   task newdlg(this, "", true);
   newdlg.set(params);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,8 +13,10 @@
 
 #include "applock.h"
 #include "guiclient.h"
+#include "taskList.h"
 #include "xwidget.h"
 #include <parameter.h>
+#include "contacts.h"
 
 #include "ui_prospect.h"
 
@@ -32,21 +34,25 @@ public:
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
 
-    virtual void        setViewMode();
-    virtual void	sCheckNumber();
-    virtual void	sDeleteQuote();
-    virtual void	sEditQuote();
-    virtual void	sNewQuote();
-    virtual void	sPrintQuote();
-    virtual void	sSave();
-    virtual void	sViewQuote();
-    virtual void	sFillQuotesList();
-    virtual void	sPopulateQuotesMenu(QMenu * menuThis);
-    virtual bool	sPopulate();
-
-    virtual void        setVisible(bool);
+    virtual void sCheckNumber();
+    virtual void sDeleteQuote();
+    virtual void sEditQuote();
+    virtual void sNewQuote();
+    virtual void sPrintQuote();
+    virtual void sSaveClicked();
+    virtual bool sSave(bool pPartial);
+    virtual void sViewQuote();
+    virtual void sFillQuotesList();
+    virtual void sPopulateQuotesMenu(QMenu * menuThis);
+    virtual bool sPopulate();
+    virtual void sSetCrmAccountId();
+    virtual void sAddContact();
+    virtual void setViewMode();
+    virtual void setVisible(bool);
 
 signals:
+    virtual void saveBeforeBegin();
+    virtual void saveAfterCommit();
             void newId(int);
             void populated();
             void saved(int);
@@ -57,12 +63,20 @@ protected slots:
 
 protected:
     virtual void closeEvent(QCloseEvent*);
+    contacts *_contacts;
+    taskList *_taskList;
+    QPushButton *_add;
 
 private:
-    int _crmacctid;
-    int _mode;
-    int _prospectid;
-    int _NumberGen;
+    int  _crmacctid;
+    int  _mode;
+    int  _prospectid;
+    int  _NumberGen;
+    int  _rowId;
+    bool _isSaved;
+    bool _saved;
+    bool _fromCRM;
+    QMap<QString, int> cmap;
     QString _cachedNumber;
     QString _crmowner;
     bool _closed;

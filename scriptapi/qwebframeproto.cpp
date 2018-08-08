@@ -48,13 +48,12 @@ void QWebFramefromScriptValue(const QScriptValue &obj, QWebFrame* &item)
 
 void setupQWebFrameProto(QScriptEngine *engine)
 {
+  scriptDeprecated("QWebFrame will not be available in Qt 5.9");
   qScriptRegisterMetaType(engine, QWebFrametoScriptValue, QWebFramefromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebFrameProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebFrame*>(), proto);
-  // Not allowed. Is private in in qwebframe.h
-  //engine->setDefaultPrototype(qMetaTypeId<QWebFrame>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebFrame, proto);
   engine->globalObject().setProperty("QWebFrame",  constructor);
@@ -80,7 +79,6 @@ QWebFrameProto::QWebFrameProto(QObject *parent)
 {
 }
 
-#if QT_VERSION >= 0x050000
 void QWebFrameProto::addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own)
 {
   scriptDeprecated("QWebFrame will not be available in future versions");
@@ -88,7 +86,6 @@ void QWebFrameProto::addToJavaScriptWindowObject(const QString & name, QObject *
   if (item)
     item->addToJavaScriptWindowObject(name, object, own);
 }
-#endif
 
 QUrl QWebFrameProto::baseUrl() const
 {

@@ -131,19 +131,21 @@ void vendorType::sSave()
     }
 
     vendorSave.prepare( "INSERT INTO vendtype "
-               "(vendtype_id, vendtype_code, vendtype_descrip) "
+               "(vendtype_id, vendtype_code, vendtype_descrip, vendtype_default) "
                "VALUES "
-               "(:vendtype_id, :vendtype_code, :vendtype_descrip);" );
+               "(:vendtype_id, :vendtype_code, :vendtype_descrip, :vendtype_default);" );
   }
   else if (_mode == cEdit)
     vendorSave.prepare( "UPDATE vendtype "
                "SET vendtype_code=:vendtype_code,"
-               "    vendtype_descrip=:vendtype_descrip "
+               "    vendtype_descrip=:vendtype_descrip, "
+               "    vendtype_default=:vendtype_default "
                "WHERE (vendtype_id=:vendtype_id);" );
 
   vendorSave.bindValue(":vendtype_id", _vendtypeid);
   vendorSave.bindValue(":vendtype_code", _code->text().trimmed());
   vendorSave.bindValue(":vendtype_descrip", _description->text().trimmed());
+  vendorSave.bindValue(":vendtype_default", _default->isChecked());
   vendorSave.exec();
 
   done(_vendtypeid);
@@ -152,7 +154,7 @@ void vendorType::sSave()
 void vendorType::populate()
 {
   XSqlQuery vendorpopulate;
-  vendorpopulate.prepare( "SELECT vendtype_code, vendtype_descrip "
+  vendorpopulate.prepare( "SELECT vendtype_code, vendtype_descrip, vendtype_default "
              "FROM vendtype "
              "WHERE (vendtype_id=:vendtype_id);" );
   vendorpopulate.bindValue(":vendtype_id", _vendtypeid);
@@ -161,5 +163,6 @@ void vendorType::populate()
   {
     _code->setText(vendorpopulate.value("vendtype_code"));
     _description->setText(vendorpopulate.value("vendtype_descrip"));
+    _default->setChecked(vendorpopulate.value("vendtype_default").toBool());
   }
 }

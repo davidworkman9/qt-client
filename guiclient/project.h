@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -33,7 +33,8 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void setViewMode();
     virtual void populate();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sPopulateTaskMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sPopulateOrdersMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sAssignedToChanged(const int);
     virtual void sStatusChanged(const int);
     virtual void sCompletedChanged();
@@ -42,6 +43,7 @@ public slots:
     virtual bool sSave(bool partial = false);
     virtual void sPrintTasks();
     virtual void sPrintOrders();
+    virtual void sProjectTypeChanged(const int);
     virtual void sNewTask();
     virtual void sEditTask();
     virtual void sViewTask();
@@ -49,7 +51,9 @@ public slots:
     virtual void sViewOrder();
     virtual void sDeleteTask();
     virtual void sFillTaskList();
+    virtual void sFillOrdersList();
     virtual void sNewIncident();
+    virtual void sNewOpportunity();
     virtual void sNewQuotation();
     virtual void sNewSalesOrder();
     virtual void sNewPurchaseOrder();

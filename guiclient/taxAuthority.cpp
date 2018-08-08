@@ -268,7 +268,7 @@ bool taxAuthority::sPopulate()
                  "       taxauth_county, taxauth_accnt_id,"
                  "       taxauth_extref, crmacct_id, crmacct_owner_username"
                  "  FROM taxauth"
-                 "  JOIN crmacct ON (crmacct_taxauth_id=taxauth_id)"
+                 "  JOIN crmacct ON (taxauth_crmacct_id=crmacct_id)"
                  " WHERE (taxauth_id=:id);");
     getq.bindValue(":id", _taxauthid);
   }

@@ -15,6 +15,7 @@
 #include <QSqlError>
 #include <QPushButton>
 #include <QtScript>
+#include <QValidator>
 
 #include <metasql.h>
 #include <xsqlquery.h>
@@ -31,11 +32,18 @@ void AddressCluster::init()
   _list->setObjectName("_list");
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+  _more = new QPushButton(tr("More"), this);
+  _more->setObjectName("_more");
+  _more->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 #ifndef Q_OS_MAC
   _list->setMaximumWidth(25);
+  _more->setMaximumWidth(50);
 #else
   _list->setMinimumWidth(60);
   _list->setMinimumHeight(32);
+  _more->setMinimumWidth(80);
+  _more->setMinimumHeight(32);
 #endif
 
   _titleSingular = tr("Address");
@@ -51,24 +59,35 @@ void AddressCluster::init()
 
   _addrChange    = new XLineEdit(this);
   _number        = new XLineEdit(this);
-  _addrLit       = new QLabel(tr("Street\nAddress:"), this);
+  _addrLit1      = new QLabel(tr("Street 1:"), this);
+  _addrLit2      = new QLabel(tr("Street 2:"), this);
+  _addrLit3      = new QLabel(tr("Street 3:"), this);
   _addr1         = new XLineEdit(this);
   _addr2         = new XLineEdit(this);
   _addr3         = new XLineEdit(this);
   _cityLit       = new QLabel(tr("City:"), this);
   _city          = new XLineEdit(this);
+  _countryLit    = new QLabel(tr("Country:"));
+  _country       = new XComboBox(this, "_country");
   _stateLit      = new QLabel(tr("State:"));
   _state         = new XComboBox(this, "_state");
   _postalcodeLit = new QLabel(tr("Postal:"));
   _postalcode    = new XLineEdit(this);
-  _countryLit    = new QLabel(tr("Country:"));
-  _country       = new XComboBox(this, "_country");
+  _longitude     = new XLineEdit(this);
+  _latitude      = new XLineEdit(this);
+  _accuracy      = new XLineEdit(this);
+  _mktg          = new QCheckBox(tr("Allow Marketing"), this);
+  _longitudeLit  = new QLabel(tr("Longitude:"));
+  _latitudeLit   = new QLabel(tr("Latitude:"));
+  _accuracyLit   = new QLabel(tr("Accuracy:"));
   _active        = new QCheckBox(tr("Active"), this);
   _mapper        = new XDataWidgetMapper(this);
 
   _addrChange->setObjectName("_addrChange");
   _number->setObjectName("_number");
-  _addrLit->setObjectName("_addrLit");
+  _addrLit1->setObjectName("_addrLit1");
+  _addrLit2->setObjectName("_addrLit2");
+  _addrLit3->setObjectName("_addrLit3");
   _addr1->setObjectName("_addr1");
   _addr2->setObjectName("_addr2");
   _addr3->setObjectName("_addr3");
@@ -78,8 +97,28 @@ void AddressCluster::init()
   _postalcodeLit->setObjectName("_postalcodeLit");
   _postalcode->setObjectName("_postalcode");
   _countryLit->setObjectName("_countryLit");
+  _longitudeLit->setObjectName("_longitudeLit");
+  _latitudeLit->setObjectName("_latitudeLit");
+  _accuracyLit->setObjectName("_accuracyLit");
+  _longitude->setObjectName("_longitude");
+  _latitude->setObjectName("_latitude");
+  _accuracy->setObjectName("_accuracy");
+  _mktg->setObjectName("_mktg");
   _active->setObjectName("_active");
   _mapper->setObjectName("_mapper");
+
+  _longitudeLit->setVisible(false);
+  _latitudeLit->setVisible(false);
+  _accuracyLit->setVisible(false);
+  _longitude->setVisible(false);
+  _latitude->setVisible(false);
+  _accuracy->setVisible(false);
+  _mktg->setVisible(false);
+  if (_x_metrics)
+    _mktg->setChecked(_x_metrics->boolean("DefaultAddressOptIn"));
+
+  _longitude->setValidator(new QDoubleValidator(-180.0, 180.0, 7, this));
+  _latitude->setValidator(new QDoubleValidator(-90.0, 90.0, 7, this));
 
   _addrChange->hide();
 #if defined Q_OS_MAC
@@ -89,7 +128,9 @@ void AddressCluster::init()
 #endif
   if (! DEBUG)
     _number->hide();
-  _addrLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _addrLit1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _addrLit2->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _addrLit3->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _cityLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _stateLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _state->setEditable(true);
@@ -109,23 +150,36 @@ void AddressCluster::init()
   _grid->setMargin(0);
   _grid->setSpacing(2);
   _grid->addWidget(_label,         0, 0, 1, -1);
-  _grid->addWidget(_addrLit,       1, 0, 3, 1);
+  _grid->addWidget(_addrLit1,      1, 0, 1, 1);
+  _grid->addWidget(_addrLit2,      2, 0, 1, 1);
+  _grid->addWidget(_addrLit3,      3, 0, 1, 1);
   _grid->addWidget(_addr1,         1, 1, 1, -1);
   _grid->addWidget(_addr2,         2, 1, 1, -1);
   _grid->addWidget(_addr3,         3, 1, 1, -1);
-  _grid->addWidget(_cityLit,       5, 0);
-  _grid->addWidget(_city,          5, 1);
+  _grid->addWidget(_cityLit,       4, 0);
+  _grid->addWidget(_city,          4, 1, 1, 3);
+  _grid->addWidget(_postalcodeLit, 5, 4);
+  _grid->addWidget(_postalcode,    5, 5, 1, 1);
+  _grid->addWidget(_more,          5, 6, 1, 1);
+  _grid->addWidget(_countryLit,    5, 0);
+  _grid->addWidget(_country,       5, 1, 1, 1);
   _grid->addWidget(_stateLit,      5, 2);
   _grid->addWidget(_state,         5, 3);
-  _grid->addWidget(_postalcodeLit, 5, 4);
-  _grid->addWidget(_postalcode,    5, 5, 1, 2);
-  _grid->addWidget(_countryLit,    4, 0);
-  _grid->addWidget(_country,       4, 1, 1, 3);
   _grid->addWidget(_active,        4, 4);
 
   QHBoxLayout* hbox = new QHBoxLayout;
   hbox->addWidget(_list);
   _grid->addLayout(hbox, 4, 5, 1, -1, Qt::AlignRight);
+
+  QHBoxLayout* hbox2 = new QHBoxLayout;
+  hbox2->addWidget(_longitudeLit);
+  hbox2->addWidget(_longitude);
+  hbox2->addWidget(_latitudeLit);
+  hbox2->addWidget(_latitude);
+  hbox2->addWidget(_accuracyLit);
+  hbox2->addWidget(_accuracy);
+  hbox2->addWidget(_mktg);
+  _grid->addLayout(hbox2, 6, 0, 1, 6, Qt::AlignRight);
 
   _grid->setColumnStretch(0, 0);
   _grid->setColumnStretch(1, 3);
@@ -139,6 +193,7 @@ void AddressCluster::init()
 #endif
 
   connect(_list,      SIGNAL(clicked()), this, SLOT(sEllipses()));
+  connect(_more,      SIGNAL(clicked()), this, SLOT(sMore()));
   connect(_addr1,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
   connect(_addr2,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
   connect(_addr3,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
@@ -372,6 +427,27 @@ void AddressCluster::silentSetId(const int pId)
         _city->setText(idQ.value("addr_city").toString());
         _postalcode->setText(idQ.value("addr_postalcode").toString());
 
+        _longitude->setText(idQ.value("addr_lon").toDouble());
+        _latitude->setText(idQ.value("addr_lat").toDouble());
+ 
+        QString mapLink = QString("<a href=\"https://www.google.co.nz/maps/@" 
+                          + idQ.value("addr_lon").toString() + ","
+                          + idQ.value("addr_lat").toString() + ",18z?hl=en\">");
+        QString lngLink = mapLink + QString("Longitude:</a>");
+        QString latLink = mapLink + QString("Latitude:</a>");
+        _longitudeLit->setText(lngLink);
+        _longitudeLit->setTextFormat(Qt::RichText);
+        _longitudeLit->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        _longitudeLit->setOpenExternalLinks(true);
+        _latitudeLit->setText(latLink);
+        _latitudeLit->setTextFormat(Qt::RichText);
+        _latitudeLit->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        _latitudeLit->setOpenExternalLinks(true);
+
+
+        _accuracy->setText(idQ.value("addr_accuracy").toDouble());
+        _mktg->setChecked(idQ.value("addr_allowmktg").toBool());
+
         // set country before state or populateStateComboBox may clear the state
         setCountry(idQ.value("addr_country").toString());
         setState(idQ.value("addr_state").toString());
@@ -555,7 +631,8 @@ int AddressCluster::save(enum SaveFlags flag)
 
   XSqlQuery datamodQ;
   datamodQ.prepare("SELECT saveAddr(:addr_id,:addr_number,:addr1,:addr2,:addr3,"
-                   ":city,:state,:postalcode,:country,:active,:notes,:flag) AS result;");
+                   ":city,:state,:postalcode,:country,:active,:notes,:flag, "
+                   ":long, :lat, :accuracy, :mktg) AS result;");
   datamodQ.bindValue(":addr_id", id());
   if (!_number->text().isEmpty())
     datamodQ.bindValue(":addr_number", _number->text());
@@ -576,6 +653,13 @@ int AddressCluster::save(enum SaveFlags flag)
     datamodQ.bindValue(":flag", QString("CHANGEONE"));
   else
     return -1;
+  if (!_longitude->text().trimmed().isEmpty())
+    datamodQ.bindValue(":long", _longitude->text().trimmed().toDouble());
+  if (!_latitude->text().trimmed().isEmpty())
+    datamodQ.bindValue(":lat", _latitude->text().trimmed().toDouble());
+  if (!_accuracy->text().trimmed().isEmpty())
+    datamodQ.bindValue(":accuracy", _accuracy->text().trimmed().toDouble());
+  datamodQ.bindValue(":mktg", _mktg->isChecked());
 
   datamodQ.exec();
   if (datamodQ.first())
@@ -655,6 +739,18 @@ void AddressCluster::sEllipses()
     sList();
 }
 
+void AddressCluster::sMore()
+{
+  bool show = !_longitude->isVisible();
+  _longitudeLit->setVisible(show);
+  _longitude->setVisible(show);
+  _latitudeLit->setVisible(show);
+  _latitude->setVisible(show);
+  _accuracyLit->setVisible(show);
+  _accuracy->setVisible(show);
+  _mktg->setVisible(show);
+}
+
 void AddressCluster::sInfo()
 {
     /*
@@ -717,13 +813,13 @@ void AddressCluster::setActiveVisible(const bool p)
   {
     _grid->removeWidget(_country);
     _grid->addWidget(_active,  4, 4);
-    _grid->addWidget(_country, 4, 1, 1, 3);
+    _grid->addWidget(_country, 5, 1, 1, 1);
   }
   else
   {
     _grid->removeWidget(_active);
     _grid->removeWidget(_country);
-    _grid->addWidget(_country, 4, 1, 1, 4);
+    _grid->addWidget(_country, 5, 1, 1, 4);
   }
 }
 
@@ -899,29 +995,44 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     resize(700, size().height());
 
-    _parent = (AddressCluster*)(pParent);
-    setObjectName("virtualSearch");
-    setWindowTitle(_parent->_titlePlural);
-    _titleLit->setText(_parent->_titlePlural);
-    _id = _parent->_id;
-
     _searchAcct = new QCheckBox();
     _searchAcct->setMaximumWidth(480);
     _dialogLyt->addWidget(_searchAcct);
-    XSqlQuery crmacct;
-    crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
-                    "FROM crmacct "
-                    "WHERE (crmacct_id = :crmacct_id);");
-    crmacct.bindValue(":crmacct_id", _parent->_searchAcctId);
-    crmacct.exec();
-    if (crmacct.first())
+
+    AddressCluster *ac = qobject_cast<AddressCluster*>(pParent);
+    if (ac)
     {
-      _searchAcct->setChecked(true);
-      _searchAcct->setText(tr("Only addresses for %1").arg(crmacct.value("account").toString()));
-      connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+      _parent = (AddressCluster*)(pParent);
+      setWindowTitle(_parent->_titlePlural);
+      _titleLit->setText(_parent->_titlePlural);
+      _id = _parent->_id;
     }
     else
+    {
+      setWindowTitle(tr("Addresses"));
+      _titleLit->setText(tr("Addresses"));
       _searchAcct->hide();
+    }
+
+    setObjectName("virtualSearch");
+
+    if (ac)
+    {
+      XSqlQuery crmacct;
+      crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
+                      "FROM crmacct "
+                      "WHERE (crmacct_id = :crmacct_id);");
+      crmacct.bindValue(":crmacct_id", _parent->_searchAcctId);
+      crmacct.exec();
+      if (crmacct.first())
+      {
+        _searchAcct->setChecked(true);
+        _searchAcct->setText(tr("Only addresses for %1").arg(crmacct.value("account").toString()));
+        connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+      }
+      else
+        _searchAcct->hide();
+    }
 }
 
 void AddressSearch::sFillList()
@@ -933,7 +1044,7 @@ void AddressSearch::sFillList()
          !_searchPostalCode->isChecked() ))
       return;
 
-    QString sql = _parent->_query +
+    QString sql = "SELECT * FROM address "
                   "<? if exists('extraClause') ?> "
                   "  <? literal('extraClause') ?> "
                   "<? else ?>"
@@ -972,10 +1083,9 @@ void AddressSearch::sFillList()
                   "<? endif ?>"
                   "ORDER BY addr_country, addr_state, addr_postalcode;";
     ParameterList params;
-    if (_searchAcct->isChecked())
-      _parent->_extraClause = QString(" WHERE crmacct_id=%1").arg(_parent->_searchAcctId);
-    else
-      _parent->_extraClause = QString();
+    QString xtraClause;
+    if (_searchAcct->isChecked() && _parent)
+      xtraClause = QString(" WHERE crmacct_id=%1").arg(_parent->_searchAcctId);
     if (_searchStreet->isChecked())
       params.append("searchStreet");
     if (_searchCity->isChecked())
@@ -988,8 +1098,8 @@ void AddressSearch::sFillList()
       params.append("searchPostalCode");
     if (_searchInactive->isChecked())
       params.append("searchInactive");
-    if (! _parent->_extraClause.isEmpty())
-      params.append("extraClause", _parent->_extraClause);
+    if (!xtraClause.isEmpty())
+      params.append("extraClause", xtraClause);
 
     params.append("searchText", _search->text());
 

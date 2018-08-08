@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,6 +13,7 @@
 
 #include "applock.h"
 #include "guiclient.h"
+#include "taskList.h"
 #include "xdialog.h"
 #include <QStringList>
 #include <parameter.h>
@@ -43,21 +44,16 @@ public slots:
     virtual void sCancel();
     virtual void setViewMode();
     virtual void sCRMAcctChanged(const int);
-    virtual void sDeleteTodoItem();
-    virtual void sEditTodoItem();
     virtual void sFillHistoryList();
-    virtual void sFillTodoList();
-    virtual void sHandleTodoPrivs();
-    virtual void sNewTodoItem();
-    virtual void sPopulateTodoMenu(QMenu*);
+    virtual void sIncdtCategoryChanged(const int);
     virtual void sSave();
     virtual void sPrint();
-    virtual void sViewTodoItem();
     virtual void sIncidentHistory();
     virtual void sReturn();
     virtual void sViewAR();
     virtual void sAssigned();
     virtual void sNewCharacteristic();
+    virtual void sProjectUpdated();
     virtual void done(int);
 
     virtual void setVisible(bool);
@@ -67,6 +63,9 @@ signals:
 
 protected slots:
     virtual void languageChange();
+
+protected:
+    taskList *_taskList;
 
 private:
     int		_cntctid;

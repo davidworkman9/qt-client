@@ -146,6 +146,17 @@ static QString countryMQL("SELECT country_id, country_name, country_name"
                           "  FROM country"
                           " <? if exists('Qt') ?>WHERE country_qt_number IS NOT NULL<? endif ?>"
                           " ORDER BY country_name;");
+static QString crmgroupMQL("SELECT groups_id, groups_name, groups_name"
+                           " FROM <? literal('group') ?> "
+                           " ORDER BY groups_name;");
+static QString crmroleMQL("SELECT crmrole_id, crmrole_name, crmrole_name"
+                          "  FROM crmrole"
+                          "  WHERE true"
+                          " <? if exists('address') ?>AND crmrole_addr<? endif ?>"
+                          " <? if exists('contact') ?>AND crmrole_cntct<? endif ?>"
+                          " <? if exists('email') ?>AND crmrole_email<? endif ?>"
+                          " <? if exists('phone') ?>AND crmrole_phone<? endif ?>"
+                          " ORDER BY crmrole_sort;");
 static QString currMQL("SELECT curr_id,"
                        "       currConcat(curr_abbr, curr_symbol), curr_abbr"
                        "  FROM curr_symbol"
@@ -223,6 +234,10 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        new XComboBoxDescrip(XComboBox::AddressCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
                        cmnttypeMQL, "cmnttype", true, "source_name", "ADDR"));
+    typeDescrip.insert(XComboBox::AddressGroups,
+                       new XComboBoxDescrip(XComboBox::AddressGroups,
+                       QString(), QString(),
+                       crmgroupMQL, QString(), false, "group", "addrgrp"));
     typeDescrip.insert(XComboBox::APBankAccounts,
                        new XComboBoxDescrip(XComboBox::APBankAccounts,
                        "bankAccounts", "MaintainBankAccounts",
@@ -247,6 +262,10 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        new XComboBoxDescrip(XComboBox::ARTerms,
                        "termses", "MaintainTerms",
                        termsMQL, "terms", true, "isAR"));
+    typeDescrip.insert(XComboBox::AccountGroups,
+                       new XComboBoxDescrip(XComboBox::AccountGroups,
+                       QString(), QString(),
+                       crmgroupMQL, QString(), false, "group", "crmacctgrp"));
     typeDescrip.insert(XComboBox::AccountingPeriods,
                        new XComboBoxDescrip(XComboBox::AccountingPeriods,
                        "accountingPeriods", "MaintainAccountingPeriods",
@@ -305,6 +324,22 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        new XComboBoxDescrip(XComboBox::CRMAccountCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
                        cmnttypeMQL, "cmnttype", true, "source_name", "CRMA"));
+    typeDescrip.insert(XComboBox::CRMRoleAddress,
+                       new XComboBoxDescrip(XComboBox::CRMRoleAddress,
+                       "crmRoles", "MaintainCRMRoles",
+                       crmroleMQL, "crmRole", true, "address"));
+    typeDescrip.insert(XComboBox::CRMRoleContact,
+                       new XComboBoxDescrip(XComboBox::CRMRoleContact,
+                       "crmRoles", "MaintainCRMRoles",
+                       crmroleMQL, "crmRole", true, "contact"));
+    typeDescrip.insert(XComboBox::CRMRolePhone,
+                       new XComboBoxDescrip(XComboBox::CRMRolePhone,
+                       "crmRoles", "MaintainCRMRoles",
+                       crmroleMQL, "crmRole", true, "phone"));
+    typeDescrip.insert(XComboBox::CRMRoleEmail,
+                       new XComboBoxDescrip(XComboBox::CRMRoleEmail,
+                       "crmRoles", "MaintainCRMRoles",
+                       crmroleMQL, "crmRole", true, "email"));
     typeDescrip.insert(XComboBox::ClassCodes,
                        new XComboBoxDescrip(XComboBox::ClassCodes,
                        "classCodes", "MaintainClassCodes",
@@ -323,6 +358,10 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        new XComboBoxDescrip(XComboBox::ContactCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
                        cmnttypeMQL, "cmnttype", true, "source_name", "T"));
+    typeDescrip.insert(XComboBox::ContactGroups,
+                       new XComboBoxDescrip(XComboBox::ContactGroups,
+                       QString(), QString(),
+                       crmgroupMQL, QString(), false, "group", "cntctgrp"));
     typeDescrip.insert(XComboBox::Contracts,
                        new XComboBoxDescrip(XComboBox::Contracts,
                        "", "",
@@ -359,10 +398,8 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        cmnttypeMQL, "cmnttype", true, "source_name", "C"));
     typeDescrip.insert(XComboBox::CustomerGroups,
                        new XComboBoxDescrip(XComboBox::CustomerGroups,
-                       "customerGroups", "MaintainCustomerGroups",
-                       "SELECT custgrp_id, custgrp_name, custgrp_name"
-                       "  FROM custgrp"
-                       " ORDER BY custgrp_name;", "custgrp"));
+                       QString(), QString(),
+                       crmgroupMQL, QString(), false, "group", "custgrp"));
     typeDescrip.insert(XComboBox::CustomerTypes,
                        new XComboBoxDescrip(XComboBox::CustomerTypes,
                        "customerTypes", "MaintainCustomerTypes",
@@ -371,6 +408,10 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        "       custtype_code"
                        "  FROM custtype"
                        " ORDER BY custtype_code;", "custtype"));
+    typeDescrip.insert(XComboBox::EmployeeGroups,
+                       new XComboBoxDescrip(XComboBox::EmployeeGroups,
+                       QString(), QString(),
+                       crmgroupMQL, QString(), false, "group", "empgrp"));
     typeDescrip.insert(XComboBox::EmployeeCommentTypes,
                        new XComboBoxDescrip(XComboBox::EmployeeCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
@@ -538,6 +579,10 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        "       prodcat_code"
                        "  FROM prodcat"
                        " ORDER BY prodcat_code;", "prodcat"));
+    typeDescrip.insert(XComboBox::ProspectGroups,
+                       new XComboBoxDescrip(XComboBox::ProspectGroups,
+                       QString(), QString(),
+                       crmgroupMQL, QString(), false, "group", "pspctgrp"));
     typeDescrip.insert(XComboBox::ProfitCenters,
                        new XComboBoxDescrip(XComboBox::ProfitCenters,
                        "profitCenters", "MaintainChartOfAccounts",
@@ -549,6 +594,10 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        new XComboBoxDescrip(XComboBox::ProjectCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
                        cmnttypeMQL, "cmnttype", true, "source_name", "J"));
+    typeDescrip.insert(XComboBox::ProspectCommentTypes,
+                       new XComboBoxDescrip(XComboBox::ProspectCommentTypes,
+                       "commentTypes", "MaintainCommentTypes",
+                       cmnttypeMQL, "cmnttype", true, "source_name", "PSPCT"));
     typeDescrip.insert(XComboBox::PurchaseOrderCommentTypes,
                        new XComboBoxDescrip(XComboBox::PurchaseOrderCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
@@ -1257,6 +1306,7 @@ void XComboBox::setId(int pTarget)
             updateMapperData();
             emit newID(pTarget);
             emit valid(true);
+            _lastid = pTarget;
 
             if (allowNull())
               emit notNull(true);
@@ -1279,6 +1329,7 @@ void XComboBox::setId(int pTarget)
           updateMapperData();
           emit newID(pTarget);
           emit valid(true);
+          _lastid = pTarget;
 
           if (allowNull())
             emit notNull(true);
@@ -1492,10 +1543,7 @@ QString XComboBox::code() const
 
 bool XComboBox::isValid() const
 {
-  if ((allowNull()) && (id() == -1))
-    return false;
-  else
-    return true;
+  return id() != -1;
 }
 
 void XComboBox::sHandleNewIndex(int pIndex)
@@ -1503,10 +1551,18 @@ void XComboBox::sHandleNewIndex(int pIndex)
   if (DEBUG)
     qDebug("%s::sHandleNewIndex(%d) entered", qPrintable(objectName()), pIndex);
 
+  if (id() == _lastid)
+  {
+    if (DEBUG)
+      qDebug("%s::sHandleNewIndex(%d) no id changed", qPrintable(objectName()), pIndex);
+    return;
+  }
+
   if (pIndex >= 0 && pIndex < _data->_ids.count())
   {
     updateMapperData();
     emit newID(_data->_ids.at(pIndex));
+    _lastid = _data->_ids.at(pIndex);
 
     if (DEBUG)
       qDebug("%s::shandleNewIndex() emitted newID(%d)",

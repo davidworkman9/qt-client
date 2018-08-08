@@ -1234,7 +1234,9 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       addr_city, addr_state, addr_postalcode, addr_country,"
                "       cntct_id, cntct_honorific, cntct_first_name,"
                "       cntct_middle, cntct_last_name, cntct_suffix,"
-               "       cntct_phone, cntct_title, cntct_fax, cntct_email,"
+               "       getcontactphone(cntct_id, 'Office') AS contact_phone, "
+               "       getcontactphone(cntct_id, 'Fax') AS contact_fax, "
+               "       cntct_title, cntct_email,"
                "       vend_terms_id, vend_curr_id, vend_pocomments,"
                "       vend_fobsource, vend_fob, vend_shipvia,"
                "       vend_name, COALESCE(vend_potype_id, -1) AS vend_potype_id,"
@@ -1244,7 +1246,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       crmacct_id"
                "  FROM vendinfo"
                "  LEFT OUTER JOIN addr ON (vend_addr_id=addr_id)"
-               "  LEFT OUTER JOIN crmacct ON (vend_id=crmacct_vend_id)"
+               "  LEFT OUTER JOIN crmacct ON (vend_crmacct_id=crmacct_id)"
                "  LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id) "
                "WHERE (vend_id=:vend_id) "
                "LIMIT 1;" );
@@ -1277,9 +1279,9 @@ void purchaseOrder::sHandleVendor(int pVendid)
         _vendCntct->setMiddle(vq.value("cntct_middle").toString());
         _vendCntct->setLast(vq.value("cntct_last_name").toString());
         _vendCntct->setSuffix(vq.value("cntct_suffix").toString());
-        _vendCntct->setPhone(vq.value("cntct_phone").toString());
+        _vendCntct->setPhone(vq.value("contact_phone").toString());
         _vendCntct->setTitle(vq.value("cntct_title").toString());
-        _vendCntct->setFax(vq.value("cntct_fax").toString());
+        _vendCntct->setFax(vq.value("contact_fax").toString());
         _vendCntct->setEmailAddress(vq.value("cntct_email").toString());
       }
 

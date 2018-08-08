@@ -233,8 +233,8 @@ void cashReceipt::sPopulateCustomerInfo(int)
   if (_customerSelector->isSelectedCust())
     sql= "SELECT cust_curr_id FROM custinfo WHERE cust_id = <? value('cust_id') ?>;";
   else
-    sql = "SELECT cust_curr_id FROM custinfo JOIN custgrpitem on cust_id=custgrpitem_cust_id "
-          "WHERE custgrpitem_custgrp_id =<? value ('custgrp_id') ?> LIMIT 1;";
+    sql = "SELECT cust_curr_id FROM custinfo JOIN custgrpitem on cust_id=groupsitem_reference_id "
+          "WHERE groupsitem_groups_id =<? value ('custgrp_id') ?> LIMIT 1;";
 
   MetaSQLQuery mql(sql);
   cust = mql.toQuery(pList);

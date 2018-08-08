@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>818</width>
-    <height>674</height>
+    <height>829</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,6 +30,64 @@ to be bound by its terms.</comment>
    <property name="verticalSpacing">
     <number>12</number>
    </property>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="_cntctGroup">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="2" column="0">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="ContactWidget" name="_contact">
+           <property name="ownerVisible">
+            <bool>false</bool>
+           </property>
+           <property name="activeVisible">
+            <bool>true</bool>
+           </property>
+           <property name="initialsVisible">
+            <bool>true</bool>
+           </property>
+           <property name="minimalLayout">
+            <bool>false</bool>
+           </property>
+           <property name="listVisible" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -87,59 +145,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="_cntctGroup">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QFrame" name="frame">
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="ContactWidget" name="_contact">
-           <property name="accountVisible">
-            <bool>true</bool>
-           </property>
-           <property name="ownerVisible">
-            <bool>false</bool>
-           </property>
-           <property name="activeVisible">
-            <bool>true</bool>
-           </property>
-           <property name="initialsVisible">
-            <bool>true</bool>
-           </property>
-           <property name="minimalLayout">
-            <bool>false</bool>
-           </property>
-           <property name="listVisible" stdset="0">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QTabWidget" name="_tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -153,116 +159,9 @@ to be bound by its terms.</comment>
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_generalTab">
-      <attribute name="title">
-       <string>General</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="_accountGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="CRMAcctCluster" name="_crmAccount">
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="label">
-             <string>Account #:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QGroupBox" name="_ownerGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="UsernameCluster" name="_owner">
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="label">
-             <string>Owner:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QGroupBox" name="_notesGroup">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Notes</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="XTextEdit" name="_notes">
-            <property name="spellEnable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_tabComments">
-      <attribute name="title">
-       <string>Comments</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="Comments" name="_comments">
-         <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="type">
-          <enum>Comments::Contact</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_tabCharacteristics">
-      <attribute name="title">
-       <string>Characteristics</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="CharacteristicsWidget" name="_charass"/>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="_usesTab">
       <attribute name="title">
-       <string>Uses of the Contact</string>
+       <string>Relationships</string>
       </attribute>
       <layout class="QHBoxLayout">
        <item>
@@ -315,6 +214,89 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_tabRemarks">
+      <attribute name="title">
+       <string>Remarks</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QRadioButton" name="_commentsButton">
+           <property name="text">
+            <string>Comments</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="_notesButton">
+           <property name="text">
+            <string>Notes</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QStackedWidget" name="_remarksStack">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="commentsPage">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="Comments" name="_comments">
+             <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+             </property>
+             <property name="type">
+              <number>Comments::Contact</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="notesPage">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="XTextEdit" name="_notes">
+             <property name="spellEnable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_tabCharacteristics">
+      <attribute name="title">
+       <string>Characteristics</string>
+      </attribute>
+      <layout class="QHBoxLayout">
+       <item>
+        <widget class="CharacteristicsWidget" name="_charass"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="_documentsTab">
       <attribute name="title">
        <string>Documents</string>
@@ -323,13 +305,27 @@ to be bound by its terms.</comment>
        <item row="0" column="0">
         <widget class="Documents" name="_documents">
          <property name="type">
-          <enum>Documents::Contact</enum>
+          <number>0</number>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
     </widget>
+   </item>
+   <item row="3" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="UsernameCluster" name="_owner">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+       <property name="label">
+        <string>Owner:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -385,11 +381,7 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_contact</tabstop>
   <tabstop>_tabWidget</tabstop>
-  <tabstop>_crmAccount</tabstop>
-  <tabstop>_owner</tabstop>
-  <tabstop>_notes</tabstop>
   <tabstop>_charass</tabstop>
-  <tabstop>_comments</tabstop>
   <tabstop>_uses</tabstop>
   <tabstop>_editUse</tabstop>
   <tabstop>_viewUse</tabstop>

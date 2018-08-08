@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -45,6 +45,7 @@ customers::customers(QWidget* parent, const char*, Qt::WindowFlags fl)
   parameterWidget()->append(tr("Customer Name Pattern"), "cust_name_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Customer Type"), "cust_custtype_id", XComboBox::CustomerTypes);
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_code_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp", XComboBox::CustomerGroups);
   parameterWidget()->append(tr("Contact Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Email Pattern"), "cntct_email_pattern", ParameterWidget::Text);

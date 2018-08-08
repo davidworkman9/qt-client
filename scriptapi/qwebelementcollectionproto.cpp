@@ -11,14 +11,9 @@
 #include "scriptapi_internal.h"
 #include "qwebelementcollectionproto.h"
 
-#if QT_VERSION < 0x050000
 void setupQWebElementCollectionProto(QScriptEngine *engine)
 {
-  Q_UNUSED(engine);
-}
-#else
-void setupQWebElementCollectionProto(QScriptEngine *engine)
-{
+  scriptDeprecated("QWebElementCollection will not be available in Qt 5.9");
   QScriptValue proto = engine->newQObject(new QWebElementCollectionProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebElementCollection*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QWebElementCollection>(),  proto);
@@ -161,5 +156,3 @@ QList<QWebElement> QWebElementCollectionProto::toList() const
     return item->toList();
   return QList<QWebElement>();
 }
-
-#endif

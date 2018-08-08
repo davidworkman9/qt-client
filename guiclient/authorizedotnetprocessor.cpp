@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -91,7 +91,7 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcv
     "  formatbytea(decrypt(setbytea(ccard_country),  setbytea(:key),'bf')) AS ccard_country,"
     "  formatbytea(decrypt(setbytea(ccard_month_expired),setbytea(:key),'bf')) AS ccard_month_expired,"
     "  formatbytea(decrypt(setbytea(ccard_year_expired),setbytea(:key), 'bf')) AS ccard_year_expired,"
-    "  custinfo.*, cntct_phone, cntct_email"
+    "  custinfo.*, getcontactphone(cntct_id, 'Office') AS contact_phone, cntct_email"
     "  FROM ccard"
     "  JOIN custinfo ON (ccard_cust_id=cust_id)"
     "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
@@ -164,7 +164,7 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcv
 
   if (_metrics->boolean("CCANWellsFargoSecureSource"))
   {
-    APPENDFIELD(prequest, "x_phone",    anq.value("cntct_phone").toString());
+    APPENDFIELD(prequest, "x_phone",    anq.value("contact_phone").toString());
     APPENDFIELD(prequest, "x_email",    anq.value("cntct_email").toString());
   }
 

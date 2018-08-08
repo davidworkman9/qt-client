@@ -208,12 +208,12 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       invoiceet.prepare("INSERT INTO invchead ("
 				"    invchead_id, invchead_invcnumber, invchead_orderdate,"
-                                "    invchead_invcdate, invchead_cust_id, invchead_posted,"
+                                "    invchead_invcdate, invchead_posted,"
 				"    invchead_printed, invchead_commission, invchead_freight,"
 				"    invchead_misc_amount, invchead_shipchrg_id "
 				") VALUES ("
 				"    :invchead_id, :invchead_invcnumber, :invchead_orderdate, "
-				"    :invchead_invcdate, -1, false,"
+				"    :invchead_invcdate, false,"
 				"    false, 0, 0,"
 				"    0, -1"
 				");");
@@ -468,7 +468,7 @@ void invoice::populateShipto(int pShiptoid)
   {
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_addr_id, "
-                    "       cntct_phone, shipto_salesrep_id, "
+                    "       getcontactphone(cntct_id, 'Office') AS contact_phone, shipto_salesrep_id, "
                     "       COALESCE(shipto_shipvia, cust_shipvia, '') AS shipvia, "
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
                     "       COALESCE(shipto_shipchrg_id, -1) AS shipto_shipchrg_id,"
@@ -489,7 +489,7 @@ void invoice::populateShipto(int pShiptoid)
 
       _shipToName->setText(shipto.value("shipto_name"));
       _shipToAddr->setId(shipto.value("shipto_addr_id").toInt());
-      _shipToPhone->setText(shipto.value("cntct_phone"));
+      _shipToPhone->setText(shipto.value("contact_phone"));
       _shipTo->setId(shipto.value("shipto_id").toInt());
 
       _shipToAddr->blockSignals(false);

@@ -16,7 +16,7 @@
 
 void setupQWebChannelProto(QScriptEngine *engine);
 
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050400
 #include <QWebChannel>
 
 Q_DECLARE_METATYPE(QWebChannel*)

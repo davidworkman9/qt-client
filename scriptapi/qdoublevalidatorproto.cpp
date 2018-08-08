@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qdoublevalidatorproto.h"
 
 #define DEBUG false
@@ -18,21 +19,31 @@ QScriptValue QDoubleValidatorToScriptValue(QScriptEngine *engine, QDoubleValidat
 void QDoubleValidatorFromScriptValue(const QScriptValue &object, QDoubleValidator* &out)
  { out = qobject_cast<QDoubleValidator*>(object.toQObject()); }
 
+static QScriptValue NotationToScriptValue(QScriptEngine *engine, const enum QDoubleValidator::Notation &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void NotationFromScriptValue(const QScriptValue &obj, enum QDoubleValidator::Notation &p)
+{
+  p = (enum QDoubleValidator::Notation)obj.toInt32();
+}
+
 void setupQDoubleValidatorProto(QScriptEngine *engine)
 {
-  //QScriptValue proto = engine->newQObject(new QDoubleValidatorProto(engine));
-  //engine->setDefaultPrototype(qMetaTypeId<QDoubleValidator*>(), proto);
-  //engine->setDefaultPrototype(qMetaTypeId<QDoubleValidator>(),  proto);
-
   qScriptRegisterMetaType(engine, QDoubleValidatorToScriptValue, QDoubleValidatorFromScriptValue);
 
-  //QScriptValue constructor = engine->newFunction(constructQDoubleValidator,
-  //                                               proto);
-  //engine->globalObject().setProperty("QDoubleValidator", constructor);
+  QScriptValue proto       = engine->newQObject(new QDoubleValidatorProto(engine));
+  QScriptValue constructor = engine->newFunction(constructQDoubleValidator, proto);
+  engine->globalObject().setProperty("QDoubleValidator", constructor);
+
+  qScriptRegisterMetaType(engine, NotationToScriptValue, NotationFromScriptValue);
+  constructor.setProperty("StandardNotation",   QScriptValue(engine, QDoubleValidator::StandardNotation),   ENUMPROPFLAGS);
+  constructor.setProperty("ScientificNotation", QScriptValue(engine, QDoubleValidator::ScientificNotation), ENUMPROPFLAGS);
+
 }
 
 QScriptValue constructQDoubleValidator(QScriptContext *context,
-                            QScriptEngine  *engine)
+                                       QScriptEngine  *engine)
 {
   QDoubleValidator *obj = 0;
 

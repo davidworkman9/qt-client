@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -15,12 +15,10 @@
 
 void setupQWebSettingsProto(QScriptEngine *engine);
 
-#if QT_VERSION >= 0x050000
 #include <QScriptable>
 #include <QWebSettings>
 
 Q_DECLARE_METATYPE(QWebSettings*)
-//Q_DECLARE_METATYPE(QWebSettings) // Is private.
 Q_DECLARE_METATYPE(enum QWebSettings::FontFamily)
 Q_DECLARE_METATYPE(enum QWebSettings::FontSize)
 Q_DECLARE_METATYPE(enum QWebSettings::ThirdPartyCookiePolicy)
@@ -59,5 +57,4 @@ class QWebSettingsProto : public QObject, public QScriptable
 
 };
 
-#endif
 #endif

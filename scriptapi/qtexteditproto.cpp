@@ -1,29 +1,45 @@
 /*
- *This file is part of the xTuple ERP: PostBooks Edition, a free and
- *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
- *It is licensed to you under the Common Public Attribution License
- *version 1.0, the full text of which (including xTuple-specific Exhibits)
- *is available at www.xtuple.com/CPAL.  By using this software, you agree
- *to be bound by its terms.
+ * This file is part of the xTuple ERP: PostBooks Edition, a free and
+ * open source Enterprise Resource Planning software suite,
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including xTuple-specific Exhibits)
+ * is available at www.xtuple.com/CPAL.  By using this software, you agree
+ * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qtexteditproto.h"
 
 #include <QString>
 
-#define DEBUG false
-
-void setupQTextEditProto(QScriptEngine *engine)
+static QScriptValue AutoFormattingFlagToScriptValue(QScriptEngine *engine, const enum QTextEdit::AutoFormattingFlag &p)
 {
-  QScriptValue proto = engine->newQObject(new QTextEditProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QTextEdit*>(), proto);
-  //engine->setDefaultPrototype(qMetaTypeId<QTextEdit>(),  proto);
-
-  QScriptValue constructor = engine->newFunction(constructQTextEdit,
-                                                 proto);
-  engine->globalObject().setProperty("QTextEdit",  constructor);
+  return QScriptValue(engine, (int)p);
 }
+static void AutoFormattingFlagFromScriptValue(const QScriptValue &obj, enum QTextEdit::AutoFormattingFlag &p)
+{
+  p = (enum QTextEdit::AutoFormattingFlag)obj.toInt32();
+}
+
+static QScriptValue AutoFormattingToScriptValue(QScriptEngine *engine, const QTextEdit::AutoFormatting &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void AutoFormattingFromScriptValue(const QScriptValue &obj, QTextEdit::AutoFormatting &p)
+{
+  p = (QTextEdit::AutoFormatting)obj.toInt32();
+}
+
+QScriptValue LineWrapModeToScriptValue(QScriptEngine *engine, const enum QTextEdit::LineWrapMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void LineWrapModeFromScriptValue(const QScriptValue &obj, enum QTextEdit::LineWrapMode &p)
+{
+  p = (enum QTextEdit::LineWrapMode)obj.toInt32();
+}
+
 
 QScriptValue constructQTextEdit(QScriptContext *context,
                                 QScriptEngine  *engine)
@@ -41,6 +57,28 @@ QScriptValue constructQTextEdit(QScriptContext *context,
   }
 
   return engine->toScriptValue(obj);
+}
+
+void setupQTextEditProto(QScriptEngine *engine)
+{
+  QScriptValue proto = engine->newQObject(new QTextEditProto(engine));
+  engine->setDefaultPrototype(qMetaTypeId<QTextEdit*>(), proto);
+
+  QScriptValue constructor = engine->newFunction(constructQTextEdit, proto);
+  engine->globalObject().setProperty("QTextEdit",  constructor);
+
+  qScriptRegisterMetaType(engine, AutoFormattingFlagToScriptValue, AutoFormattingFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, AutoFormattingToScriptValue,     AutoFormattingFromScriptValue);
+  constructor.setProperty("AutoNone",       QScriptValue(engine, QTextEdit::AutoNone),       ENUMPROPFLAGS);
+  constructor.setProperty("AutoBulletList", QScriptValue(engine, QTextEdit::AutoBulletList), ENUMPROPFLAGS);
+  constructor.setProperty("AutoAll",        QScriptValue(engine, QTextEdit::AutoAll),        ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, LineWrapModeToScriptValue, LineWrapModeFromScriptValue);
+  constructor.setProperty("NoWrap",           QScriptValue(engine, QTextEdit::AutoNone),         ENUMPROPFLAGS);
+  constructor.setProperty("WidgetWidth",      QScriptValue(engine, QTextEdit::WidgetWidth),      ENUMPROPFLAGS);
+  constructor.setProperty("FixedPixelWidth",  QScriptValue(engine, QTextEdit::FixedPixelWidth),  ENUMPROPFLAGS);
+  constructor.setProperty("FixedColumnWidth", QScriptValue(engine, QTextEdit::FixedColumnWidth), ENUMPROPFLAGS);
+
 }
 
 QTextEditProto::QTextEditProto(QObject *parent)
@@ -131,10 +169,8 @@ QRect QTextEditProto::cursorRect() const
 QTextDocument *QTextEditProto::document() const
 {
   QTextEdit *item = qscriptvalue_cast<QTextEdit*>(thisObject());
-  if (DEBUG) qDebug("QTextEditProto::document() item = %p", item);
   if (item)
   {
-    if (DEBUG) qDebug("QTextEditProto::document() item->document() = %p", item->document());
     return item->document();
   }
   return 0;

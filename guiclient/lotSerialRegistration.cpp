@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -332,14 +332,14 @@ void lotSerialRegistration::sSetSoCustId()
   if (_crmacct->id() != -1)
   {
     XSqlQuery cq;
-    cq.prepare("SELECT crmacct_cust_id "
-               "FROM crmacct "
-	       "WHERE (crmacct_id=:crmacct_id);");
+    cq.prepare("SELECT cust_id "
+               "FROM custinfo "
+	       "WHERE (cust_crmacct_id=:crmacct_id);");
     cq.bindValue(":crmacct_id", _crmacct->id());
     cq.exec();
     if (cq.first())
     {
-      _so->setCustId(cq.value("crmacct_cust_id").toInt());
+      _so->setCustId(cq.value("cust_id").toInt());
       _shipment->setId(-1);
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),

@@ -182,15 +182,15 @@ void adjustmentTrans::sPost()
     cost = (_cost->toDouble() - _cachedValue);
   }
 
-  QList<GuiErrorCheck>errors;
-    errors<<GuiErrorCheck(!_item->isValid(), _item,
+  QList<GuiErrorCheck> errors;
+    errors << GuiErrorCheck(!_item->isValid(), _item,
       tr("You must select an Item before posting this transaction."))
-    <<GuiErrorCheck(_qty->text().length() == 0 || qty == 0, _qty,
+    << GuiErrorCheck(_qty->text().length() == 0 || qty == 0, _qty,
       tr("<p>You must enter a Quantity before posting this Transaction."))
-    <<GuiErrorCheck(_costAdjust->isEnabled() && _costAdjust->isChecked() && _costManual->isChecked()
+    << GuiErrorCheck(_costAdjust->isEnabled() && _costAdjust->isChecked() && _costManual->isChecked()
       && (_cost->text().length() == 0 || cost == 0), _cost,
       tr("<p>You must enter a total cost value for the inventory to be transaction."))
-    <<GuiErrorCheck( _costMethod == "A" && _afterQty->toDouble() < 0, _qty,
+    << GuiErrorCheck( _costMethod == "A" && _afterQty->toDouble() < 0, _qty,
       tr("<p>Average cost adjustments may not result in a negative quantity on hand."));
 
   if (GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))

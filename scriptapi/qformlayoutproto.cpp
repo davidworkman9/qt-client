@@ -1,19 +1,47 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qformlayoutproto.h"
 
 #include <QString>
 #include <QWidget>
 
 #define DEBUG false
+
+QScriptValue FieldGrowthPolicytoScriptValue(QScriptEngine *engine, const enum QFormLayout::FieldGrowthPolicy &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void FieldGrowthPolicyfromScriptValue(const QScriptValue &obj, enum QFormLayout::FieldGrowthPolicy &p)
+{
+  p = (enum QFormLayout::FieldGrowthPolicy)obj.toInt32();
+}
+
+QScriptValue ItemRoletoScriptValue(QScriptEngine *engine, const enum QFormLayout::ItemRole &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void ItemRolefromScriptValue(const QScriptValue &obj, enum QFormLayout::ItemRole &p)
+{
+  p = (enum QFormLayout::ItemRole)obj.toInt32();
+}
+
+QScriptValue RowWrapPolicytoScriptValue(QScriptEngine *engine, const enum QFormLayout::RowWrapPolicy &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void RowWrapPolicyfromScriptValue(const QScriptValue &obj, enum QFormLayout::RowWrapPolicy &p)
+{
+  p = (enum QFormLayout::RowWrapPolicy)obj.toInt32();
+}
 
 QScriptValue QFormLayouttoScriptValue(QScriptEngine *engine, QFormLayout* const &item)
 {
@@ -36,20 +64,20 @@ void setupQFormLayoutProto(QScriptEngine *engine)
                                                  proto);
   engine->globalObject().setProperty("QFormLayout", constructor);
 
-  // enum QFormLayout::FieldGrowthPolicy
-  constructor.setProperty("FieldsStayAtSizeHint",  QScriptValue(engine, QFormLayout::FieldsStayAtSizeHint),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("ExpandingFieldsGrow",   QScriptValue(engine, QFormLayout::ExpandingFieldsGrow),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("AllNonFixedFieldsGrow", QScriptValue(engine, QFormLayout::AllNonFixedFieldsGrow), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  qScriptRegisterMetaType(engine, FieldGrowthPolicytoScriptValue, FieldGrowthPolicyfromScriptValue);
+  constructor.setProperty("FieldsStayAtSizeHint",  QScriptValue(engine, QFormLayout::FieldsStayAtSizeHint),  ENUMPROPFLAGS);
+  constructor.setProperty("ExpandingFieldsGrow",   QScriptValue(engine, QFormLayout::ExpandingFieldsGrow),   ENUMPROPFLAGS);
+  constructor.setProperty("AllNonFixedFieldsGrow", QScriptValue(engine, QFormLayout::AllNonFixedFieldsGrow), ENUMPROPFLAGS);
 
-  // enum QFormLayout::ItemRole
-  constructor.setProperty("LabelRole",    QScriptValue(engine, QFormLayout::LabelRole),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("FieldRole",    QScriptValue(engine, QFormLayout::FieldRole),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("SpanningRole", QScriptValue(engine, QFormLayout::SpanningRole), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  qScriptRegisterMetaType(engine, ItemRoletoScriptValue, ItemRolefromScriptValue);
+  constructor.setProperty("LabelRole",    QScriptValue(engine, QFormLayout::LabelRole),    ENUMPROPFLAGS);
+  constructor.setProperty("FieldRole",    QScriptValue(engine, QFormLayout::FieldRole),    ENUMPROPFLAGS);
+  constructor.setProperty("SpanningRole", QScriptValue(engine, QFormLayout::SpanningRole), ENUMPROPFLAGS);
 
- // enum QFormLayout::RowWrapPolicy
-  constructor.setProperty("DontWrapRows", QScriptValue(engine, QFormLayout::DontWrapRows), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("WrapLongRows", QScriptValue(engine, QFormLayout::WrapLongRows), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("WrapAllRows",  QScriptValue(engine, QFormLayout::WrapAllRows),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  qScriptRegisterMetaType(engine, RowWrapPolicytoScriptValue, RowWrapPolicyfromScriptValue);
+  constructor.setProperty("DontWrapRows", QScriptValue(engine, QFormLayout::DontWrapRows), ENUMPROPFLAGS);
+  constructor.setProperty("WrapLongRows", QScriptValue(engine, QFormLayout::WrapLongRows), ENUMPROPFLAGS);
+  constructor.setProperty("WrapAllRows",  QScriptValue(engine, QFormLayout::WrapAllRows),  ENUMPROPFLAGS);
 }
 
 QScriptValue constructQFormLayout(QScriptContext *context,

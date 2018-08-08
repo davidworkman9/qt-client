@@ -140,10 +140,12 @@ void accountingPeriod::sHandleNumber()
 void accountingPeriod::sSave()
 {
   QList<GuiErrorCheck> errors;
-    errors<< GuiErrorCheck(_startDate->date() >= _endDate->date(), _endDate,
-                           tr("The start date must be less than the end date."))
-    ;
-    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Period"), errors))
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You much provide a name for the Accounting Period"));
+  errors << GuiErrorCheck(_startDate->date() >= _endDate->date(), _endDate,
+                          tr("The start date must be less than the end date."));
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Period"), errors))
       return;
 
   XSqlQuery saveAccounting;

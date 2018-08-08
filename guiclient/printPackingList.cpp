@@ -277,7 +277,7 @@ void printPackingList::sPopulate()
                     "SELECT cohead_number AS order_number,"
                     "       cohead_orderdate AS orderdate,"
                     "       cohead_custponumber AS alternate_number,"
-                    "       cust_name AS name, cntct_phone AS phone "
+                    "       cust_name AS name, getcontactphone(cntct_id, 'Office') AS phone "
                     "FROM cohead "
                     " JOIN custinfo ON (cohead_cust_id=cust_id)"
                     " LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"

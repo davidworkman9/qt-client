@@ -297,7 +297,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
   qq.prepare("SELECT cohead_number,"
              "       cohead_orderdate,"
              "       cohead_custponumber,"
-             "       cust_name, cntct_phone "
+             "       cust_name, getcontactphone(cntct_id, 'Office') AS contact_phone "
              "  FROM cohead"
              "  JOIN custinfo ON (cohead_cust_id=cust_id)"
              "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
@@ -309,7 +309,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
     _orderDate->setDate(qq.value("cohead_orderdate").toDate());
     _poNumber->setText(qq.value("cohead_custponumber").toString());
     _custName->setText(qq.value("cust_name").toString());
-    _custPhone->setText(qq.value("cntct_phone").toString());
+    _custPhone->setText(qq.value("contact_phone").toString());
   }
                
   display::sFillList();

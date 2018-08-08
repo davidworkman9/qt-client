@@ -68,7 +68,7 @@ void createRecurringItems::sCreate()
     { _vouchers,   "V"     },
     { _incidents,  "INCDT" },
     { _projects,   "J"     },
-    { _todoItems,  "TODO"  }
+    { _todoItems,  "TASK"  }
   };
 
   QStringList errors;

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -15,15 +15,12 @@
 
 void setupQWebElementCollectionProto(QScriptEngine *engine);
 
-#if QT_VERSION >= 0x050000
 #include <QScriptable>
 #include <QWebElementCollection>
 
 Q_DECLARE_METATYPE(QWebElementCollection*)
 Q_DECLARE_METATYPE(QWebElementCollection)
 
-// Uncomment the following when/if we need to iterate; better to just use JS
-// #define Use_QWebElementCollectionIterators
 #ifdef Use_QWebElementCollectionIterators
 Q_DECLARE_METATYPE(QWebElementCollection::const_iterator)
 Q_DECLARE_METATYPE(QWebElementCollection::iterator)
@@ -57,5 +54,4 @@ class QWebElementCollectionProto : public QObject, public QScriptable
     Q_INVOKABLE QList<QWebElement>                      toList() const;
 };
 
-#endif
 #endif

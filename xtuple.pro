@@ -10,6 +10,7 @@
 TEMPLATE = subdirs
 SUBDIRS = common \
           scriptapi \
+          scriptapitest/scriptapitest.pro \
           widgets/dll.pro \
           widgets \
           guiclient

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -34,12 +34,9 @@
 #include <QWebSecurityOrigin>
 
 Q_DECLARE_METATYPE(QWebFrame*)
-//Q_DECLARE_METATYPE(QWebFrame) // Is private in in qwebframe.h
 
 Q_DECLARE_METATYPE(enum QWebFrame::RenderLayer)
-#if QT_VERSION >= 0x050000
 Q_DECLARE_METATYPE(enum QWebFrame::ValueOwnership)
-#endif
 
 void setupQWebFrameProto(QScriptEngine *engine);
 QScriptValue constructQWebFrame(QScriptContext *context, QScriptEngine *engine);
@@ -61,9 +58,7 @@ class QWebFrameProto : public QObject, public QScriptable
   public:
     QWebFrameProto(QObject *parent);
 
-#if QT_VERSION >= 0x050000
     Q_INVOKABLE void                          addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own = QWebFrame::QtOwnership);
-#endif
     Q_INVOKABLE QUrl                          baseUrl() const;
     Q_INVOKABLE QList<QWebFrame *>            childFrames() const;
     Q_INVOKABLE QSize                         contentsSize() const;

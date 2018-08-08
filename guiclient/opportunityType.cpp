@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,6 +14,7 @@
 #include <QMessageBox>
 
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 /*
  *  Constructs a opportunityType as a child of 'parent', with the
@@ -31,6 +32,8 @@ opportunityType::opportunityType(QWidget* parent, const char* name, bool modal, 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
+
+  _template->populate("SELECT tasktmpl_id, tasktmpl_name FROM tasktmpl ORDER BY tasktmpl_name;");
 }
 
 /*
@@ -41,10 +44,6 @@ opportunityType::~opportunityType()
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void opportunityType::languageChange()
 {
   retranslateUi(this);
@@ -81,6 +80,7 @@ enum SetResponse opportunityType::set(const ParameterList &pParams)
       _mode = cView;
       _name->setEnabled(false);
       _description->setEnabled(false);
+      _template->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
       _buttonBox->setFocus();
@@ -115,14 +115,15 @@ void opportunityType::sCheck()
 void opportunityType::sSave()
 {
   XSqlQuery opportunitySave;
+  QList<GuiErrorCheck> errors;
+
   _name->setText(_name->text().trimmed().toUpper());
-  if (_name->text().length() == 0)
-  {
-    QMessageBox::information( this, tr("Invalid Name"),
-                              tr("You must enter a valid Name for this Opportunity Type.") );
-    _name->setFocus();
-    return;
-  }
+  errors << GuiErrorCheck(_name->text().trimmed().length() == 0, _name, 
+                          tr("You must enter a valid Name for this Opportunity Type."))
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Opportunity Type"), errors))
+      return;
 
   if (_mode == cNew)
   {
@@ -137,19 +138,22 @@ void opportunityType::sSave()
     }
 
     opportunitySave.prepare( "INSERT INTO optype "
-               "( optype_id, optype_name, optype_descrip)"
+               "( optype_id, optype_name, optype_descrip, optype_tasktmpl_id)"
                "VALUES "
-               "( :optype_id, :optype_name, :optype_descrip );" );
+               "( :optype_id, :optype_name, :optype_descrip, :template );" );
   }
   else if (_mode == cEdit)
     opportunitySave.prepare( "UPDATE optype "
                "   SET optype_name=:optype_name,"
-               "       optype_descrip=:optype_descrip "
+               "       optype_descrip=:optype_descrip, "
+               "       optype_tasktmpl_id=:template "
                " WHERE(optype_id=:optype_id);" );
 
   opportunitySave.bindValue(":optype_id", _optypeid);
   opportunitySave.bindValue(":optype_name", _name->text());
   opportunitySave.bindValue(":optype_descrip", _description->text().trimmed());
+  if (_template->isValid())
+    opportunitySave.bindValue(":template", _template->id());
   opportunitySave.exec();
 
   done(_optypeid);
@@ -158,7 +162,7 @@ void opportunityType::sSave()
 void opportunityType::populate()
 {
   XSqlQuery opportunitypopulate;
-  opportunitypopulate.prepare( "SELECT optype_name, optype_descrip "
+  opportunitypopulate.prepare( "SELECT optype_name, optype_descrip, optype_tasktmpl_id "
              "  FROM optype "
              " WHERE(optype_id=:optype_id);" );
   opportunitypopulate.bindValue(":optype_id", _optypeid);
@@ -167,6 +171,7 @@ void opportunityType::populate()
   {
     _name->setText(opportunitypopulate.value("optype_name"));
     _description->setText(opportunitypopulate.value("optype_descrip"));
+    _template->setId(opportunitypopulate.value("optype_tasktmpl_id").toInt());
   }
 } 
 

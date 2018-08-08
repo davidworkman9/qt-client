@@ -39,9 +39,6 @@ class QDataWidgetMapperProto : public QObject, public QScriptable
 
 };
 
-#if QT_VERSION < 0x050000
-Q_DECLARE_METATYPE(QDataWidgetMapper*)
-#endif
 Q_DECLARE_METATYPE(enum QDataWidgetMapper::SubmitPolicy)
 
 void setupQDataWidgetMapperProto(QScriptEngine *engine);

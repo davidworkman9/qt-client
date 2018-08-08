@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -19,8 +19,9 @@
 #include <openreports.h>
 
 #include "errorReporter.h"
+#include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
-#include "todoItem.h"
+#include "task.h"
 #include "salesOrder.h"
 #include "salesOrderList.h"
 #include "quoteList.h"
@@ -67,13 +68,6 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_crmacct, SIGNAL(newId(int)), this, SLOT(sHandleCrmacct(int)));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sCancel()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_deleteTodoItem, SIGNAL(clicked()), this, SLOT(sDeleteTodoItem()));
-  connect(_viewTodoItem, SIGNAL(clicked()), this, SLOT(sViewTodoItem()));
-  connect(_editTodoItem, SIGNAL(clicked()), this, SLOT(sEditTodoItem()));
-  connect(_newTodoItem, SIGNAL(clicked()), this, SLOT(sNewTodoItem()));
-  connect(_todoList, SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
-  connect(_todoList, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateTodoMenu(QMenu*)));
-  connect(_todoList, SIGNAL(valid(bool)), this, SLOT(sHandleTodoPrivs()));
   connect(_deleteSale, SIGNAL(clicked()), this, SLOT(sDeleteSale()));
   connect(_viewSale, SIGNAL(clicked()), this, SLOT(sViewSale()));
   connect(_editSale, SIGNAL(clicked()), this, SLOT(sEditSale()));
@@ -83,7 +77,8 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_salesList, SIGNAL(valid(bool)), this, SLOT(sHandleSalesPrivs()));
   connect(omfgThis,	SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillSalesList()));
   connect(omfgThis,	SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillSalesList()));
-  connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sHandleAssigned()));
+  connect(_assignedTo,  SIGNAL(newId(int)), this, SLOT(sHandleAssigned()));
+  connect(_project,     SIGNAL(newId(int)), this, SLOT(sProjectUpdated()));
 
   _probability->setValidator(new QIntValidator(this));
   
@@ -91,14 +86,25 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::Wind
   _custid = -1;
   _prospectid = -1;
   
-  _todoList->addColumn(tr("Active"),   _statusColumn, Qt::AlignRight, true, "todoitem_active");
-  _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight, true, "incdtpriority_name");
-  _todoList->addColumn(tr("Owner"),      _userColumn, Qt::AlignLeft, false, "todoitem_owner_username");
-  _todoList->addColumn(tr("Assigned"),   _userColumn, Qt::AlignLeft,  true, "todoitem_username" );
-  _todoList->addColumn(tr("Name"),               100, Qt::AlignLeft,  true, "todoitem_name" );
-  _todoList->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "todoitem_description" );
-  _todoList->addColumn(tr("Status"),   _statusColumn, Qt::AlignLeft,  true, "todoitem_status" );
-  _todoList->addColumn(tr("Due Date"),   _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date" );
+  _taskList = new taskList(this, "taskList", Qt::Widget);
+  _taskListTab->layout()->addWidget(_taskList);
+  _taskList->setCloseVisible(false);
+  _taskList->list()->hideColumn("crmacct_number");
+  _taskList->list()->hideColumn("crmacct_name");
+  _taskList->list()->hideColumn("parent");
+  _taskList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _taskList->parameterWidget()->append("hasContext", "hasContext", ParameterWidget::Exists, true);
+  _taskList->setParameterWidgetVisible(false);
+  _taskList->setQueryOnStartEnabled(false);
+  _taskList->_opportunities->setForgetful(true);
+  _taskList->_opportunities->setChecked(false);
+  _taskList->_incidents->setForgetful(true);
+  _taskList->_incidents->setChecked(false);
+  _taskList->_projects->setForgetful(true);
+  _taskList->_projects->setChecked(false);
+  _taskList->_showGroup->setVisible(false);
+  _taskList->_showCompleted->setVisible(true);
+  _taskList->setParent("OPP");
 
   _salesList->addColumn(tr("Doc #"),       _orderColumn, Qt::AlignLeft,  true, "sale_number" );
   _salesList->addColumn(tr("Type"),                  -1, Qt::AlignLeft,  true, "sale_type" );
@@ -140,23 +146,37 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("parent_owner_username", &valid);
+  if (valid)
+    _owner->setUsername(param.toString());
+
+  param = pParams.value("parent_assigned_username", &valid);
+  if (valid)
+    _assignedTo->setUsername(param.toString());
+
+  param = pParams.value("prj_id", &valid);
+  if (valid)
+    _project->setId(param.toInt());
+
+  param = pParams.value("cntct_id", &valid);
+  if (valid)
+    _cntct->setId(param.toInt());
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
     if (param.toString() == "new")
     {
-      _mode = cNew;
-      
-      param = pParams.value("crmacct_id", &valid);
-      if (valid)
-        _crmacct->setId(param.toInt());
-
+      _mode = cNew;    
       _startDate->setDate(omfgThis->dbDate());
 
-      opportunityet.exec("SELECT NEXTVAL('ophead_ophead_id_seq') AS result;");
+      opportunityet.exec("SELECT NEXTVAL('ophead_ophead_id_seq') AS result, "
+                         "COALESCE((SELECT incdtpriority_id FROM incdtpriority "
+                         "WHERE incdtpriority_default), -1) AS prioritydefault;");
       if (opportunityet.first())
       {
         _opheadid = opportunityet.value("result").toInt();
+        _priority->setId(opportunityet.value("prioritydefault").toInt());
         _charass->setId(_opheadid);
         _documents->setId(_opheadid);
         _comments->setId(_opheadid);
@@ -203,7 +223,11 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
     _crmacct->setEnabled(false);
   }
 
-  sHandleTodoPrivs();
+  _taskList->parameterWidget()->setDefault(tr("Opportunity"), _opheadid, true);
+  _taskList->sFillList();
+
+  connect(_opptype,     SIGNAL(newID(int)), this, SLOT(sOppTypeChanged(int)));
+
   sHandleSalesPrivs();
   return NoError;
 }
@@ -214,6 +238,8 @@ void opportunity::setViewMode()
 
   _crmacct->setEnabled(false);
   _owner->setEnabled(false);
+  _assignedTo->setEnabled(false);
+  _project->setEnabled(false);
   _oppstage->setEnabled(false);
   _oppsource->setEnabled(false);
   _opptype->setEnabled(false);
@@ -223,9 +249,6 @@ void opportunity::setViewMode()
   _actualDate->setEnabled(false);
   _amount->setEnabled(false);
   _probability->setEnabled(false);
-  _deleteTodoItem->setEnabled(false);
-  _editTodoItem->setEnabled(false);
-  _newTodoItem->setEnabled(false);
   _deleteSale->setEnabled(false);
   _editSale->setEnabled(false);
   _printSale->setEnabled(false);
@@ -256,25 +279,11 @@ void opportunity::sCancel()
 
   if (_saved && cNew == _mode)
   {
-    cancelOppo.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
+    cancelOppo.prepare("SELECT deleteOpportunity(:ophead_id, true) AS result;");
     cancelOppo.bindValue(":ophead_id", _opheadid);
     cancelOppo.exec();
-    if (cancelOppo.first())
-    {
-      int result = cancelOppo.value("result").toInt();
-      if (result < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Opportunity"),
-                               storedProcErrorLookup("deleteOpportunity", result),
-                               __FILE__, __LINE__);
-        return;
-      }
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Opportunity"),
-                                  cancelOppo, __FILE__, __LINE__))
-    {
-      return;
-    }
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Opportunity"),
+                                  cancelOppo, __FILE__, __LINE__);
   }
   reject();
 }
@@ -283,6 +292,8 @@ void opportunity::sSave()
 {
   if (! save(false)) // if error
     return;
+
+  omfgThis->sEmitSignal(QString("Opportunity"), _opheadid);
 
   done(_opheadid);
 }
@@ -296,7 +307,9 @@ bool opportunity::save(bool partial)
     errors<< GuiErrorCheck(_crmacct->id() == -1, _crmacct,
                            tr("You must specify the Account that this opportunity is for."))
           << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
-                           tr("You must specify a Name for this opportunity report."))
+                           tr("You must specify a Name for this Opportunity."))
+          << GuiErrorCheck(_opptype->id() < 1, _opptype,
+                           tr("You must specify an opportunity type."))
     ;
     if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Incident"), errors))
       return false;
@@ -324,7 +337,7 @@ bool opportunity::save(bool partial)
               "       ophead_actual_date,"
               "       ophead_notes, ophead_active, ophead_cntct_id, "
               "       ophead_username, ophead_start_date, ophead_assigned_date, "
-              "       ophead_priority_id, ophead_number) "
+              "       ophead_priority_id, ophead_number, ophead_prj_id) "
               "VALUES(:ophead_id, :ophead_name, :ophead_crmacct_id,"
               "       :ophead_owner_username,"
               "       :ophead_opstage_id, :ophead_opsource_id,"
@@ -333,7 +346,7 @@ bool opportunity::save(bool partial)
               "       :ophead_actual_date,"
               "       :ophead_notes, :ophead_active, :ophead_cntct_id, "
               "       :ophead_username, :ophead_start_date, :ophead_assigned_date, "
-              "       :ophead_priority_id, :ophead_number); " );
+              "       :ophead_priority_id, :ophead_number, :ophead_prj_id); " );
   else if (cEdit == _mode || _saved)
     opportunityave.prepare("UPDATE ophead"
               "   SET ophead_name=:ophead_name,"
@@ -353,7 +366,8 @@ bool opportunity::save(bool partial)
               "       ophead_username=:ophead_username, "
               "       ophead_start_date=:ophead_start_date, "
               "       ophead_assigned_date=:ophead_assigned_date, "
-              "       ophead_priority_id=:ophead_priority_id "
+              "       ophead_priority_id=:ophead_priority_id, "
+              "       ophead_prj_id=:ophead_prj_id "
               " WHERE (ophead_id=:ophead_id); ");
 
   opportunityave.bindValue(":ophead_id", _opheadid);
@@ -389,6 +403,8 @@ bool opportunity::save(bool partial)
     opportunityave.bindValue(":ophead_cntct_id", _cntct->id());
   if (_priority->isValid())
     opportunityave.bindValue(":ophead_priority_id", _priority->id());
+  if (_project->isValid())
+    opportunityave.bindValue(":ophead_prj_id", _project->id());
   opportunityave.bindValue(":ophead_number", _number->text());
 
   if(!opportunityave.exec() && opportunityave.lastError().type() != QSqlError::NoError)
@@ -462,7 +478,7 @@ void opportunity::populate()
             "       ophead_target_date, ophead_actual_date,"
             "       ophead_notes, ophead_active, ophead_cntct_id, "
             "       ophead_username, ophead_start_date, ophead_assigned_date, "
-            "       ophead_number, ophead_priority_id "
+            "       ophead_number, ophead_priority_id, ophead_prj_id "
             "  FROM ophead"
             " WHERE(ophead_id=:ophead_id); ");
   opportunitypopulate.bindValue(":ophead_id", _opheadid);
@@ -475,6 +491,7 @@ void opportunity::populate()
     _crmacct->setId(opportunitypopulate.value("ophead_crmacct_id").toInt());
     _owner->setUsername(opportunitypopulate.value("ophead_owner_username").toString());
     _assignedTo->setUsername(opportunitypopulate.value("ophead_username").toString());
+    _project->setId(opportunitypopulate.value("ophead_prj_id").toInt());
 
     _oppstage->setNull();
     if(!opportunitypopulate.value("ophead_opstage_id").toString().isEmpty())
@@ -525,177 +542,58 @@ void opportunity::populate()
 
     _cntct->setId(opportunitypopulate.value("ophead_cntct_id").toInt());
 
-    sFillTodoList();
     sFillSalesList();
   }
 }
 
-void opportunity::sNewTodoItem()
+void opportunity::sOppTypeChanged(int newCat)
 {
-  if (! save(true))
-    return;
-
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("ophead_id", _opheadid);
-  if (_crmacct->isValid())
-    params.append("crmacct_id", _crmacct->id());
-
-  todoItem newdlg(this, 0, true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillTodoList();
-}
-
-void opportunity::sEditTodoItem()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("todoitem_id", _todoList->id());
-
-  todoItem newdlg(this, 0, true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillTodoList();
-}
-
-void opportunity::sViewTodoItem()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("todoitem_id", _todoList->id());
-
-  todoItem newdlg(this, 0, true);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void opportunity::sDeleteTodoItem()
-{
-  XSqlQuery opportunityDeleteTodoItem;
-  opportunityDeleteTodoItem.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-  opportunityDeleteTodoItem.bindValue(":todoitem_id", _todoList->id());
-  opportunityDeleteTodoItem.exec();
-  if (opportunityDeleteTodoItem.first())
+  if (!_saved)
   {
-    int result = opportunityDeleteTodoItem.value("result").toInt();
-    if (result < 0)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To-Do Information"),
-                             storedProcErrorLookup("deleteTodoItem", result),
-                             __FILE__, __LINE__);
+    if (! save(true))
       return;
+  }
+
+  XSqlQuery taskq;
+  taskq.prepare("SELECT applyDefaultTasks('OPP', :type, :opp, :override) AS ret;" );
+  taskq.bindValue(":type", newCat);
+  taskq.bindValue(":opp", _opheadid);
+  taskq.bindValue(":override", false);
+  taskq.exec();
+
+  /*
+   The following checks whether tasks already exist and should be overridden.
+   return code 0 means no templates exist
+   return code < 0 means tasks already exist and user is asked whether to override
+   return code > 0 means no existing tasks so they have been copied automatically
+  */
+  if (taskq.first()) 
+  {
+    if (taskq.value("ret").toInt() < 0)
+    {
+      if (QMessageBox::question(this, tr("Existing Tasks"),
+                         tr("<p>Tasks already exist for this Opportunity.\n"
+                            "Do you want to replace tasks with the new template?"),
+                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      {
+          return;
+      }
+      else
+      {
+         taskq.bindValue(":override", true);
+         taskq.exec();
+         if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Template Tasks"),
+                                  taskq, __FILE__, __LINE__))
+              return;
+      }
     }
-    else
-      sFillTodoList();
-    }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To-Do Information"),
-                                opportunityDeleteTodoItem, __FILE__, __LINE__))
-  {
-    return;
   }
-}
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Template Tasks"),
+                                taskq, __FILE__, __LINE__))
+            return;
 
-void opportunity::sFillTodoList()
-{
-  XSqlQuery opportunityFillTodoList;
-  opportunityFillTodoList.prepare("SELECT todoitem_id, incdtpriority_name, incdtpriority_order, "
-            "       todoitem_owner_username, todoitem_username, todoitem_name, "
-	    "       firstLine(todoitem_description) AS todoitem_description, "
-            "       todoitem_status, todoitem_due_date, todoitem_active, "
-            "       CASE "
-            "         WHEN (todoitem_status != 'C' AND todoitem_due_date < current_date) THEN "
-            "           'error' "
-            "         WHEN (todoitem_status != 'C' AND todoitem_due_date > current_date) THEN "
-            "           'altemphasis' "
-            "       END AS qtforegroundrole "
-	    "  FROM todoitem "
-            "       LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-            "WHERE ( (todoitem_ophead_id=:ophead_id) ) "
-	    "ORDER BY incdtpriority_order, todoitem_username;");
+  _taskList->sFillList();
 
-  opportunityFillTodoList.bindValue(":ophead_id", _opheadid);
-  opportunityFillTodoList.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To-Do Information"),
-                                opportunityFillTodoList, __FILE__, __LINE__))
-  {
-    return;
-  }
-  _todoList->populate(opportunityFillTodoList);
-}
-
-void opportunity::sPopulateTodoMenu(QMenu *pMenu)
-{
-  QAction *menuItem;
-
-  bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privileges->check("MaintainPersonalToDoItems") ||
-       _privileges->check("MaintainAllToDoItems") );
-
-  bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (_privileges->check("MaintainAllToDoItems")) );
-
-  bool viewPriv =
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("ViewPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("ViewPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (_privileges->check("ViewAllToDoItems")) || (_privileges->check("MaintainAllToDoItems"));
-
-  menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNewTodoItem()));
-  menuItem->setEnabled(newPriv);
-
-  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditTodoItem()));
-  menuItem->setEnabled(editPriv);
-
-  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewTodoItem()));
-  menuItem->setEnabled(viewPriv);
-
-  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDeleteTodoItem()));
-  menuItem->setEnabled(editPriv);
-}
-
-void opportunity::sHandleTodoPrivs()
-{
-  bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privileges->check("MaintainPersonalToDoItems") ||
-       _privileges->check("MaintainAllToDoItems") );
-
-  bool editPriv = false;
-  bool viewPriv = false;
-
-  if(_todoList->currentItem())
-  {
-    editPriv = (cNew == _mode || cEdit == _mode) && (
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (_privileges->check("MaintainAllToDoItems")) );
-
-    viewPriv =
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (_privileges->check("ViewAllToDoItems")) || (_privileges->check("MaintainAllToDoItems"));
-  }
-
-  _newTodoItem->setEnabled(newPriv);
-  _editTodoItem->setEnabled(editPriv && _todoList->id() > 0);
-  _viewTodoItem->setEnabled((editPriv || viewPriv) && _todoList->id() > 0);
-  _deleteTodoItem->setEnabled(editPriv && _todoList->id() > 0);
-
-  if (editPriv)
-  {
-    disconnect(_todoList,SIGNAL(itemSelected(int)),_viewTodoItem, SLOT(animateClick()));
-    connect(_todoList,	SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
-  }
-  else if (viewPriv)
-  {
-    disconnect(_todoList,SIGNAL(itemSelected(int)),_editTodoItem, SLOT(animateClick()));
-    connect(_todoList,	SIGNAL(itemSelected(int)), _viewTodoItem, SLOT(animateClick()));
-  }
 }
 
 void opportunity::sPrintSale()
@@ -1201,8 +1099,8 @@ void opportunity::sHandleSalesPrivs()
 void opportunity::sHandleCrmacct(int pCrmacctid)
 {
   XSqlQuery crmacct;
-  crmacct.prepare( "SELECT COALESCE(crmacct_cust_id, -1) AS cust_id, "
-                   "       COALESCE(crmacct_prospect_id, -1) AS prospect_id "
+  crmacct.prepare( "SELECT COALESCE((crmacctTypes(crmacct_id)#>>'{customer}')::INT, -1) AS cust_id, "
+                   "       COALESCE((crmacctTypes(crmacct_id)#>>'{prospect}')::INT, -1) AS prospect_id "
                    "FROM crmacct "
                    "WHERE (crmacct_id=:crmacct_id);" );
   crmacct.bindValue(":crmacct_id", pCrmacctid);
@@ -1229,6 +1127,24 @@ void opportunity::sHandleAssigned()
 int opportunity::id()
 {
   return _opheadid;
+}
+
+void opportunity::sProjectUpdated()
+{
+  XSqlQuery updp;
+  updp.prepare("UPDATE task SET task_prj_id=:prjid "
+               " WHERE task_parent_type='OPP' "
+               "   AND task_parent_id=:oppid;" );
+  if (_project->isValid())
+    updp.bindValue(":prjid", _project->id());
+  updp.bindValue(":oppid", _opheadid);
+  updp.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error updating Opportunity Project"),
+                                updp, __FILE__, __LINE__))
+       return;
+
+  _taskList->parameterWidget()->setDefault(tr("Project"), _project->id(), true);
+  _taskList->sFillList();
 }
 
 void opportunity::setVisible(bool visible)

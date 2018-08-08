@@ -18,7 +18,8 @@
 class QString;
 
 Q_DECLARE_METATYPE(QTabWidget*)
-//Q_DECLARE_METATYPE(QTabWidget)
+Q_DECLARE_METATYPE(enum QTabWidget::TabPosition)
+Q_DECLARE_METATYPE(enum QTabWidget::TabShape)
 
 void setupQTabWidgetProto(QScriptEngine *engine);
 void TabPositionScriptValue(const QScriptValue &obj, enum QTabWidget::TabPosition &p);

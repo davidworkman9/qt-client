@@ -1,16 +1,62 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qtextdocumentproto.h"
 
 #include <QString>
+
+QScriptValue FindFlagToScriptValue(QScriptEngine *engine, const enum QTextDocument::FindFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void FindFlagFromScriptValue(const QScriptValue &obj, enum QTextDocument::FindFlag &p)
+{
+  p = (enum QTextDocument::FindFlag)obj.toInt32();
+}
+
+QScriptValue FindFlagsToScriptValue(QScriptEngine *engine, const QTextDocument::FindFlags &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void FindFlagsFromScriptValue(const QScriptValue &obj, QTextDocument::FindFlags &p)
+{
+  p = (QTextDocument::FindFlags)obj.toInt32();
+}
+
+QScriptValue MetaInformationToScriptValue(QScriptEngine *engine, const enum QTextDocument::MetaInformation &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void MetaInformationFromScriptValue(const QScriptValue &obj, enum QTextDocument::MetaInformation &p)
+{
+  p = (enum QTextDocument::MetaInformation)obj.toInt32();
+}
+
+QScriptValue ResourceTypeToScriptValue(QScriptEngine *engine, const enum QTextDocument::ResourceType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void ResourceTypeFromScriptValue(const QScriptValue &obj, enum QTextDocument::ResourceType &p)
+{
+  p = (enum QTextDocument::ResourceType)obj.toInt32();
+}
+
+QScriptValue StacksToScriptValue(QScriptEngine *engine, const enum QTextDocument::Stacks &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void StacksFromScriptValue(const QScriptValue &obj, enum QTextDocument::Stacks &p)
+{
+  p = (enum QTextDocument::Stacks)obj.toInt32();
+}
 
 void setupQTextDocumentProto(QScriptEngine *engine)
 {
@@ -18,9 +64,30 @@ void setupQTextDocumentProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<QTextDocument*>(), proto);
   // engine->setDefaultPrototype(qMetaTypeId<QTextDocument>(),  proto);
 
-  QScriptValue constructor = engine->newFunction(constructQTextDocument,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQTextDocument, proto);
   engine->globalObject().setProperty("QTextDocument",  constructor);
+
+  qScriptRegisterMetaType(engine, FindFlagToScriptValue,  FindFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, FindFlagsToScriptValue, FindFlagsFromScriptValue);
+  constructor.setProperty("FindBackward",        QScriptValue(engine, QTextDocument::FindBackward),        ENUMPROPFLAGS);
+  constructor.setProperty("FindCaseSensitively", QScriptValue(engine, QTextDocument::FindCaseSensitively), ENUMPROPFLAGS);
+  constructor.setProperty("FindWholeWords",      QScriptValue(engine, QTextDocument::FindWholeWords),      ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, MetaInformationToScriptValue, MetaInformationFromScriptValue);
+  constructor.setProperty("DocumentTitle", QScriptValue(engine, QTextDocument::DocumentTitle), ENUMPROPFLAGS);
+  constructor.setProperty("DocumentUrl",   QScriptValue(engine, QTextDocument::DocumentUrl),   ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, ResourceTypeToScriptValue, ResourceTypeFromScriptValue);
+  constructor.setProperty("HtmlResource",       QScriptValue(engine, QTextDocument::HtmlResource),       ENUMPROPFLAGS);
+  constructor.setProperty("ImageResource",      QScriptValue(engine, QTextDocument::ImageResource),      ENUMPROPFLAGS);
+  constructor.setProperty("StyleSheetResource", QScriptValue(engine, QTextDocument::StyleSheetResource), ENUMPROPFLAGS);
+  constructor.setProperty("UserResource",       QScriptValue(engine, QTextDocument::UserResource),       ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, StacksToScriptValue, StacksFromScriptValue);
+  constructor.setProperty("UndoStack",         QScriptValue(engine, QTextDocument::UndoStack),         ENUMPROPFLAGS);
+  constructor.setProperty("RedoStack",         QScriptValue(engine, QTextDocument::UndoStack),         ENUMPROPFLAGS);
+  constructor.setProperty("UndoAndRedoStacks", QScriptValue(engine, QTextDocument::UndoAndRedoStacks), ENUMPROPFLAGS);
+
 }
 
 QScriptValue constructQTextDocument(QScriptContext *context,

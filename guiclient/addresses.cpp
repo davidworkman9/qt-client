@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,6 +16,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QToolBar>
+#include <QToolButton>
 
 #include <openreports.h>
 #include <metasql.h>
@@ -37,22 +39,42 @@ addresses::addresses(QWidget* parent, const char*, Qt::WindowFlags fl)
   setQueryOnStartEnabled(true);
   setParameterWidgetVisible(true);
 
+  _crmacctid = -1;
+  _detachAct = 0;
+
+  parameterWidget()->append(tr("Account"), "crmacct_id", ParameterWidget::Crmacct);
+  parameterWidget()->appendComboBox(tr("Address Group"), "addrgrp", XComboBox::AddressGroups);
+  parameterWidget()->append(tr("Address"), "address", ParameterWidget::Text);
+  parameterWidget()->append(tr("City"), "city", ParameterWidget::Text);
+  parameterWidget()->append(tr("State"), "state", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Country"), "country", XComboBox::LocaleCountries);
+  parameterWidget()->append(tr("Postal Code"), "postalcode", ParameterWidget::Text);
   parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
 
   list()->addColumn(tr("Line 1"),	 -1, Qt::AlignLeft, true, "addr_line1");
-  list()->addColumn(tr("Line 2"),	 75, Qt::AlignLeft, true, "addr_line2");
-  list()->addColumn(tr("Line 3"),	 75, Qt::AlignLeft, true, "addr_line3");
-  list()->addColumn(tr("City"),	 75, Qt::AlignLeft, true, "addr_city");
-  list()->addColumn(tr("State"),	 50, Qt::AlignLeft, true, "addr_state");
-  list()->addColumn(tr("Country"),	 50, Qt::AlignLeft, true, "addr_country");
-  list()->addColumn(tr("Postal Code"),50,Qt::AlignLeft, true, "addr_postalcode");
+  list()->addColumn(tr("Line 2"),	 150, Qt::AlignLeft, true, "addr_line2");
+  list()->addColumn(tr("Line 3"),	 150, Qt::AlignLeft, true, "addr_line3");
+  list()->addColumn(tr("City"),	         150, Qt::AlignLeft, true, "addr_city");
+  list()->addColumn(tr("State"),	 75, Qt::AlignLeft, true, "addr_state");
+  list()->addColumn(tr("Country"),	 150, Qt::AlignLeft, true, "addr_country");
+  list()->addColumn(tr("Postal Code"),   75,Qt::AlignLeft, true, "addr_postalcode");
+  list()->addColumn(tr("CRM Account(s)"), 150, Qt::AlignLeft, true, "crmacct");
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   setupCharacteristics("ADDR");
 
+  QToolButton * detachBtn = new QToolButton(this);
+  detachBtn->setText(tr("Detach"));
+  _detachAct = toolBar()->insertWidget(filterSeparator(), detachBtn);
+  _detachAct->setEnabled(false);
+  _detachAct->setVisible(false);
+
   if (_privileges->check("MaintainAddresses"))
+  {
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+    connect(list(), SIGNAL(valid(bool)), _detachAct, SLOT(setEnabled(bool)));
+  }
   else
   {
     newAction()->setEnabled(false);
@@ -77,17 +99,17 @@ void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
   // Create, Edit, View Prospect:
   XSqlQuery sql;
   sql.prepare("WITH crmaccts AS ( "
-              "SELECT crmacct_prospect_id"
+              "SELECT crmaccttypes(crmacctcntctass_crmacct_id)#>>'{prospect}' AS prospectid"
               "  FROM cntct"
-              "  JOIN crmacct ON cntct_crmacct_id=crmacct_id"
+              "  JOIN crmacctcntctass ON cntct_id=crmacctcntctass_cntct_id"
               " WHERE cntct_addr_id::TEXT IN (SELECT regexp_split_to_table(:addr_id, ','))"
-              "   AND crmacct_cust_id IS NULL) "
+              "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{customer}' IS NULL) "
               "SELECT EXISTS(SELECT 1"
               "                FROM crmaccts"
-              "               WHERE crmacct_prospect_id IS NOT NULL) AS edit,"
+              "               WHERE prospectid IS NOT NULL) AS edit,"
               "       EXISTS(SELECT 1"
               "                FROM crmaccts"
-              "               WHERE crmacct_prospect_id IS NULL) AS new;");
+              "               WHERE prospectid IS NULL) AS new;");
   QStringList ids;
   foreach (XTreeWidgetItem *item, list()->selectedItems())
     ids << QString::number(item->id());
@@ -96,8 +118,8 @@ void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 
   if (sql.first())
   {
-    bool editProspectPriv = _privileges->check("MaintainAllCRMAccounts"); // TODO - replace if a new "ViewProspect" priv created
-    bool viewProspectPriv = _privileges->check("ViewAllCRMAccounts"); // TODO - replace if a new "ViewProspect" priv created
+    bool editProspectPriv = _privileges->check("MaintainProspectMasters");
+    bool viewProspectPriv = _privileges->check("MaintainProspectMasters ViewProspectMasters");
     
     if (sql.value("edit").toBool())
     {
@@ -117,6 +139,28 @@ void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking CRM Accounts"),
                                 sql, __FILE__, __LINE__))
     return;
+}
+
+enum SetResponse addresses::set(const ParameterList& pParams)
+{
+  XWidget::set(pParams);
+  QVariant param;
+  bool	   valid;
+  
+  param = pParams.value("showRole", &valid);
+  if (valid)
+  {
+    list()->addColumn(tr("Role"), 80, Qt::AlignLeft, true, "crmrole");
+    list()->moveColumn(list()->column("crmrole"), 0);
+  }
+
+  sFillList();
+  return NoError;
+}
+
+int addresses::crmacctId()
+{
+  return _crmacctid;
 }
 
 void addresses::sNew()
@@ -162,6 +206,63 @@ void addresses::sView()
   }
 }
 
+void addresses::sDetach()
+{
+  int answer = QMessageBox::question(this, tr("Detach Address?"),
+			tr("<p>Are you sure you want to detach this Address "
+			   "from this Account?"),
+			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+  if (answer == QMessageBox::Yes)
+  {
+    int cntctId = list()->id();
+    XSqlQuery detq;
+    detq.prepare("DELETE FROM  crmacctaddrass "
+                 "WHERE crmacctaddrass_crmacct_id=:crmacct_id "
+                 " AND crmacctaddrass_addr_id=:addr_id ");
+    detq.bindValue(":addr_id", list()->id());
+    detq.bindValue(":crmacct_id", _crmacctid);
+    detq.exec();
+    if (detq.first())
+    {
+      int returnVal = detq.value("returnVal").toInt();
+      if (returnVal < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error detaching Address from Account (%1)")
+                        .arg(returnVal),detq, __FILE__, __LINE__);
+        return;
+      }
+      emit cntctDetached(cntctId);
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Detaching Address"),
+                                  detq, __FILE__, __LINE__))
+      return;
+
+    sFillList();
+  }
+}
+
+QAction* addresses::detachAction()
+{
+  return _detachAct;
+}
+
+void addresses::setCrmacctid(int crmacctId)
+{
+  _crmacctid = crmacctId;
+  if (_crmacctid == -1)
+  {
+    parameterWidget()->setDefault(tr("Account"), QVariant(), true);
+    _detachAct->setVisible(false);
+  }
+  else
+  {
+    parameterWidget()->setDefault(tr("Account"), _crmacctid, true);
+    setNewVisible(false);
+    _detachAct->setVisible(true);
+    list()->hideColumn(list()->column("crmacct"));
+  }
+}
+
 void addresses::sDelete()
 {
   XSqlQuery deleteAddress;
@@ -203,10 +304,11 @@ void addresses::sNewProspect()
     XSqlQuery sql;
     sql.prepare("SELECT DISTINCT crmacct_number"
                 "  FROM cntct"
-                "  JOIN crmacct ON cntct_crmacct_id=crmacct_id"
+                "  JOIN crmacctcntctass ON cntct_id=crmacctcntctass_cntct_id"
+                "  JOIN crmacct ON crmacct_id=crmacctcntctass_crmacct_id"
                 " WHERE cntct_addr_id=:addr_id"
-                "   AND crmacct_cust_id IS NULL"
-                "   AND crmacct_prospect_id IS NULL"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{customer}' IS NULL"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{prospect}' IS NULL"
                 " ORDER BY crmacct_number;");
     sql.bindValue(":addr_id", item->id());
     sql.exec();
@@ -284,11 +386,11 @@ void addresses::sOpenProspect(QString mode)
     XSqlQuery sql;
     sql.prepare("SELECT DISTINCT prospect_number"
                 "  FROM cntct"
-                "  JOIN crmacct ON cntct_crmacct_id=crmacct_id"
-                "  JOIN prospect ON crmacct_prospect_id=prospect_id"
+                "  JOIN crmacctcntctass ON cntct_id=crmacctcntctass_cntct_id"
+                "  JOIN prospect ON crmacctcntctass_crmacct_id=prospect_crmacct_id"
                 " WHERE cntct_addr_id=:addr_id"
-                "   AND crmacct_cust_id IS NULL"
-                "   AND crmacct_prospect_id IS NOT NULL"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{customer}' IS NULL"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{prospect}' IS NOT NULL"
                 " ORDER BY prospect_number;");
     sql.bindValue(":addr_id", item->id());
     sql.exec();

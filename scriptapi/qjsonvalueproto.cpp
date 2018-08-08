@@ -1,23 +1,17 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qjsonvalueproto.h"
 #include "qjsonobjectproto.h"
 
-#if QT_VERSION < 0x050000
-void setupQJsonValueProto(QScriptEngine *engine)
-{
-  Q_UNUSED(engine); // do nothing
-}
-
-#else
 QScriptValue QJsonValueToScriptValue(QScriptEngine *engine, QJsonValue* const &in)
 {
   QJsonObject obj = in->toObject();
@@ -29,10 +23,18 @@ void QJsonValueFromScriptValue(const QScriptValue &obj, QJsonValue* &out)
   out = dynamic_cast<QJsonValue*>(obj.toQObject());
 }
 
+static QScriptValue TypeToScriptValue(QScriptEngine *engine, const enum QJsonValue::Type &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void TypeFromScriptValue(const QScriptValue &obj, enum QJsonValue::Type &p)
+{
+  p = (enum QJsonValue::Type)obj.toInt32();
+}
+
 void setupQJsonValueProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QJsonValueToScriptValue, QJsonValueFromScriptValue);
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QJsonValueProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QJsonValue*>(), proto);
@@ -41,7 +43,15 @@ void setupQJsonValueProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQJsonValue,
                                                  proto);
   engine->globalObject().setProperty("QJsonValue",  constructor);
-  proto.setProperty("Undefined", QScriptValue(engine, QJsonValue::Undefined),  permanent);
+
+  qScriptRegisterMetaType(engine, TypeToScriptValue, TypeFromScriptValue);
+  constructor.setProperty("Null",      QScriptValue(engine, QJsonValue::Null),      ENUMPROPFLAGS);
+  constructor.setProperty("Bool",      QScriptValue(engine, QJsonValue::Bool),      ENUMPROPFLAGS);
+  constructor.setProperty("Double",    QScriptValue(engine, QJsonValue::Double),    ENUMPROPFLAGS);
+  constructor.setProperty("String",    QScriptValue(engine, QJsonValue::String),    ENUMPROPFLAGS);
+  constructor.setProperty("Array",     QScriptValue(engine, QJsonValue::Array),     ENUMPROPFLAGS);
+  constructor.setProperty("Object",    QScriptValue(engine, QJsonValue::Object),    ENUMPROPFLAGS);
+  constructor.setProperty("Undefined", QScriptValue(engine, QJsonValue::Undefined), ENUMPROPFLAGS);
 }
 
 QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine)
@@ -228,4 +238,3 @@ QJsonValue QJsonValueProto::fromVariant(const QVariant & variant)
   return QJsonValue::fromVariant(variant);
 }
 
-#endif

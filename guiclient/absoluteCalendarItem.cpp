@@ -9,6 +9,7 @@
  */
 
 #include "absoluteCalendarItem.h"
+#include "guiErrorCheck.h"
 
 #include <QVariant>
 
@@ -83,13 +84,22 @@ enum SetResponse absoluteCalendarItem::set(const ParameterList &pParams)
 
 void absoluteCalendarItem::sSave()
 {
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must provide a Period Name"));
+
+  errors << GuiErrorCheck(_startDate->date().toString().isEmpty(), _startDate,
+                          tr("You must provide a Start Date"));
+
+  if (GuiErrorCheck::reportErrors(this, tr("Error stuff"), errors))
+      return;
+
   XSqlQuery saveCalendarItem;
   if (_mode == cNew)
   {
     saveCalendarItem.exec("SELECT NEXTVAL('xcalitem_xcalitem_id_seq') AS _calitem_id");
     if (saveCalendarItem.first())
       _calitemid = saveCalendarItem.value("_calitem_id").toInt();
-//  ToDo
 
     saveCalendarItem.prepare( "INSERT INTO acalitem "
                "( acalitem_id, acalitem_calhead_id, acalitem_name,"

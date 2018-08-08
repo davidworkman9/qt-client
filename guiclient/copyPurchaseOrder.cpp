@@ -77,7 +77,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
   if (_po->id() != -1)
   {
     copyPopulatePoInfo.prepare( "SELECT pohead_orderdate,"
-              "        vend_id, cntct_phone, pohead_curr_id "
+              "        vend_id, getcontactphone(cntct_id, 'Office') AS contact_phone, pohead_curr_id "
               "FROM pohead, vendinfo "
               "LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id) "
               "WHERE ( (pohead_vend_id=vend_id)"
@@ -88,7 +88,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
     {
       _orderDate->setDate(copyPopulatePoInfo.value("pohead_orderdate").toDate());
       _vend->setId(copyPopulatePoInfo.value("vend_id").toInt());
-      _vendPhone->setText(copyPopulatePoInfo.value("cntct_phone").toString());
+      _vendPhone->setText(copyPopulatePoInfo.value("contact_phone").toString());
       _currency->setId(copyPopulatePoInfo.value("pohead_curr_id").toInt());
     }
 

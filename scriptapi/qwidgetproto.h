@@ -43,7 +43,6 @@
 #include "qobjectproto.h"
 
 void setupQWidgetProto(QScriptEngine *engine);
-QScriptValue constructQWidget(QScriptContext *context, QScriptEngine *engine);
 
 class QWidgetProto : public QObjectProto
 {
@@ -182,5 +181,8 @@ class QWidgetProto : public QObjectProto
     void    windowTitleChanged(const QString & title);
 
 };
+
+Q_DECLARE_METATYPE(enum QWidget::RenderFlag);
+Q_DECLARE_METATYPE(QWidget::RenderFlags);
 
 #endif

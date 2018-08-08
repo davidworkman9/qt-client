@@ -757,9 +757,10 @@ bool user::sPopulate()
                  "       usr_email, usr_locale_id, usr_agent,"
                  "       userCanCreateUsers(usr_username) AS createusers,"
                  "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
-                 "       crmacct_id, crmacct_emp_id, crmacct_owner_username"
+                 "       crmacct_id, emp_id, crmacct_owner_username"
                  "  FROM usr"
                  "  LEFT OUTER JOIN crmacct ON (usr_username=crmacct_usr_username) "
+                 "  LEFT OUTER JOIN emp ON (emp_crmacct_id=crmacct_id) "
                  "WHERE (usr_username=:usr_username);" );
     usrq.bindValue(":usr_username", _cUsername);
   }
@@ -775,9 +776,12 @@ bool user::sPopulate()
                  "       NULL  AS usr_window,  cntct_email AS usr_email,"
                  "       false AS createusers,"
                  "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
-                 "       crmacct_id, crmacct_emp_id, crmacct_owner_username"
+                 "       crmacct_id, emp_id, crmacct_owner_username"
                  "  FROM crmacct"
-                 "  LEFT OUTER JOIN cntct ON (crmacct_cntct_id_1=cntct_id)"
+                 "   LEFT OUTER JOIN emp ON (emp_crmacct_id=crmacct_id) "
+                 "   LEFT OUTER JOIN crmacctcntctass ON (crmacct_id=crmacctcntctass_crmacct_id "
+                 "                      AND crmacctcntctass_crmrole_id=getcrmroleid('Primary'))"
+                 "   LEFT OUTER JOIN cntct ON (crmacctcntctass_cntct_id=cntct_id)"
                  " WHERE (crmacct_id=:id);");
     usrq.bindValue(":id", _crmacctid);
   }
@@ -809,7 +813,7 @@ bool user::sPopulate()
     _agent->setChecked(usrq.value("usr_agent").toBool());
     _createUsers->setChecked(usrq.value("createusers").toBool());
     _createUsers->setEnabled(usrq.value("enablecreateusers").toBool());
-    _employee->setId(usrq.value("crmacct_emp_id").toInt());
+    _employee->setId(usrq.value("emp_id").toInt());
     _crmacctid = usrq.value("crmacct_id").toInt();
     _crmowner = usrq.value("crmacct_owner_username").toString();
     _cUsername = _username->text().trimmed().toLower();

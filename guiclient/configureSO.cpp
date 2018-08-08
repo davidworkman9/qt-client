@@ -79,6 +79,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _allowDiscounts->setChecked(_metrics->boolean("AllowDiscounts"));
   _allowASAP->setChecked(_metrics->boolean("AllowASAPShipSchedules"));
+  _prospectChangeLog->setChecked(_metrics->boolean("ProspectChangeLog"));
   _customerChangeLog->setChecked(_metrics->boolean("CustomerChangeLog"));
   _salesOrderChangeLog->setChecked(_metrics->boolean("SalesOrderChangeLog"));
   _restrictCreditMemos->setChecked(_metrics->boolean("RestrictCreditMemos"));
@@ -298,6 +299,7 @@ bool configureSO::sSave()
   _metrics->set("ShowQuotesAfterSO", _quoteafterSO->isChecked());
   _metrics->set("AllowDiscounts", _allowDiscounts->isChecked());
   _metrics->set("AllowASAPShipSchedules", _allowASAP->isChecked());
+  _metrics->set("ProspectChangeLog", _prospectChangeLog->isChecked());
   _metrics->set("CustomerChangeLog", _customerChangeLog->isChecked());
   _metrics->set("SalesOrderChangeLog", _salesOrderChangeLog->isChecked());
   _metrics->set("RestrictCreditMemos", _restrictCreditMemos->isChecked());

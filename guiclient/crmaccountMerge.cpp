@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,7 +16,6 @@
 #include "crmaccountMergePickAccountsPage.h"
 #include "crmaccountMergePickDataPage.h"
 #include "crmaccountMergePickTaskPage.h"
-#include "crmaccountMergePurgePage.h"
 #include "crmaccountMergeResultPage.h"
 
 class crmaccountMergePrivate {
@@ -57,20 +56,16 @@ crmaccountMerge::crmaccountMerge(QWidget* parent, const char* name, Qt::WindowFl
   QWizardPage *pickacctpage = new CrmaccountMergePickAccountsPage(this);
   QWizardPage *pickdatapage = new CrmaccountMergePickDataPage(this);
   QWizardPage *mergerespage = new CrmaccountMergeResultPage(this);
-  QWizardPage *mergeprgpage = new CrmaccountMergePurgePage(this);
 
   setPage(Page_PickTask,        picktaskpage);
   setPage(Page_PickAccounts,    pickacctpage);
   setPage(Page_PickData,        pickdatapage);
   setPage(Page_Result,          mergerespage);
-  setPage(Page_Purge,           mergeprgpage);
 
   setButtonText(CancelButton, tr("Close"));
 
   setDefaultProperty("XComboBox", "text", SIGNAL(currentIndexChanged(QString)));
 
-  connect(mergeprgpage, SIGNAL(mergeSetChanged()), picktaskpage, SLOT(sUpdateComboBoxes()));
-  connect(mergeprgpage, SIGNAL(mergeSetChanged()), mergerespage, SLOT(clearIfPurged()));
 }
 
 crmaccountMerge::~crmaccountMerge()

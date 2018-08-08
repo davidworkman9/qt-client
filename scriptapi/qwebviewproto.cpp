@@ -31,12 +31,11 @@ void QWebViewfromScriptValue(const QScriptValue &obj, QWebView* &item)
 
 void setupQWebViewProto(QScriptEngine *engine)
 {
+  scriptDeprecated("QWebView will not be available in Qt 5.9");
   qScriptRegisterMetaType(engine, QWebViewtoScriptValue, QWebViewfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QWebViewProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebView*>(), proto);
-  // Not allowed. Is private in qwebview.h
-  //engine->setDefaultPrototype(qMetaTypeId<QWebView>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebView,
                                                  proto);

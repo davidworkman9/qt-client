@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -21,8 +21,9 @@
 #include "returnAuthorization.h"
 #include "storedProcErrorLookup.h"
 #include "incidentHistory.h"
-#include "todoItem.h"
+#include "task.h"
 #include "guiErrorCheck.h"
+#include "parameterwidget.h"
 
 #include <openreports.h>
 
@@ -72,21 +73,15 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
-  connect(_assignedTo,    SIGNAL(newId(int)),       this, SLOT(sAssigned()));
-  connect(_buttonBox,     SIGNAL(rejected()),        this,       SLOT(sCancel()));
+  connect(_assignedTo,    SIGNAL(newId(int)),       this,       SLOT(sAssigned()));
+  connect(_buttonBox,     SIGNAL(rejected()),       this,       SLOT(sCancel()));
   connect(_crmacct,       SIGNAL(newId(int)),       this,       SLOT(sCRMAcctChanged(int)));
-  connect(_deleteTodoItem, SIGNAL(clicked()),       this,       SLOT(sDeleteTodoItem()));
-  connect(_editTodoItem,  SIGNAL(clicked()),        this,       SLOT(sEditTodoItem()));
   connect(_item,          SIGNAL(newId(int)),     _lotserial,   SLOT(setItemId(int)));
   connect(_incdthist,     SIGNAL(itemSelected(int)), this,      SLOT(sIncidentHistory()));
-  connect(_newTodoItem,   SIGNAL(clicked()),        this,       SLOT(sNewTodoItem()));
-  connect(_buttonBox,     SIGNAL(accepted()),        this,       SLOT(sSave()));
+  connect(_buttonBox,     SIGNAL(accepted()),       this,       SLOT(sSave()));
   connect(_print,         SIGNAL(clicked()),        this,       SLOT(sPrint()));
-  connect(_todoList,      SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
-  connect(_todoList,      SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,         SLOT(sPopulateTodoMenu(QMenu*)));
-  connect(_todoList,      SIGNAL(valid(bool)),      this, SLOT(sHandleTodoPrivs()));
-  connect(_viewAR,        SIGNAL(clicked()),        this, SLOT(sViewAR()));
-  connect(_viewTodoItem,  SIGNAL(clicked()),        this,       SLOT(sViewTodoItem()));
+  connect(_viewAR,        SIGNAL(clicked()),        this,       SLOT(sViewAR()));
+  connect(_project,       SIGNAL(newId(int)),       this,       SLOT(sProjectUpdated()));
 
   _charass->setType("INCDT");
   _severity->setType(XComboBox::IncidentSeverity);
@@ -99,13 +94,25 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   _incdthist->addColumn(tr("Date/Time"),_timeDateColumn, Qt::AlignLeft, true, "incdthist_timestamp");
   _incdthist->addColumn(tr("Description"),           -1, Qt::AlignLeft, true, "incdthist_descrip");
 
-  _todoList->addColumn(tr("Priority"),      _userColumn, Qt::AlignRight, true, "incdtpriority_name");
-  _todoList->addColumn(tr("Owner"),         _userColumn, Qt::AlignLeft, false, "todoitem_owner_username");
-  _todoList->addColumn(tr("Assigned"),      _userColumn, Qt::AlignLeft,  true, "todoitem_username");
-  _todoList->addColumn(tr("Name"),                  100, Qt::AlignLeft,  true, "todoitem_name");
-  _todoList->addColumn(tr("Description"),            -1, Qt::AlignLeft,  true, "todoitem_description");
-  _todoList->addColumn(tr("Status"),      _statusColumn, Qt::AlignLeft,  true, "todoitem_status");
-  _todoList->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date");
+  _taskList = new taskList(this, "taskList", Qt::Widget);
+  _taskListTab->layout()->addWidget(_taskList);
+  _taskList->setCloseVisible(false);
+  _taskList->list()->hideColumn("crmacct_number");
+  _taskList->list()->hideColumn("crmacct_name");
+  _taskList->list()->hideColumn("parent");
+  _taskList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _taskList->parameterWidget()->append("hasContext", "hasContext", ParameterWidget::Exists, true);
+  _taskList->setParameterWidgetVisible(false);
+  _taskList->setQueryOnStartEnabled(false);
+  _taskList->_opportunities->setForgetful(true);
+  _taskList->_opportunities->setChecked(false);
+  _taskList->_incidents->setForgetful(true);
+  _taskList->_incidents->setChecked(false);
+  _taskList->_projects->setForgetful(true);
+  _taskList->_projects->setChecked(false);
+  _taskList->_showGroup->setVisible(false);
+  _taskList->_showCompleted->setVisible(true);
+  _taskList->setParent("INCDT");
 
   _owner->setUsername(omfgThis->username());
   _owner->setType(UsernameLineEdit::UsersActive);
@@ -152,7 +159,9 @@ enum SetResponse incident::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       incidentet.exec("SELECT nextval('incdt_incdt_id_seq') AS incdt_id, "
-             "fetchIncidentNumber() AS number;");
+           "fetchIncidentNumber() AS number,"
+           "COALESCE((SELECT incdtpriority_id FROM incdtpriority "
+           "          WHERE incdtpriority_default), -1) AS prioritydefault;");
       if(incidentet.first())
       {
         _incdtid=incidentet.value("incdt_id").toInt();
@@ -162,6 +171,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
         _charass->setId(_incdtid);
         _alarms->setId(_incdtid);
         _recurring->setParent(_incdtid, "INCDT");
+        _priority->setId(incidentet.value("prioritydefault").toInt());
         _print->hide();
         _project->setAllowedStatuses(ProjectLineEdit::Concept |  ProjectLineEdit::InProcess);
       }
@@ -196,6 +206,9 @@ enum SetResponse incident::set(const ParameterList &pParams)
     _lotserial->setItemId(_item->id());
     _charass->setId(_incdtid);
   }
+
+  _taskList->parameterWidget()->setDefault(tr("Incident"), _incdtid, true);
+  _taskList->sFillList();
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
@@ -245,7 +258,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
     }
   }
 
-  sHandleTodoPrivs();
+  connect(_category,      SIGNAL(newID(int)),       this,       SLOT(sIncdtCategoryChanged(int)));
   return NoError;
 }
 
@@ -265,9 +278,6 @@ void incident::setViewMode()
   _lotserial->setEnabled(false);
   _description->setEnabled(false);
   _notes->setEnabled(false);
-  _deleteTodoItem->setEnabled(false);
-  _editTodoItem->setEnabled(false);
-  _newTodoItem->setEnabled(false);
   _charass->setReadOnly(true);
   _owner->setEnabled(false);
 
@@ -350,9 +360,8 @@ void incident::sSave()
 {
   if (! save(false)) // if error
     return;
-  {
-   done(_incdtid);
-  }
+
+  done(_incdtid);
 }
 
 bool incident::save(bool partial)
@@ -399,7 +408,8 @@ bool incident::save(bool partial)
               "       incdt_prj_id, incdt_public,"
               "       incdt_recurring_incdt_id) "
               "VALUES(:incdt_id, :incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
-              "       :incdt_description, :incdt_notes, :incdt_item_id,"
+              "       COALESCE(:incdt_description, 'TEMP'||:incdt_number), "
+              "       :incdt_notes, :incdt_item_id,"
               "       :incdt_status, :incdt_assigned_username,"
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
               "       :incdt_incdtpriority_id, :incdt_incdtresolution_id,"
@@ -433,7 +443,8 @@ bool incident::save(bool partial)
     incidentave.bindValue(":incdt_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
     incidentave.bindValue(":incdt_cntct_id", _cntct->id());
-  incidentave.bindValue(":incdt_description", _description->text().trimmed());
+  if (!_description->text().trimmed().isEmpty())
+    incidentave.bindValue(":incdt_description", _description->text().trimmed());
   incidentave.bindValue(":incdt_notes", _notes->toPlainText().trimmed());
   if(-1 != _item->id())
     incidentave.bindValue(":incdt_item_id", _item->id());
@@ -635,10 +646,57 @@ void incident::populate()
                           "INCDT");
 
     sFillHistoryList();
-    sFillTodoList();
 
     emit populated();
   }
+}
+
+void incident::sIncdtCategoryChanged(int newCat)
+{
+  if (!_saved)
+  {
+    if (! save(true))
+      return;
+  }
+
+  XSqlQuery taskq;
+  taskq.prepare("SELECT applyDefaultTasks('INCDT', :category, :incdt, :override) AS ret;" );
+  taskq.bindValue(":category", newCat);
+  taskq.bindValue(":incdt", _incdtid);
+  taskq.bindValue(":override", false);
+  taskq.exec();
+
+  /*
+   The following checks whether tasks already exist and should be overridden.
+   return code 0 means no templates exist
+   return code < 0 means tasks already exist and user is questions whether to override
+   return code > 0 means no existing tasks so they have been copied automatically
+  */
+  if (taskq.first()) 
+  {
+    if (taskq.value("ret").toInt() < 0)
+    {
+      if (QMessageBox::question(this, tr("Existing Tasks"),
+                         tr("<p>Tasks already exist for this Incident.<br>"
+                            "Do you want to replace tasks with the new template?"),
+                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      {
+          return;
+      }
+
+      taskq.bindValue(":override", true);
+      taskq.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Template Tasks"),
+                               taskq, __FILE__, __LINE__))
+         return;
+    }
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Template Tasks"),
+                                taskq, __FILE__, __LINE__))
+            return;
+
+  _taskList->sFillList();
+
 }
 
 void incident::sCRMAcctChanged(const int newid)
@@ -653,43 +711,22 @@ void incident::sNewCharacteristic()
   _charass->sNew();
 }
 
-void incident::sNewTodoItem()
+void incident::sProjectUpdated()
 {
-  if (! save(true))
-    return;
+  XSqlQuery updp;
+  updp.prepare("UPDATE task SET task_prj_id=:prjid "
+               " WHERE task_parent_type='INCDT' "
+               "   AND task_parent_id=:incdtid;" );
+  if (_project->isValid())
+    updp.bindValue(":prjid", _project->id());
+  updp.bindValue(":incdtid", _incdtid);
+  updp.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Incident Project"),
+                                updp, __FILE__, __LINE__))
+       return;
 
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("incdt_id", _incdtid);
-  params.append("priority_id", _priority->id());
-
-  todoItem newdlg(this, 0, true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillTodoList();
-}
-
-void incident::sEditTodoItem()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("todoitem_id", _todoList->id());
-
-  todoItem newdlg(this, 0, true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillTodoList();
-}
-
-void incident::sViewTodoItem()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("todoitem_id", _todoList->id());
-
-  todoItem newdlg(this, 0, true);
-  newdlg.set(params);
-  newdlg.exec();
+  _taskList->parameterWidget()->setDefault(tr("Project"), _project->id(), true);
+  _taskList->sFillList();
 }
 
 void incident::sIncidentHistory()
@@ -700,135 +737,6 @@ void incident::sIncidentHistory()
   incidentHistory newdlg(this, 0, true);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void incident::sDeleteTodoItem()
-{
-  XSqlQuery incidentDeleteTodoItem;
-  incidentDeleteTodoItem.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-  incidentDeleteTodoItem.bindValue(":todoitem_id", _todoList->id());
-  incidentDeleteTodoItem.exec();
-  if (incidentDeleteTodoItem.first())
-  {
-    int result = incidentDeleteTodoItem.value("result").toInt();
-    if (result < 0)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To-Do Item"),
-                             storedProcErrorLookup("deleteTodoItem", result),
-                             __FILE__, __LINE__);
-      return;
-    }
-    else
-      sFillTodoList();
-    }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To-Do Item"),
-                                incidentDeleteTodoItem, __FILE__, __LINE__))
-  {
-    return;
-  }
-}
-
-void incident::sFillTodoList()
-{
-  XSqlQuery incidentFillTodoList;
-  incidentFillTodoList.prepare("SELECT todoitem_id, todoitem_owner_username,"
-            "       firstLine(todoitem_notes) AS todoitem_notes,"
-            "       todoitem_username, todoitem_name, todoitem_description,"
-            "       todoitem_status, todoitem_due_date,"
-            "       incdtpriority_name,"
-            "       CASE WHEN (todoitem_status != 'C' AND"
-            "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
-            "            WHEN (todoitem_status != 'C' AND"
-            "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
-            "       END AS todoitem_due_date_qtforegroundrole "
-            "  FROM todoitem "
-            "  LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id)"
-            " WHERE ((todoitem_incdt_id=:incdt_id)"
-            "   AND  todoitem_active )"
-            " ORDER BY todoitem_due_date, todoitem_username;");
-
-  incidentFillTodoList.bindValue(":incdt_id", _incdtid);
-  incidentFillTodoList.exec();
-  _todoList->populate(incidentFillTodoList);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting To-Do Items"),
-                           incidentFillTodoList, __FILE__, __LINE__))
-  {
-    return;
-  }
-}
-
-void incident::sPopulateTodoMenu(QMenu *pMenu)
-{
-  QAction *menuItem;
-
-  bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privileges->check("MaintainPersonalToDoItems") ||
-       _privileges->check("MaintainAllToDoItems") );
-
-  bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (_privileges->check("MaintainAllToDoItems")) );
-
-  bool viewPriv =
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("ViewPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("ViewPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-      (_privileges->check("ViewAllToDoItems")) || (_privileges->check("MaintainAllToDoItems"));
-
-  menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNewTodoItem()));
-  menuItem->setEnabled(newPriv);
-
-  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditTodoItem()));
-  menuItem->setEnabled(editPriv);
-
-  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewTodoItem()));
-  menuItem->setEnabled(viewPriv);
-
-  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDeleteTodoItem()));
-  menuItem->setEnabled(editPriv);
-}
-
-void incident::sHandleTodoPrivs()
-{
-  bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privileges->check("MaintainPersonalToDoItems") ||
-       _privileges->check("MaintainAllToDoItems") );
-
-  bool editPriv = false;
-  bool viewPriv = false;
-
-  if(_todoList->currentItem())
-  {
-    editPriv = (cNew == _mode || cEdit == _mode) && (
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (_privileges->check("MaintainAllToDoItems")) );
-
-    viewPriv =
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (_privileges->check("ViewAllToDoItems")) || (_privileges->check("MaintainAllToDoItems"));
-  }
-
-  _newTodoItem->setEnabled(newPriv);
-  _editTodoItem->setEnabled(editPriv && _todoList->id() > 0);
-  _viewTodoItem->setEnabled((editPriv || viewPriv) && _todoList->id() > 0);
-  _deleteTodoItem->setEnabled(editPriv && _todoList->id() > 0);
-
-  if (editPriv)
-  {
-    disconnect(_todoList,SIGNAL(itemSelected(int)),_viewTodoItem, SLOT(animateClick()));
-    connect(_todoList,  SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
-  }
-  else if (viewPriv)
-  {
-    disconnect(_todoList,SIGNAL(itemSelected(int)),_editTodoItem, SLOT(animateClick()));
-    connect(_todoList,  SIGNAL(itemSelected(int)), _viewTodoItem, SLOT(animateClick()));
-  }
 }
 
 void incident::sReturn()
@@ -907,6 +815,8 @@ void incident::done(int result)
   if (!_lock.release())
     ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
                          _lock.lastError(), __FILE__, __LINE__);
+
+  omfgThis->sEmitSignal(QString("Incident"), _incdtid);
 
   XDialog::done(result);
 }

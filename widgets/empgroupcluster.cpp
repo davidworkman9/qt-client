@@ -29,7 +29,7 @@ int EmpGroupClusterLineEdit::idFromList(QWidget *pParent)
 }
 
 EmpGroupClusterLineEdit::EmpGroupClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "empgrp", "empgrp_id", "empgrp_name", "empgrp_descrip", 0, 0, pName)
+    VirtualClusterLineEdit(pParent, "empgrp", "groups_id", "groups_name", "groups_descrip", 0, 0, pName)
 {
   setTitles(tr("Employee Group"), tr("Employee Groups"));
 }

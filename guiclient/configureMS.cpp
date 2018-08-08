@@ -9,6 +9,7 @@
  */
 
 #include "configureMS.h"
+#include "guiErrorCheck.h"
 
 #include <QVariant>
 #include <QValidator>
@@ -48,6 +49,14 @@ void configureMS::languageChange()
 bool configureMS::sSave()
 {
   emit saving();
+
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(_nextPlanNumber->text().trimmed().isEmpty(), _nextPlanNumber, tr("Enter a Next Planned Order Number"))
+         << GuiErrorCheck(_calendar->id() == -1, _calendar, tr("Choose a default calendar"));
+
+  if (GuiErrorCheck::reportErrors(this, tr("Configure MS Error"), errors))
+      return false;
 
   XSqlQuery configq;
   configq.prepare("SELECT setNextPlanNumber(:planord_number) AS result;");

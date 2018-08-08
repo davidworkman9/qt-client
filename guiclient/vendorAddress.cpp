@@ -63,7 +63,7 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
 
       setVendor.prepare("SELECT crmacct_id "
                 "FROM vendinfo "
-                "  JOIN crmacct ON (crmacct_vend_id=vend_id) "
+                "  JOIN crmacct ON (vend_crmacct_id=crmacct_id) "
                 "WHERE (vend_id=:vend_id);");
       setVendor.bindValue(":vend_id", _vendid);
       setVendor.exec();
@@ -213,7 +213,8 @@ void vendorAddress::populate()
   XSqlQuery vendorpopulate;
   vendorpopulate.prepare( "SELECT vendaddrinfo.*, crmacct_id "
              "FROM vendaddrinfo "
-             " JOIN crmacct ON (vendaddr_vend_id=crmacct_vend_id) "
+             " JOIN vendinfo ON (vendaddr_vend_id=vend_id) "
+             " JOIN crmacct ON (vend_crmacct_id=crmacct_id) "
              "WHERE (vendaddr_id=:vendaddr_id);" );
   vendorpopulate.bindValue(":vendaddr_id", _vendaddrid);
   vendorpopulate.exec();

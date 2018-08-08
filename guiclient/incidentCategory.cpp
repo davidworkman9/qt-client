@@ -15,6 +15,7 @@
 #include <QValidator>
 #include <QVariant>
 #include <errorReporter.h>
+#include "guiErrorCheck.h"
 
 incidentCategory::incidentCategory(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -34,6 +35,8 @@ incidentCategory::incidentCategory(QWidget* parent, const char* name, bool modal
       _ediprofile->populate("SELECT ediprofile_id, ediprofile_name "
                             "FROM xtbatch.ediprofile "
                             "WHERE (ediprofile_type='email');");
+
+    _template->populate("SELECT tasktmpl_id, tasktmpl_name FROM tasktmpl ORDER BY tasktmpl_name;");
 }
 
 incidentCategory::~incidentCategory()
@@ -109,29 +112,21 @@ void incidentCategory::sCheck()
 void incidentCategory::sSave()
 {
   XSqlQuery incidentSave;
-  if(_name->text().length() == 0)
-  {
-    QMessageBox::critical(this, tr("Category Name Required"),
-      tr("You must enter a Category Name to continue.") );
-    _name->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().length() == 0, _name, 
+                          tr("You must enter a valid Name for this Incident Category."))
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Incident Category"), errors))
+      return;
 
   if (_mode == cNew)
   {
-    incidentSave.exec("SELECT NEXTVAL('incdtcat_incdtcat_id_seq') AS _incdtcat_id");
-    if (incidentSave.first())
-      _incdtcatId = incidentSave.value("_incdtcat_id").toInt();
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Incident Category Information"),
-                                  incidentSave, __FILE__, __LINE__))
-    {
-      return;
-    }
-
     incidentSave.prepare( "INSERT INTO incdtcat "
-               "(incdtcat_id, incdtcat_name, incdtcat_order, incdtcat_descrip, incdtcat_ediprofile_id)"
+               "(incdtcat_name, incdtcat_order, incdtcat_descrip, incdtcat_ediprofile_id, incdtcat_tasktmpl_id)"
                " VALUES "
-               "(:incdtcat_id, :incdtcat_name, :incdtcat_order, :incdtcat_descrip, :incdtcat_ediprofile_id );" );
+               "(:incdtcat_name, :incdtcat_order, :incdtcat_descrip, :incdtcat_ediprofile_id, :template ) "
+               "RETURNING incdtcat_id; " );
   }
   else if (_mode == cEdit)
   {
@@ -140,7 +135,7 @@ void incidentCategory::sSave()
                "WHERE ( (UPPER(incdtcat_name)=UPPER(:incdtcat_name))"
                " AND (incdtcat_id<>:incdtcat_id) );" );
     incidentSave.bindValue(":incdtcat_id", _incdtcatId);
-    incidentSave.bindValue(":incdtcat_name", _name->text());
+    incidentSave.bindValue(":incdtcat_name", _name->text().trimmed());
     incidentSave.exec();
     if (incidentSave.first())
     {
@@ -160,6 +155,7 @@ void incidentCategory::sSave()
                "SET incdtcat_name=:incdtcat_name, "
 	       "    incdtcat_order=:incdtcat_order, "
 	       "    incdtcat_descrip=:incdtcat_descrip, "
+	       "    incdtcat_tasktmpl_id=:template, "
                "    incdtcat_ediprofile_id=:incdtcat_ediprofile_id "
                "WHERE (incdtcat_id=:incdtcat_id);" );
   }
@@ -170,8 +166,13 @@ void incidentCategory::sSave()
   incidentSave.bindValue(":incdtcat_descrip", _descrip->toPlainText());
   if (_ediprofile->id() != -1)
     incidentSave.bindValue(":incdtcat_ediprofile_id", _ediprofile->id());
+  if (_template->isValid())
+    incidentSave.bindValue(":template", _template->id());
+
   incidentSave.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Incident Category Information"),
+  if (incidentSave.first())
+    _incdtcatId = incidentSave.value("incdtcat_id").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Incident Category Information"),
                                 incidentSave, __FILE__, __LINE__))
   {
     return;
@@ -193,6 +194,7 @@ void incidentCategory::populate()
     _name->setText(incidentpopulate.value("incdtcat_name").toString());
     _order->setValue(incidentpopulate.value("incdtcat_order").toInt());
     _descrip->setText(incidentpopulate.value("incdtcat_descrip").toString());
+    _template->setId(incidentpopulate.value("incdtcat_tasktmpl_id").toInt());
     _ediprofile->setId(incidentpopulate.value("ediprofile").toInt());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Incident Category Information"),

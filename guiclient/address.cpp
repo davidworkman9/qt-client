@@ -44,9 +44,9 @@ address::address(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
     _uses->addColumn(tr("First Name\nor Number"),50, Qt::AlignLeft, true, "cntct_first_name");
     _uses->addColumn(tr("Last Name\nor Name"),	 -1, Qt::AlignLeft, true, "cntct_last_name");
     _uses->addColumn(tr("Account"),	 80, Qt::AlignLeft, true, "crmacct_number");
-    _uses->addColumn(tr("Phone"),	100, Qt::AlignLeft, true, "cntct_phone");
-    _uses->addColumn(tr("Alternate"),	100, Qt::AlignLeft, true, "cntct_phone2");
-    _uses->addColumn(tr("Fax"),		100, Qt::AlignLeft, true, "cntct_fax");
+    _uses->addColumn(tr("Phone"),	100, Qt::AlignLeft, true, "contact_phone");
+    _uses->addColumn(tr("Mobile"),	100, Qt::AlignLeft, true, "contact_phone2");
+    _uses->addColumn(tr("Fax"),		100, Qt::AlignLeft, true, "contact_fax");
     _uses->addColumn(tr("E-Mail"),	100, Qt::AlignLeft, true, "cntct_email");
     _uses->addColumn(tr("Web Address"),	100, Qt::AlignLeft, true, "cntct_webaddr");
 

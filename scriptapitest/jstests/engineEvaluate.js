@@ -1,0 +1,1 @@
+assertIsFunction(engineEvaluate, 'engineEvaluate');

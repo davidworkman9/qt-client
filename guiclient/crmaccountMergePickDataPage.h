@@ -29,14 +29,10 @@ class CrmaccountMergePickDataPage : public QWizardPage, public Ui::crmaccountMer
     virtual bool validatePage();
 
   protected slots:
-    virtual void sDeselect();
     virtual bool sDelete();
     virtual void sEdit();
     virtual void sFillList();
-    virtual void sHandleButtons();
     virtual void sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *);
-    virtual void sSelect();
-    virtual bool sSelect(QTreeWidgetItem *pitem, int col, bool clearSelection = true);
     virtual void sView();
 
   protected:

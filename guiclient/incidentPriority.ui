@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>183</height>
+    <width>346</width>
+    <height>307</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,6 +93,13 @@ to be bound by its terms.</comment>
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_default">
+             <property name="text">
+              <string>Default</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>

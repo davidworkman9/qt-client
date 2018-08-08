@@ -9,6 +9,7 @@
  */
 
 #include "bankAdjustmentType.h"
+#include "guiErrorCheck.h"
 
 #include <QMessageBox>
 #include <QVariant>
@@ -75,21 +76,14 @@ enum SetResponse bankAdjustmentType::set(const ParameterList &pParams)
 void bankAdjustmentType::sSave()
 {
   XSqlQuery bankSave;
-  if (_name->text().length() == 0)
-  {
-    QMessageBox::information( this, tr("Cannot Save Adjustment Type"),
-                              tr("You must enter a valid name for this Adjustment Type.") );
-    _name->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
 
-  if (_accnt->id() == -1)
-  {
-    QMessageBox::information( this, tr("Cannot Save Adjustment Type"),
-                              tr("You must select a valid account for this Adjustment Type.") );
-    return;
-  }
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name, tr("YYou must enter a valid name for this Adjustment Type."));
+  errors << GuiErrorCheck(_accnt->id() == -1, _accnt, tr("You must select a valid account for this Adjustment Type."));
   
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Adjustment Type"), errors))
+    return;
+
   if (_mode == cNew)
   {
     bankSave.exec("SELECT NEXTVAL('bankadjtype_bankadjtype_id_seq') AS bankadjtype_id");

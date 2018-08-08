@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qmainwindowproto.h"
 #include "qtsetup.h"
 #include "xtsettings.h"
@@ -23,6 +24,24 @@ void QMainWindowfromScriptValue(const QScriptValue &obj, QMainWindow* &item)
   item = qobject_cast<QMainWindow*>(obj.toQObject());
 }
 
+QScriptValue DockOptionToScriptValue(QScriptEngine *engine, const enum QMainWindow::DockOption &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void DockOptionFromScriptValue(const QScriptValue &obj, enum QMainWindow::DockOption &p)
+{
+  p = (enum QMainWindow::DockOption)obj.toInt32();
+}
+
+QScriptValue DockOptionsToScriptValue(QScriptEngine *engine, const QMainWindow::DockOptions &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void DockOptionsFromScriptValue(const QScriptValue &obj, QMainWindow::DockOptions &p)
+{
+  p = (QMainWindow::DockOptions)obj.toInt32();
+}
+
 void setupQMainWindowProto(QScriptEngine *engine)
 {
  qScriptRegisterMetaType(engine, QMainWindowtoScriptValue, QMainWindowfromScriptValue);
@@ -33,6 +52,17 @@ void setupQMainWindowProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQMainWindow,
                                                  proto);
   engine->globalObject().setProperty("QMainWindow",  constructor);
+
+  qScriptRegisterMetaType(engine, DockOptionToScriptValue,  DockOptionFromScriptValue);
+  qScriptRegisterMetaType(engine, DockOptionsToScriptValue, DockOptionsFromScriptValue);
+  constructor.setProperty("AnimatedDocks",    QScriptValue(engine, QMainWindow::AnimatedDocks),    ENUMPROPFLAGS);
+  constructor.setProperty("ALlowNestedDocks", QScriptValue(engine, QMainWindow::AllowNestedDocks), ENUMPROPFLAGS);
+  constructor.setProperty("AllowTabbedDocks", QScriptValue(engine, QMainWindow::AllowTabbedDocks), ENUMPROPFLAGS);
+  constructor.setProperty("ForceTabbedDocks", QScriptValue(engine, QMainWindow::ForceTabbedDocks), ENUMPROPFLAGS);
+  constructor.setProperty("VerticalTabs",     QScriptValue(engine, QMainWindow::VerticalTabs),     ENUMPROPFLAGS);
+#if QT_VERSION >= 0x050600
+  constructor.setProperty("GroupedDragging",  QScriptValue(engine, QMainWindow::GroupedDragging),  ENUMPROPFLAGS);
+#endif
 }
 
 QScriptValue constructQMainWindow(QScriptContext * context,

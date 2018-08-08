@@ -213,6 +213,8 @@ void comment::set(const ParameterList &pParams)
         _cmnttype->setType(XComboBox::OpportunityCommentTypes);
       else if (_sourcetype == "J")
         _cmnttype->setType(XComboBox::ProjectCommentTypes);
+      else if (_sourcetype == "PSPCT")
+        _cmnttype->setType(XComboBox::ProspectCommentTypes);      
       else if (_sourcetype == "P")
         _cmnttype->setType(XComboBox::PurchaseOrderCommentTypes);
       else if (_sourcetype == "PI")

@@ -28,6 +28,11 @@ class QString;
 
 Q_DECLARE_METATYPE(QTextDocument*)
 //Q_DECLARE_METATYPE(QTextDocument)
+Q_DECLARE_METATYPE(enum QTextDocument::FindFlag)
+Q_DECLARE_METATYPE(QTextDocument::FindFlags)
+Q_DECLARE_METATYPE(enum QTextDocument::MetaInformation)
+Q_DECLARE_METATYPE(enum QTextDocument::ResourceType)
+Q_DECLARE_METATYPE(enum QTextDocument::Stacks)
 
 void setupQTextDocumentProto(QScriptEngine *engine);
 QScriptValue constructQTextDocument(QScriptContext *context, QScriptEngine *engine);

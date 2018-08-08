@@ -9,6 +9,7 @@
  */
 
 #include "configureEncryption.h"
+#include "guiErrorCheck.h"
 
 #include <QMessageBox>
 
@@ -48,6 +49,16 @@ void configureEncryption::languageChange()
 bool configureEncryption::sSave()
 {
   emit saving();
+
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(_ccEncKeyName->text().trimmed().isEmpty(), _ccEncKeyName, tr("Enter a Key File Name"))
+         << GuiErrorCheck((_ccWinEncKey->text().trimmed().isEmpty()
+                           && _ccLinEncKey->text().trimmed().isEmpty()
+                           && _ccMacEncKey->text().trimmed().isEmpty()), _ccWinEncKey, tr("Enter a File Location"));
+
+  if (GuiErrorCheck::reportErrors(this, tr("Encryption error"), errors))
+      return false;
 
   _metrics->set("CCEncKeyName",      _ccEncKeyName->text());
   _metrics->set("CCWinEncKey",       _ccWinEncKey->text());

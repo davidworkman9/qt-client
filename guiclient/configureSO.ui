@@ -312,21 +312,28 @@ to be bound by its terms.</comment>
                   <string>Change Log</string>
                  </property>
                  <layout class="QGridLayout">
-                  <item row="1" column="0">
+                  <item row="0" column="0">
+                   <widget class="QCheckBox" name="_prospectChangeLog">
+                    <property name="text">
+                     <string>Post Prospect Changes</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
                    <widget class="QCheckBox" name="_salesOrderChangeLog">
                     <property name="text">
                      <string>Post Sales Order Changes</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="0">
+                  <item row="1" column="0">
                    <widget class="QCheckBox" name="_customerChangeLog">
                     <property name="text">
                      <string>Post Customer Changes</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="2" column="0">
+                  <item row="3" column="0">
                    <spacer name="verticalSpacer_4">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>

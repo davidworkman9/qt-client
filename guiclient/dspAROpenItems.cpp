@@ -980,10 +980,14 @@ void dspAROpenItems::sViewInvoiceDetails()
 void dspAROpenItems::sIncident()
 {
   XSqlQuery dspIncident;
-  dspIncident.prepare("SELECT crmacct_id, crmacct_cntct_id_1 "
-            "FROM crmacct, aropen "
-            "WHERE ((aropen_id=:aropen_id) "
-            "AND (crmacct_cust_id=aropen_cust_id));");
+  dspIncident.prepare("SELECT crmacct_id, pc.crmacctcntctass_cntct_id AS cntct_id_1 "
+            "FROM crmacct"
+            "JOIN custinfo ON (cust_crmacct_id=crmacct_id) "
+            "JOIN aropen ON (cust_id=aropen_cust_id) "
+            "  LEFT OUTER JOIN crmacctcntctass pc "
+            "                  ON (crmacct_id=pc.crmacctcntctass_crmacct_id "
+            "                      AND pc.crmacctcntctass_crmrole_id=getcrmroleid('Primary')) "
+            "WHERE aropen_id=:aropen_id;");
   dspIncident.bindValue(":aropen_id", list()->id());
   dspIncident.exec();
   if (dspIncident.first())
@@ -992,7 +996,7 @@ void dspAROpenItems::sIncident()
     params.append("mode", "new");
     params.append("aropen_id", list()->id());
     params.append("crmacct_id", dspIncident.value("crmacct_id"));
-    params.append("cntct_id", dspIncident.value("crmacct_cntct_id_1"));
+    params.append("cntct_id", dspIncident.value("cntct_id_1"));
     incident newdlg(this, 0, true);
     newdlg.set(params);
 

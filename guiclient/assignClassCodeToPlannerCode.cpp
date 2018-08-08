@@ -9,6 +9,7 @@
  */
 
 #include "assignClassCodeToPlannerCode.h"
+#include "guiErrorCheck.h"
 
 #include <QMessageBox>
 #include <QVariant>
@@ -41,12 +42,11 @@ void assignClassCodeToPlannerCode::languageChange()
 void assignClassCodeToPlannerCode::sAssign()
 {
   XSqlQuery assignAssign;
-  if(!_planCode->isValid())
-  {
-    QMessageBox::warning(this, tr("No Planner Code Selected"),
-      tr("You must select a Planner Code to assign before continuing.") );
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(!_planCode->isValid(), _planCode, tr("Please select a planner code."));
+  if (GuiErrorCheck::reportErrors(this, tr("Assign items to planner code"), errors))
     return;
-  }
 
   QString sql( "UPDATE itemsite "
                "SET itemsite_plancode_id=:plancode_id "

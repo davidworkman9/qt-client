@@ -173,12 +173,10 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     _raheadid = param.toInt();
     returnet.prepare("SELECT rahead.*,"
               "       COALESCE(cust_preferred_warehous_id,-1) AS prefwhs, "
-              "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id, "
-              "       crmacct_id "
-              "FROM rahead, custinfo, crmacct "
+              "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id "
+              "FROM rahead, custinfo "
               "WHERE ( (rahead_cust_id=cust_id) "
-              "AND (rahead_id=:rahead_id) "
-              "AND (rahead_cust_id=crmacct_cust_id) );");
+              "AND (rahead_id=:rahead_id) );");
     returnet.bindValue(":rahead_id", _raheadid);
     returnet.exec();
     if (returnet.first())
@@ -842,7 +840,7 @@ void returnAuthorizationItem::populate()
                  "       rcv.itemsite_warehous_id AS itemsite_warehous_id, "
                  "       shp.itemsite_warehous_id AS shipWhs_id, "
                  "       qtyToReceive('RA', raitem_id) AS qtytorcv, "
-                 "       crmacct_id, "
+                 "       cust_crmacct_id, "
                  "       COALESCE(nc.coitem_price, raitem_saleprice) AS saleprice, "
                  "       COALESCE(nch.cohead_curr_id, rahead_curr_id) AS salecurrid, "
                  "       COALESCE(nch.cohead_orderdate, rahead_authdate) AS saledate "
@@ -852,12 +850,12 @@ void returnAuthorizationItem::populate()
                  "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
                  "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id)"
                  "  LEFT OUTER JOIN itemsite shp ON (raitem_coitem_itemsite_id=shp.itemsite_id),"
-                 "  rahead, itemsite rcv, item, crmacct "
+                 "  rahead, itemsite rcv, item, custinfo "
                  "WHERE ((raitem_rahead_id=rahead_id)"
                  " AND  (raitem_id=:raitem_id) "
                  " AND  (raitem_itemsite_id=rcv.itemsite_id) "
                  " AND  (item_id=rcv.itemsite_item_id) "
-                 " AND  (rahead_cust_id=crmacct_cust_id) );" );
+                 " AND  (rahead_cust_id=cust_id) );" );
   raitem.bindValue(":raitem_id", _raitemid);
   _comments->setId(_raitemid);
   raitem.exec();
@@ -913,7 +911,7 @@ void returnAuthorizationItem::populate()
 
     _cQtyOrdered = _qtyAuth->toDouble();
     _cScheduledDate = _scheduledDate->date();
-    _crmacctid = raitem.value("crmacct_id").toInt();
+    _crmacctid = raitem.value("cust_crmacct_id").toInt();
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
     _coitemitemsiteid = raitem.value("raitem_coitem_itemsite_id").toInt();

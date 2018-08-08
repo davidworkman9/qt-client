@@ -10,6 +10,7 @@
 
 #include "setupscriptapi.h"
 
+#include <QtGlobal>
 #include <QDebug>
 #include <QMessageBox>
 
@@ -155,6 +156,11 @@
 #include "xsqlqueryproto.h"
 #include "xvariantsetup.h"
 #include "xwebsync.h"
+
+#if QT_VERSION >= 0x050900
+  #include "qwebenginepageproto.h"
+  #include "qwebengineviewproto.h"
+#endif
 
 static Preferences *prefs = 0;
 /*! \defgroup scriptapi The xTuple ERP Scripting API
@@ -311,8 +317,32 @@ void setupScriptApi(QScriptEngine *engine, Preferences *pPreferences)
   setupXVariant(engine);
   setupXWebSync(engine);
   setupchar(engine);
-
   setupFormat(engine);
+
+  #if QT_VERSION < 0x050900
+    setupQWebElementCollectionProto(engine);
+    setupQWebElementProto(engine);
+    setupQWebFrameProto(engine);
+    setupQWebPageProto(engine);
+    setupQWebSecurityOriginProto(engine);
+    setupQWebSettingsProto(engine);
+    setupQWebViewProto(engine);
+  #endif
+
+  #if QT_VERSION <= 0x050600
+    setupQWebElementProto(engine);
+    setupQWebElementCollectionProto(engine);
+    setupQWebFrameProto(engine);
+    setupQWebPageProto(engine);
+    setupQWebSecurityOriginProto(engine);
+    setupQWebSettingsProto(engine);
+    setupQWebViewProto(engine);
+  #endif
+
+  #if QT_VERSION > 0x050900
+    setupQWebEnginePageProto(engine);
+    setupQWebEngineViewProto(engine);
+  #endif
 }
 
 void scriptDeprecated(QString msg)

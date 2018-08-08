@@ -11,12 +11,6 @@
 #include "scriptapi_internal.h"
 #include "qwebelementproto.h"
 
-#if QT_VERSION < 0x050000
-void setupQWebElementProto(QScriptEngine *engine)
-{
-  Q_UNUSED(engine);
-}
-#else
 QScriptValue StyleResolveStrategyToScriptValue(QScriptEngine *engine, const QWebElement::StyleResolveStrategy &item)
 {
   return engine->newVariant(item);
@@ -28,6 +22,7 @@ void StyleResolveStrategyFromScriptValue(const QScriptValue &obj, QWebElement::S
 
 void setupQWebElementProto(QScriptEngine *engine)
 {
+  scriptDeprecated("QWebElement will not be available in Qt 5.9");
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebElementProto(engine));
@@ -595,5 +590,3 @@ QString QWebElementProto::toString() const
     return item->toPlainText();
   return QString("QWebElement(unknown)");
 }
-
-#endif

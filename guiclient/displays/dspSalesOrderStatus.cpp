@@ -86,7 +86,7 @@ void dspSalesOrderStatus::sFillList()
     coq.prepare( "SELECT cohead_number,"
                  "       cohead_orderdate,"
                  "       cohead_custponumber,"
-                 "       cust_name, cntct_phone"
+                 "       cust_name, getcontactphone(cntct_id, 'Office') AS contact_phone "
                  "  FROM cohead"
                  "  JOIN custinfo ON (cohead_cust_id=cust_id)"
                  "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
@@ -98,7 +98,7 @@ void dspSalesOrderStatus::sFillList()
       _orderDate->setDate(coq.value("cohead_orderdate").toDate());
       _poNumber->setText(coq.value("cohead_custponumber").toString());
       _custName->setText(coq.value("cust_name").toString());
-      _custPhone->setText(coq.value("cntct_phone").toString());
+      _custPhone->setText(coq.value("contact_phone").toString());
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting S/O"),
                                   coq, __FILE__, __LINE__))

@@ -158,6 +158,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
                virtual void setListVisible(bool p) { _list->setVisible(p); }
 	virtual void	clear();
 	virtual void	sEllipses();
+	virtual void	sMore();
 	virtual void	sInfo();
 	virtual void	sList();
 	virtual void	sSearch();
@@ -193,7 +194,9 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QString		_extraClause;
         XLineEdit*      _addrChange;
 	XLineEdit*      _number;
-	QLabel*		_addrLit;
+	QLabel*		_addrLit1;
+	QLabel*		_addrLit2;
+	QLabel*		_addrLit3;
 	XLineEdit*	_addr1;
 	XLineEdit*	_addr2;
 	XLineEdit*	_addr3;
@@ -206,6 +209,13 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	XLineEdit*	_postalcode;
 	QLabel*		_countryLit;
 	XComboBox*	_country;
+	XLineEdit*	_longitude;
+	XLineEdit*	_latitude;
+	XLineEdit*	_accuracy;
+	QLabel*		_longitudeLit;
+	QLabel*		_latitudeLit;
+	QLabel*		_accuracyLit;
+	QCheckBox*	_mktg;
 	QCheckBox*	_active;
 
     private:
@@ -221,6 +231,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	bool		_valid;
 	XDataWidgetMapper* _mapper;
         QPushButton*    _list;
+        QPushButton*    _more;
 
 	// cached values
 	QString         c_number;

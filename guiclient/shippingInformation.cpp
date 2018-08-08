@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -280,7 +280,7 @@ void shippingInformation::sFillList()
     shippingFillList.prepare("SELECT cohead_orderdate AS orderdate,"
                              "       soHoldType(cohead_id) AS holdtype,"
                              "       cohead_custponumber AS ponumber,"
-                             "       cust_name AS name, cntct_phone AS phone,"
+                             "       cust_name AS name, getcontactphone(cntct_id, 'Office') AS phone,"
                              "       cohead_shipcomments AS shipcomments,"
                              "       cohead_shipvia AS shipvia,"
                              "       cohead_shipchrg_id AS shipchrg_id,"

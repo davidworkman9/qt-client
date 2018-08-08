@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
-    <height>370</height>
+    <width>846</width>
+    <height>749</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,52 +24,201 @@ to be bound by its terms.</comment>
    <property name="verticalSpacing">
     <number>12</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="_numberLit">
-     <property name="text">
-      <string>Prospect #:</string>
+   <item row="2" column="0" colspan="3">
+    <widget class="QGroupBox" name="_mainGroup">
+     <property name="title">
+      <string/>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>_number</cstring>
-     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="3" column="2">
+       <widget class="XLabel" name="_assignedToLit">
+        <property name="text">
+         <string>Assigned To:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="_taxzoneLit">
+        <property name="text">
+         <string>Tax Zone:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>_taxzone</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="XComboBox" name="_salesrep">
+        <property name="allowNull">
+         <bool>true</bool>
+        </property>
+        <property name="type">
+         <enum>XComboBox::SalesReps</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="WComboBox" name="_site">
+        <property name="allowNull">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="_siteLit">
+        <property name="text">
+         <string>Site:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="XComboBox" name="_taxzone"/>
+      </item>
+      <item row="3" column="4">
+       <widget class="UsernameLineEdit" name="_assignedTo"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Sales Rep:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>_salesrep</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="XLabel" name="_sourceLit">
+        <property name="text">
+         <string>Source:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="XLabel" name="ownerLit">
+        <property name="text">
+         <string>Owner:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="4">
+       <widget class="DLineEdit" name="_assigned"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="XLabel" name="_assignedLit">
+        <property name="text">
+         <string>Assigned:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="UsernameLineEdit" name="_owner"/>
+      </item>
+      <item row="5" column="1">
+       <widget class="XComboBox" name="_source">
+        <property name="allowNull">
+         <bool>true</bool>
+        </property>
+        <property name="type">
+         <enum>XComboBox::OpportunitySources</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="7">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="2">
+       <widget class="XLabel" name="_lastTouchLit">
+        <property name="text">
+         <string>Last Touched:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="4">
+       <widget class="DLineEdit" name="_lastTouch"/>
+      </item>
+      <item row="2" column="7">
+       <widget class="XLabel" name="_createdLit">
+        <property name="text">
+         <string>Created:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="8">
+       <widget class="DLineEdit" name="_created">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="7">
+       <widget class="XLabel" name="_updatedLit">
+        <property name="text">
+         <string>Updated:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="8">
+       <widget class="DLineEdit" name="_updated">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <layout class="QHBoxLayout">
-     <item>
-      <widget class="XLineEdit" name="_number">
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_crmacct">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Account...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item row="0" column="3" rowspan="3">
     <layout class="QVBoxLayout">
@@ -125,84 +274,6 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="6">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>0</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1">
-       <widget class="WComboBox" name="_site">
-        <property name="allowNull">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="_siteLit">
-        <property name="text">
-         <string>Site:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Sales Rep:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>_salesrep</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="XComboBox" name="_salesrep">
-        <property name="allowNull">
-         <bool>true</bool>
-        </property>
-        <property name="type">
-         <enum>XComboBox::SalesReps</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QLabel" name="_taxzoneLit">
-        <property name="text">
-         <string>Tax Zone:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>_taxzone</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
-       <widget class="XComboBox" name="_taxzone"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="3" column="0" colspan="4">
     <widget class="QTabWidget" name="_tabs">
      <property name="sizePolicy">
@@ -214,72 +285,150 @@ to be bound by its terms.</comment>
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_contactTab">
+     <widget class="QWidget" name="activityTab">
       <attribute name="title">
-       <string>Contact</string>
+       <string>Activity</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="ContactCluster" name="_contact">
-             <property name="focusPolicy">
-              <enum>Qt::StrongFocus</enum>
-             </property>
-             <property name="accountVisible" stdset="0">
-              <bool>false</bool>
-             </property>
-             <property name="activeVisible" stdset="0">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="Comments" name="_comments">
+         <property name="type">
+          <number>Comments::Contact</number>
+         </property>
+        </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="_contactTab">
+      <attribute name="title">
+       <string>Contacts</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="XLabel" name="xlabel">
+         <property name="text">
+          <string>Associated Contacts:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="_contactsPlaceholder"/>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_contactGroupBox">
+         <property name="title">
+          <string>Attach Contact:</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="XLabel" name="_cntctRoleLit">
+                <property name="text">
+                 <string>Role:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XComboBox" name="_cntctRole">
+                <property name="type">
+                 <enum>XComboBox::CRMRoleContact</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="ContactCluster" name="_contact"/>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QCheckBox" name="_cntctDefault">
+              <property name="text">
+               <string>Default</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QPushButton" name="_cntctAdd">
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_taskListTab">
+      <attribute name="title">
+       <string>Tasks</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_task"/>
      </widget>
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">
@@ -368,15 +517,102 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="charsTab">
+      <attribute name="title">
+       <string>Characteristics</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="CharacteristicsWidget" name="_charass"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="docsTab">
+      <attribute name="title">
+       <string>Documents</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="Documents" name="_documents"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="_numberLit">
+     <property name="text">
+      <string>Prospect #:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>_number</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="XLineEdit" name="_number">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_crmacct">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Account...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ContactCluster</class>
+   <class>CharacteristicsWidget</class>
    <extends>QWidget</extends>
-   <header>contactcluster.h</header>
+   <header>characteristicswidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
+  </customwidget>
+  <customwidget>
+   <class>UsernameLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>usernamecluster.h</header>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
@@ -387,6 +623,11 @@ to be bound by its terms.</comment>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -408,9 +649,19 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_number</tabstop>
+  <tabstop>_crmacct</tabstop>
   <tabstop>_name</tabstop>
+  <tabstop>_active</tabstop>
+  <tabstop>_site</tabstop>
+  <tabstop>_salesrep</tabstop>
+  <tabstop>_taxzone</tabstop>
+  <tabstop>_owner</tabstop>
+  <tabstop>_assignedTo</tabstop>
+  <tabstop>_assigned</tabstop>
+  <tabstop>_lastTouch</tabstop>
+  <tabstop>_source</tabstop>
+  <tabstop>_status</tabstop>
   <tabstop>_tabs</tabstop>
-  <tabstop>_contact</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_quotes</tabstop>
   <tabstop>_newQuote</tabstop>
@@ -418,6 +669,7 @@ to be bound by its terms.</comment>
   <tabstop>_viewQuote</tabstop>
   <tabstop>_deleteQuote</tabstop>
   <tabstop>_printQuote</tabstop>
+  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>

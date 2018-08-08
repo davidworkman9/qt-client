@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qiconproto.h"
 #include "xsqlquery.h"
 
@@ -15,6 +16,24 @@
 
 #include <QIcon>
 #include <QImage>
+
+QScriptValue ModeToScriptValue(QScriptEngine *engine, const enum QIcon::Mode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void ModeFromScriptValue(const QScriptValue &obj, enum QIcon::Mode &p)
+{
+  p = (enum QIcon::Mode)obj.toInt32();
+}
+
+QScriptValue StateToScriptValue(QScriptEngine *engine, const enum QIcon::State &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void StateFromScriptValue(const QScriptValue &obj, enum QIcon::State &p)
+{
+  p = (enum QIcon::State)obj.toInt32();
+}
 
 void setupQIconProto(QScriptEngine *engine)
 {
@@ -25,6 +44,16 @@ void setupQIconProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQIcon,
                                                  proto);
   engine->globalObject().setProperty("QIcon",  constructor);
+
+  qScriptRegisterMetaType(engine, ModeToScriptValue, ModeFromScriptValue);
+  constructor.setProperty("Normal",   QScriptValue(engine, QIcon::Normal),   ENUMPROPFLAGS);
+  constructor.setProperty("Disabled", QScriptValue(engine, QIcon::Disabled), ENUMPROPFLAGS);
+  constructor.setProperty("Active",   QScriptValue(engine, QIcon::Active),   ENUMPROPFLAGS);
+  constructor.setProperty("Selected", QScriptValue(engine, QIcon::Selected), ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, StateToScriptValue, StateFromScriptValue);
+  constructor.setProperty("Off", QScriptValue(engine, QIcon::Off), ENUMPROPFLAGS);
+  constructor.setProperty("On",  QScriptValue(engine, QIcon::On),  ENUMPROPFLAGS);
 }
 
 QScriptValue constructQIcon(QScriptContext * context,

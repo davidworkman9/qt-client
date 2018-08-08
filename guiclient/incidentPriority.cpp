@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -119,9 +119,9 @@ void incidentPriority::sSave()
     }
 
     incidentSave.prepare( "INSERT INTO incdtpriority "
-               "(incdtpriority_id, incdtpriority_name, incdtpriority_order, incdtpriority_descrip)"
+               "(incdtpriority_id, incdtpriority_name, incdtpriority_order, incdtpriority_descrip, incdtpriority_default)"
                " VALUES "
-               "(:incdtpriority_id, :incdtpriority_name, :incdtpriority_order, :incdtpriority_descrip);" );
+               "(:incdtpriority_id, :incdtpriority_name, :incdtpriority_order, :incdtpriority_descrip, :incdtpriority_default);" );
   }
   else if (_mode == cEdit)
   {
@@ -149,7 +149,8 @@ void incidentPriority::sSave()
     incidentSave.prepare( "UPDATE incdtpriority "
                "SET incdtpriority_name=:incdtpriority_name, "
 	       "    incdtpriority_order=:incdtpriority_order, "
-	       "    incdtpriority_descrip=:incdtpriority_descrip "
+	       "    incdtpriority_descrip=:incdtpriority_descrip, "
+	       "    incdtpriority_default=:incdtpriority_default "
                "WHERE (incdtpriority_id=:incdtpriority_id);" );
   }
 
@@ -157,6 +158,7 @@ void incidentPriority::sSave()
   incidentSave.bindValue(":incdtpriority_name", _name->text());
   incidentSave.bindValue(":incdtpriority_order", _order->value());
   incidentSave.bindValue(":incdtpriority_descrip", _descrip->toPlainText());
+  incidentSave.bindValue(":incdtpriority_default", _default->isChecked());
   incidentSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Incident Priority"),
                                 incidentSave, __FILE__, __LINE__))
@@ -180,6 +182,7 @@ void incidentPriority::populate()
     _name->setText(incidentpopulate.value("incdtpriority_name").toString());
     _order->setValue(incidentpopulate.value("incdtpriority_order").toInt());
     _descrip->setText(incidentpopulate.value("incdtpriority_descrip").toString());
+    _default->setChecked(incidentpopulate.value("incdtpriority_default").toBool());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Incident Priority Information"),
                                 incidentpopulate, __FILE__, __LINE__))

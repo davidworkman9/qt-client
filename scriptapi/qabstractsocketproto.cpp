@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -12,13 +12,6 @@
 
 #define DEBUG false
 
-#if QT_VERSION < 0x050000
-void setupQAbstractSocketProto(QScriptEngine *engine)
-{
-  Q_UNUSED(engine);
-}
-#else
-
 QScriptValue QAbstractSockettoScriptValue(QScriptEngine *engine, QAbstractSocket* const &item)
 {
   return engine->newQObject(item);
@@ -28,11 +21,11 @@ void QAbstractSocketfromScriptValue(const QScriptValue &obj, QAbstractSocket* &i
   item = qobject_cast<QAbstractSocket*>(obj.toQObject());
 }
 
-QScriptValue BindFlagtoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::BindFlag &p)
+QScriptValue BindFlagToScriptValue(QScriptEngine *engine, const enum QAbstractSocket::BindFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
-void BindFlagfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::BindFlag &p)
+void BindFlagFromScriptValue(const QScriptValue &obj, enum QAbstractSocket::BindFlag &p)
 {
   p = (enum QAbstractSocket::BindFlag)obj.toInt32();
 }
@@ -99,26 +92,22 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQAbstractSocket, proto);
   engine->globalObject().setProperty("QAbstractSocket",  constructor);
 
-    // enum QAbstractSocket::BindFlag
-  qScriptRegisterMetaType(engine,               BindFlagtoScriptValue, BindFlagfromScriptValue);
-  constructor.setProperty("ShareAddress",       QScriptValue(engine,   QAbstractSocket::ShareAddress),       ENUMPROPFLAGS);
-  constructor.setProperty("DontShareAddress",   QScriptValue(engine,   QAbstractSocket::DontShareAddress),   ENUMPROPFLAGS);
-  constructor.setProperty("ReuseAddressHint",   QScriptValue(engine,   QAbstractSocket::ReuseAddressHint),   ENUMPROPFLAGS);
-  constructor.setProperty("DefaultForPlatform", QScriptValue(engine,   QAbstractSocket::DefaultForPlatform), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, BindFlagToScriptValue, BindFlagFromScriptValue);
+  constructor.setProperty("ShareAddress",       QScriptValue(engine, QAbstractSocket::ShareAddress),       ENUMPROPFLAGS);
+  constructor.setProperty("DontShareAddress",   QScriptValue(engine, QAbstractSocket::DontShareAddress),   ENUMPROPFLAGS);
+  constructor.setProperty("ReuseAddressHint",   QScriptValue(engine, QAbstractSocket::ReuseAddressHint),   ENUMPROPFLAGS);
+  constructor.setProperty("DefaultForPlatform", QScriptValue(engine, QAbstractSocket::DefaultForPlatform), ENUMPROPFLAGS);
 
-  // enum QAbstractSocket::NetworkLayerProtocol
-  qScriptRegisterMetaType(engine,                        NetworkLayerProtocoltoScriptValue, NetworkLayerProtocolfromScriptValue);
-  constructor.setProperty("IPv4Protocol",                QScriptValue(engine,               QAbstractSocket::IPv4Protocol),                ENUMPROPFLAGS);
-  constructor.setProperty("IPv6Protocol",                QScriptValue(engine,               QAbstractSocket::IPv6Protocol),                ENUMPROPFLAGS);
-  constructor.setProperty("AnyIPProtocol",               QScriptValue(engine,               QAbstractSocket::AnyIPProtocol),               ENUMPROPFLAGS);
-  constructor.setProperty("UnknownNetworkLayerProtocol", QScriptValue(engine,               QAbstractSocket::UnknownNetworkLayerProtocol), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, NetworkLayerProtocoltoScriptValue, NetworkLayerProtocolfromScriptValue);
+  constructor.setProperty("IPv4Protocol",                QScriptValue(engine, QAbstractSocket::IPv4Protocol),                ENUMPROPFLAGS);
+  constructor.setProperty("IPv6Protocol",                QScriptValue(engine, QAbstractSocket::IPv6Protocol),                ENUMPROPFLAGS);
+  constructor.setProperty("AnyIPProtocol",               QScriptValue(engine, QAbstractSocket::AnyIPProtocol),               ENUMPROPFLAGS);
+  constructor.setProperty("UnknownNetworkLayerProtocol", QScriptValue(engine, QAbstractSocket::UnknownNetworkLayerProtocol), ENUMPROPFLAGS);
 
-  // enum QAbstractSocket::PauseMode
-  qScriptRegisterMetaType(engine,             PauseModetoScriptValue,  PauseModefromScriptValue);
-  constructor.setProperty("PauseNever",       QScriptValue(engine,     QAbstractSocket::PauseNever),       ENUMPROPFLAGS);
-  constructor.setProperty("PauseOnSslErrors", QScriptValue(engine,     QAbstractSocket::PauseOnSslErrors), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, PauseModetoScriptValue,  PauseModefromScriptValue);
+  constructor.setProperty("PauseNever",       QScriptValue(engine, QAbstractSocket::PauseNever),       ENUMPROPFLAGS);
+  constructor.setProperty("PauseOnSslErrors", QScriptValue(engine, QAbstractSocket::PauseOnSslErrors), ENUMPROPFLAGS);
 
-  // enum QAbstractSocket::SocketError
   qScriptRegisterMetaType(engine, SocketErrortoScriptValue, SocketErrorfromScriptValue);
   constructor.setProperty("ConnectionRefusedError",           QScriptValue(engine, QAbstractSocket::ConnectionRefusedError),           ENUMPROPFLAGS);
   constructor.setProperty("RemoteHostClosedError",            QScriptValue(engine, QAbstractSocket::RemoteHostClosedError),            ENUMPROPFLAGS);
@@ -145,7 +134,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("TemporaryError",                   QScriptValue(engine, QAbstractSocket::TemporaryError),                   ENUMPROPFLAGS);
   constructor.setProperty("UnknownSocketError",               QScriptValue(engine, QAbstractSocket::UnknownSocketError),               ENUMPROPFLAGS);
 
-  // enum QAbstractSocket::SocketOption
   qScriptRegisterMetaType(engine, SocketOptiontoScriptValue, SocketOptionfromScriptValue);
   constructor.setProperty("LowDelayOption",                QScriptValue(engine, QAbstractSocket::LowDelayOption),                ENUMPROPFLAGS);
   constructor.setProperty("KeepAliveOption",               QScriptValue(engine, QAbstractSocket::KeepAliveOption),               ENUMPROPFLAGS);
@@ -155,7 +143,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("SendBufferSizeSocketOption",    QScriptValue(engine, QAbstractSocket::SendBufferSizeSocketOption),    ENUMPROPFLAGS);
   constructor.setProperty("ReceiveBufferSizeSocketOption", QScriptValue(engine, QAbstractSocket::ReceiveBufferSizeSocketOption), ENUMPROPFLAGS);
 
-  // enum QAbstractSocket::SocketState
   qScriptRegisterMetaType(engine, SocketStatetoScriptValue, SocketStatefromScriptValue);
   constructor.setProperty("UnconnectedState", QScriptValue(engine, QAbstractSocket::UnconnectedState), ENUMPROPFLAGS);
   constructor.setProperty("HostLookupState",  QScriptValue(engine, QAbstractSocket::HostLookupState),  ENUMPROPFLAGS);
@@ -165,10 +152,12 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("ClosingState",     QScriptValue(engine, QAbstractSocket::ClosingState),     ENUMPROPFLAGS);
   constructor.setProperty("ListeningState",   QScriptValue(engine, QAbstractSocket::ListeningState),   ENUMPROPFLAGS);
 
-  // enum QAbstractSocket::SocketType
   qScriptRegisterMetaType(engine,              SocketTypetoScriptValue,  SocketTypefromScriptValue);
   constructor.setProperty("TcpSocket",         QScriptValue(engine,      QAbstractSocket::TcpSocket),         ENUMPROPFLAGS);
   constructor.setProperty("UdpSocket",         QScriptValue(engine,      QAbstractSocket::UdpSocket),         ENUMPROPFLAGS);
+#if QT_VERSION >= 0x050900
+  constructor.setProperty("SctpSocket",        QScriptValue(engine,      QAbstractSocket::SctpSocket),        ENUMPROPFLAGS);
+#endif
   constructor.setProperty("UnknownSocketType", QScriptValue(engine,      QAbstractSocket::UnknownSocketType), ENUMPROPFLAGS);
 }
 
@@ -487,4 +476,3 @@ QString QAbstractSocketProto::toString() const
     return QString("QAbstractSocketProto()");
   return QString("QAbstractSocketProto(unknown)");
 }
-#endif

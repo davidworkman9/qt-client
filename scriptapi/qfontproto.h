@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -20,8 +20,16 @@ class QString;
 
 Q_DECLARE_METATYPE(QFont*)
 Q_DECLARE_METATYPE(QFont)
+Q_DECLARE_METATYPE(enum QFont::Capitalization)
+Q_DECLARE_METATYPE(enum QFont::HintingPreference)
+Q_DECLARE_METATYPE(enum QFont::SpacingType)
+Q_DECLARE_METATYPE(enum QFont::Stretch)
+Q_DECLARE_METATYPE(enum QFont::Style)
+Q_DECLARE_METATYPE(enum QFont::StyleHint)
+Q_DECLARE_METATYPE(enum QFont::StyleStrategy)
+Q_DECLARE_METATYPE(enum QFont::Weight)
 
-// this really belongs in qpaintdeviceproto.h
+// QFont::this really belongs in qpaintdeviceproto.h
 Q_DECLARE_METATYPE(QPaintDevice*)
 
 void setupQFontProto(QScriptEngine *engine);
@@ -40,9 +48,7 @@ class QFontProto : public QObject, public QScriptable
     Q_INVOKABLE bool    exactMatch()    const;
     Q_INVOKABLE QString family()        const;
     Q_INVOKABLE bool    fixedPitch()    const;
-    // Q_INVOKABLE FT_Face freetypeFace()  const;
     Q_INVOKABLE bool    fromString(const QString &descrip);
-    // Q_INVOKABLE HFONT   handle()        const;
     Q_INVOKABLE bool    isCopyOf(const QFont &f)        const;
     Q_INVOKABLE bool    italic()        const;
     Q_INVOKABLE bool    kerning()       const;
@@ -51,11 +57,6 @@ class QFontProto : public QObject, public QScriptable
     Q_INVOKABLE QString lastResortFont()        const;
     Q_INVOKABLE qreal   letterSpacing() const;
     Q_INVOKABLE int     letterSpacingType()    const;
-#if QT_VERSION < 5
-#ifdef Q_OS_MAC
-    Q_INVOKABLE quint32 macFontID()     const;
-#endif
-#endif
     Q_INVOKABLE bool    overline()      const;
     Q_INVOKABLE int     pixelSize()     const;
     Q_INVOKABLE int     pointSize()     const;

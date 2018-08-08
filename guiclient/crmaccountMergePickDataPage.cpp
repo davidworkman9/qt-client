@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -19,6 +19,7 @@
 #include "crmaccount.h"
 #include "errorReporter.h"
 #include "format.h"
+#include "storedProcErrorLookup.h"
 
 // funky struct[] here so we can be consistent in addColumn, select, & deselect
 static struct {
@@ -33,19 +34,15 @@ static struct {
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Name"),              -1, Qt::AlignLeft,   "crmacct_name",   "crmacctsel_mrg_crmacct_name",           false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Active"),     _ynColumn, Qt::AlignCenter, "crmacct_active", "crmacctsel_mrg_crmacct_active",         false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Type"),              -1, Qt::AlignLeft,   "crmacct_type",   "crmacctsel_mrg_crmacct_type",           false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Primary Contact"),   -1, Qt::AlignLeft,   "primary",        "crmacctsel_mrg_crmacct_cntct_id_1",     false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Secondary Contact"), -1, Qt::AlignLeft,   "secondary",      "crmacctsel_mrg_crmacct_cntct_id_2",     false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Owner"),   _orderColumn, Qt::AlignLeft,   "owner",          "crmacctsel_mrg_crmacct_owner_username", false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Parent"),  _orderColumn, Qt::AlignLeft,   "parent",         "crmacctsel_mrg_crmacct_parent_id",      false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Customer"),   _ynColumn, Qt::AlignCenter, "cust",           "crmacctsel_mrg_crmacct_cust_id",        false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Prospect"),   _ynColumn, Qt::AlignCenter, "prospect",       "crmacctsel_mrg_crmacct_prospect_id",    false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Vendor"),     _ynColumn, Qt::AlignCenter, "vend",           "crmacctsel_mrg_crmacct_vend_id",        false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Competitor"), _ynColumn, Qt::AlignCenter, "competitor",     "crmacctsel_mrg_crmacct_competitor_id",  false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Partner"),    _ynColumn, Qt::AlignCenter, "partner",        "crmacctsel_mrg_crmacct_partner_id",     false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Tax Auth."),  _ynColumn, Qt::AlignCenter, "taxauth",        "crmacctsel_mrg_crmacct_taxauth_id",     false },
+  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Customer"),   _ynColumn, Qt::AlignCenter, "cust",           "crmacctsel_mrg_custinfo",               false },
+  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Prospect"),   _ynColumn, Qt::AlignCenter, "prospect",       "crmacctsel_mrg_prospect",               false },
+  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Vendor"),     _ynColumn, Qt::AlignCenter, "vend",           "crmacctsel_mrg_vendinfo",               false },
+  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Tax Auth."),  _ynColumn, Qt::AlignCenter, "taxauth",        "crmacctsel_mrg_taxauth",                false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "User"),    _orderColumn, Qt::AlignCenter, "usr",            "crmacctsel_mrg_crmacct_usr_username",   false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Employee"),   _ynColumn, Qt::AlignCenter, "emp",            "crmacctsel_mrg_crmacct_emp_id",         false },
-  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Sales Rep"),  _ynColumn, Qt::AlignCenter, "salesrep",       "crmacctsel_mrg_crmacct_salesrep_id",    false },
+  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Employee"),   _ynColumn, Qt::AlignCenter, "emp",            "crmacctsel_mrg_emp",                    false },
+  { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Sales Rep"),  _ynColumn, Qt::AlignCenter, "salesrep",       "crmacctsel_mrg_salesrep",               false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Notes"),             -1, Qt::AlignLeft,   "notes",          "crmacctsel_mrg_crmacct_notes",          true  }
 };
 
@@ -91,16 +88,8 @@ CrmaccountMergePickDataPage::CrmaccountMergePickDataPage(QWidget *parent)
     _sources->addColumn(mergeUiDesc[i].title, mergeUiDesc[i].width,
                         mergeUiDesc[i].align,  true, mergeUiDesc[i].querycol);
 
-  connect(_deselect,             SIGNAL(clicked()), this, SLOT(sDeselect()));
-  connect(_select,               SIGNAL(clicked()), this, SLOT(sSelect()));
-  connect(_sources, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
-                          this, SLOT(sSelect(QTreeWidgetItem*, int)));
-  connect(_sources, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
   connect(_sources, SIGNAL(populateMenu(QMenu *, XTreeWidgetItem *)),
                this, SLOT(sPopulateMenu(QMenu *, XTreeWidgetItem *)));
-
-  _selectedColorIndicator->setStyleSheet(QString("* { color: %1; }")
-                                         .arg(namedColor("emphasis").name()));
 
   setCommitPage(true);
 }
@@ -156,8 +145,7 @@ bool CrmaccountMergePickDataPage::validatePage()
                                 tr("<p>Are you sure you want to merge the "
                                    "Accounts as described here?</p>"
                                    "<p>If you click YES then the merge will "
-                                   "be run immediately. You will have a chance "
-                                   "to undo it later.</p>"),
+                                   "be run immediately and cannot be undone.</p>"),
                                 QMessageBox::No | QMessageBox::Default,
                                 QMessageBox::Yes) == QMessageBox::No)
     return false;
@@ -167,34 +155,14 @@ bool CrmaccountMergePickDataPage::validatePage()
   mrgq.bindValue(":destid", _data->_destid);
   mrgq.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Merging"),
-                              mrgq, __FILE__, __LINE__))
+                            mrgq, __FILE__, __LINE__))
     return false;
 
   disconnect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
   omfgThis->sCrmAccountsUpdated(_data->_destid);
-  setField("_completedMerge", _data->_destnumber);
+  setField("_completedMerge", _data->_destid);
 
   return true;
-}
-
-void CrmaccountMergePickDataPage::sDeselect()
-{
-  MetaSQLQuery srcm("UPDATE crmacctsel"
-                    "   SET <? literal('colname') ?>=<? value('value') ?>"
-                    " WHERE (crmacctsel_src_crmacct_id=<? value('srcid') ?>);");
-
-  foreach(QModelIndex cell, _sources->selectionModel()->selectedIndexes())
-  {
-    ParameterList params;
-    params.append("colname", mergeUiDesc[cell.column()].mergecol);
-    params.append("value",   QVariant(false));
-    params.append("srcid",   _sources->topLevelItem(cell.row())->id());
-    XSqlQuery srcq = srcm.toQuery(params);
-    ErrorReporter::error(QtCriticalMsg, this, tr("Updating Merge Sources"),
-                         srcq, __FILE__, __LINE__);
-  }
-  _sources->selectionModel()->clear();
-  sFillList();
 }
 
 bool CrmaccountMergePickDataPage::sDelete()
@@ -267,12 +235,6 @@ void CrmaccountMergePickDataPage::sFillList()
     return;
 }
 
-void CrmaccountMergePickDataPage::sHandleButtons()
-{
-  _deselect->setEnabled(_sources->selectionModel()->selectedIndexes().size());
-  _select->setEnabled(_sources->selectionModel()->selectedIndexes().size());
-}
-
 void CrmaccountMergePickDataPage::sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *pItem)
 {
   Q_UNUSED(pItem);
@@ -288,62 +250,6 @@ void CrmaccountMergePickDataPage::sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *p
   menuItem = pMenu->addAction(tr("Delete Account"), this, SLOT(sDelete()));
   menuItem->setEnabled(pItem->id() != _data->_destid &&
                        _privileges->check("MaintainAllCRMAccounts"));
-}
-
-bool CrmaccountMergePickDataPage::sSelect(QTreeWidgetItem *pitem, int col, bool clearSelection)
-{
-  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(pitem);
-  if (! item)
-    return false;
-
-  MetaSQLQuery srcm("UPDATE crmacctsel"
-                    "   SET <? literal('colname') ?>=<? value('srcval') ?>"
-                    " WHERE (crmacctsel_src_crmacct_id=<? value('srcid') ?>);");
-  MetaSQLQuery destm("UPDATE crmacctsel"
-                     "   SET <? literal('colname') ?>=<? value('destval') ?>"
-                     " WHERE ((crmacctsel_dest_crmacct_id=<? value('destid') ?>)"
-                     "    AND (crmacctsel_src_crmacct_id!=<? value('srcid') ?>));");
-  ParameterList params;
-  params.append("colname", mergeUiDesc[col].mergecol);
-  params.append("srcval",  QVariant(true));
-  params.append("srcid",   item->id());
-  params.append("destval", QVariant(false));
-  params.append("destid",  item->altId());
-
-  XSqlQuery srcq = srcm.toQuery(params);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Updating Merge Sources"),
-                           srcq, __FILE__, __LINE__))
-    return false;
-
-  if (! mergeUiDesc[col].multiple)
-  {
-    XSqlQuery destq = destm.toQuery(params);
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Updating Merge Destination"),
-                             destq, __FILE__, __LINE__))
-      return false;
-  }
-
-  if (clearSelection)
-  {
-    _sources->selectionModel()->clear();
-    sFillList();
-  }
-
-  return true;
-}
-
-void CrmaccountMergePickDataPage::sSelect()
-{
-  foreach(QModelIndex cell, _sources->selectionModel()->selectedIndexes())
-  {
-    if (mergeUiDesc[cell.column()].mergecol.isEmpty())
-      continue;
-    sSelect(_sources->topLevelItem(cell.row()), cell.column(), false);
-  }
-
-  _sources->selectionModel()->clear();
-
-  sFillList();
 }
 
 void CrmaccountMergePickDataPage::sView()

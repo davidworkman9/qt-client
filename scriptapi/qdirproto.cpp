@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -284,6 +284,8 @@ void setupQDirProto(QScriptEngine *engine)
   constructor.setProperty("Drives",         QScriptValue(engine, QDir::Drives),         ENUMPROPFLAGS);
   constructor.setProperty("NoSymLinks",     QScriptValue(engine, QDir::NoSymLinks),     ENUMPROPFLAGS);
   constructor.setProperty("NoDotAndDotDot", QScriptValue(engine, QDir::NoDotAndDotDot), ENUMPROPFLAGS);
+  constructor.setProperty("NoDot",          QScriptValue(engine, QDir::NoDot),          ENUMPROPFLAGS);
+  constructor.setProperty("NoDotDot",       QScriptValue(engine, QDir::NoDotDot),       ENUMPROPFLAGS);
   constructor.setProperty("AllEntries",     QScriptValue(engine, QDir::AllEntries),     ENUMPROPFLAGS);
   constructor.setProperty("Readable",       QScriptValue(engine, QDir::Readable),       ENUMPROPFLAGS);
   constructor.setProperty("Writable",       QScriptValue(engine, QDir::Writable),       ENUMPROPFLAGS);
@@ -292,6 +294,7 @@ void setupQDirProto(QScriptEngine *engine)
   constructor.setProperty("Hidden",         QScriptValue(engine, QDir::Hidden),         ENUMPROPFLAGS);
   constructor.setProperty("System",         QScriptValue(engine, QDir::System),         ENUMPROPFLAGS);
   constructor.setProperty("CaseSensitive",  QScriptValue(engine, QDir::CaseSensitive),  ENUMPROPFLAGS);
+
   constructor.setProperty("Name",           QScriptValue(engine, QDir::Name),           ENUMPROPFLAGS);
   constructor.setProperty("Time",           QScriptValue(engine, QDir::Time),           ENUMPROPFLAGS);
   constructor.setProperty("Size",           QScriptValue(engine, QDir::Size),           ENUMPROPFLAGS);

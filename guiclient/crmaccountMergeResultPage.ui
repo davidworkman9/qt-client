@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -22,9 +22,6 @@ to be bound by its terms.</comment>
   </property>
   <property name="title">
    <string>Result of Merge</string>
-  </property>
-  <property name="subTitle">
-   <string>To keep this merge result, make sure Keep is selected below and click the Continue or Next Page button. To undo the merge, make sure the Undo button is selected and click Next Page or Continue.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
@@ -56,49 +53,6 @@ to be bound by its terms.</comment>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout"/>
      </widget>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="_sourceLit">
-     <property name="text">
-      <string>Source Accounts:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="XTreeWidget" name="_source">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QGroupBox" name="_nextStepGroup">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="1">
-       <widget class="QRadioButton" name="_undo">
-        <property name="text">
-         <string>Undo</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QRadioButton" name="_keep">
-        <property name="text">
-         <string>Keep</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

@@ -1,18 +1,91 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qfontproto.h"
 
 #include <QString>
 
 #define DEBUG false
+
+static QScriptValue CapitalizationToScriptValue(QScriptEngine *engine, const enum QFont::Capitalization &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void CapitalizationFromScriptValue(const QScriptValue &obj, enum QFont::Capitalization &p)
+{
+  p = (enum QFont::Capitalization)obj.toInt32();
+}
+
+static QScriptValue HintingPreferenceToScriptValue(QScriptEngine *engine, const enum QFont::HintingPreference &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void HintingPreferenceFromScriptValue(const QScriptValue &obj, enum QFont::HintingPreference &p)
+{
+  p = (enum QFont::HintingPreference)obj.toInt32();
+}
+
+static QScriptValue SpacingTypeToScriptValue(QScriptEngine *engine, const enum QFont::SpacingType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void SpacingTypeFromScriptValue(const QScriptValue &obj, enum QFont::SpacingType &p)
+{
+  p = (enum QFont::SpacingType)obj.toInt32();
+}
+
+static QScriptValue StretchToScriptValue(QScriptEngine *engine, const enum QFont::Stretch &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void StretchFromScriptValue(const QScriptValue &obj, enum QFont::Stretch &p)
+{
+  p = (enum QFont::Stretch)obj.toInt32();
+}
+
+static QScriptValue StyleToScriptValue(QScriptEngine *engine, const enum QFont::Style &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void StyleFromScriptValue(const QScriptValue &obj, enum QFont::Style &p)
+{
+  p = (enum QFont::Style)obj.toInt32();
+}
+
+static QScriptValue StyleHintToScriptValue(QScriptEngine *engine, const enum QFont::StyleHint &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void StyleHintFromScriptValue(const QScriptValue &obj, enum QFont::StyleHint &p)
+{
+  p = (enum QFont::StyleHint)obj.toInt32();
+}
+
+static QScriptValue StyleStrategyToScriptValue(QScriptEngine *engine, const enum QFont::StyleStrategy &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void StyleStrategyFromScriptValue(const QScriptValue &obj, enum QFont::StyleStrategy &p)
+{
+  p = (enum QFont::StyleStrategy)obj.toInt32();
+}
+
+static QScriptValue WeightToScriptValue(QScriptEngine *engine, const enum QFont::Weight &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void WeightFromScriptValue(const QScriptValue &obj, enum QFont::Weight &p)
+{
+  p = (enum QFont::Weight)obj.toInt32();
+}
 
 void setupQFontProto(QScriptEngine *engine)
 {
@@ -20,9 +93,87 @@ void setupQFontProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<QFont*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QFont>(),  proto);
 
-  QScriptValue constructor = engine->newFunction(constructQFont,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQFont, proto);
   engine->globalObject().setProperty("QFont", constructor);
+
+  qScriptRegisterMetaType(engine, CapitalizationToScriptValue, CapitalizationFromScriptValue);
+  constructor.setProperty("MixedCase",    QScriptValue(engine, QFont::MixedCase),    ENUMPROPFLAGS);
+  constructor.setProperty("AllUppercase", QScriptValue(engine, QFont::AllUppercase), ENUMPROPFLAGS);
+  constructor.setProperty("AllLowercase", QScriptValue(engine, QFont::AllLowercase), ENUMPROPFLAGS);
+  constructor.setProperty("SmallCaps",    QScriptValue(engine, QFont::SmallCaps),    ENUMPROPFLAGS);
+  constructor.setProperty("Capitalize",   QScriptValue(engine, QFont::Capitalize),   ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, HintingPreferenceToScriptValue, HintingPreferenceFromScriptValue);
+  constructor.setProperty("PreferDefaultHinting",  QScriptValue(engine, QFont::PreferDefaultHinting),  ENUMPROPFLAGS);
+  constructor.setProperty("PreferNoHinting",       QScriptValue(engine, QFont::PreferNoHinting),       ENUMPROPFLAGS);
+  constructor.setProperty("PreferVerticalHinting", QScriptValue(engine, QFont::PreferVerticalHinting), ENUMPROPFLAGS);
+  constructor.setProperty("PreferFullHinting",     QScriptValue(engine, QFont::PreferFullHinting),     ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, SpacingTypeToScriptValue, SpacingTypeFromScriptValue);
+  constructor.setProperty("PercentageSpacing", QScriptValue(engine, QFont::PercentageSpacing), ENUMPROPFLAGS);
+  constructor.setProperty("AbsoluteSpacing",   QScriptValue(engine, QFont::AbsoluteSpacing),   ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, StretchToScriptValue, StretchFromScriptValue);
+#if QT_VERSION >= 0x050800
+  constructor.setProperty("AnyStretch",     QScriptValue(engine, QFont::AnyStretch),     ENUMPROPFLAGS);
+#endif
+  constructor.setProperty("UltraCondensed", QScriptValue(engine, QFont::UltraCondensed), ENUMPROPFLAGS);
+  constructor.setProperty("ExtraCondensed", QScriptValue(engine, QFont::ExtraCondensed), ENUMPROPFLAGS);
+  constructor.setProperty("Condensed",      QScriptValue(engine, QFont::Condensed),      ENUMPROPFLAGS);
+  constructor.setProperty("SemiCondensed",  QScriptValue(engine, QFont::SemiCondensed),  ENUMPROPFLAGS);
+  constructor.setProperty("Unstretched",    QScriptValue(engine, QFont::Unstretched),    ENUMPROPFLAGS);
+  constructor.setProperty("SemiExpanded",   QScriptValue(engine, QFont::SemiExpanded),   ENUMPROPFLAGS);
+  constructor.setProperty("Expanded",       QScriptValue(engine, QFont::Expanded),       ENUMPROPFLAGS);
+  constructor.setProperty("ExtraExpanded",  QScriptValue(engine, QFont::ExtraExpanded),  ENUMPROPFLAGS);
+  constructor.setProperty("UltraExpanded",  QScriptValue(engine, QFont::UltraExpanded),  ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine,         StyleToScriptValue, StyleFromScriptValue);
+  constructor.setProperty("StyleNormal",  QScriptValue(engine, QFont::StyleNormal),  ENUMPROPFLAGS);
+  constructor.setProperty("StyleItalic",  QScriptValue(engine, QFont::StyleItalic),  ENUMPROPFLAGS);
+  constructor.setProperty("StyleOblique", QScriptValue(engine, QFont::StyleOblique), ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, StyleHintToScriptValue, StyleHintFromScriptValue);
+  constructor.setProperty("AnyStyle",   QScriptValue(engine, QFont::AnyStyle),   ENUMPROPFLAGS);
+  constructor.setProperty("SansSerif",  QScriptValue(engine, QFont::SansSerif),  ENUMPROPFLAGS);
+  constructor.setProperty("Helvetica",  QScriptValue(engine, QFont::Helvetica),  ENUMPROPFLAGS);
+  constructor.setProperty("Serif",      QScriptValue(engine, QFont::Serif),      ENUMPROPFLAGS);
+  constructor.setProperty("Times",      QScriptValue(engine, QFont::Times),      ENUMPROPFLAGS);
+  constructor.setProperty("TypeWriter", QScriptValue(engine, QFont::TypeWriter), ENUMPROPFLAGS);
+  constructor.setProperty("Courier",    QScriptValue(engine, QFont::Courier),    ENUMPROPFLAGS);
+  constructor.setProperty("OldEnglish", QScriptValue(engine, QFont::OldEnglish), ENUMPROPFLAGS);
+  constructor.setProperty("Decorative", QScriptValue(engine, QFont::Decorative), ENUMPROPFLAGS);
+  constructor.setProperty("Monospace",  QScriptValue(engine, QFont::Monospace),  ENUMPROPFLAGS);
+  constructor.setProperty("Fantasy",    QScriptValue(engine, QFont::Fantasy),    ENUMPROPFLAGS);
+  constructor.setProperty("Cursive",    QScriptValue(engine, QFont::Cursive),    ENUMPROPFLAGS);
+  constructor.setProperty("System",     QScriptValue(engine, QFont::System),     ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, StyleStrategyToScriptValue, StyleStrategyFromScriptValue);
+  constructor.setProperty("PreferDefault",       QScriptValue(engine, QFont::PreferDefault),       ENUMPROPFLAGS);
+  constructor.setProperty("PreferBitmap",        QScriptValue(engine, QFont::PreferBitmap),        ENUMPROPFLAGS);
+  constructor.setProperty("PreferDevice",        QScriptValue(engine, QFont::PreferDevice),        ENUMPROPFLAGS);
+  constructor.setProperty("PreferOutline",       QScriptValue(engine, QFont::PreferOutline),       ENUMPROPFLAGS);
+  constructor.setProperty("ForceOutline",        QScriptValue(engine, QFont::ForceOutline),        ENUMPROPFLAGS);
+  constructor.setProperty("NoAntialias",         QScriptValue(engine, QFont::NoAntialias),         ENUMPROPFLAGS);
+  constructor.setProperty("NoSubpixelAntialias", QScriptValue(engine, QFont::NoSubpixelAntialias), ENUMPROPFLAGS);
+  constructor.setProperty("PreferAntialias",     QScriptValue(engine, QFont::PreferAntialias),     ENUMPROPFLAGS);
+  constructor.setProperty("OpenGLCompatible",    QScriptValue(engine, QFont::OpenGLCompatible),    ENUMPROPFLAGS);
+  constructor.setProperty("NoFontMerging",       QScriptValue(engine, QFont::NoFontMerging),       ENUMPROPFLAGS);
+
+  constructor.setProperty("PreferMatch",         QScriptValue(engine, QFont::PreferMatch),         ENUMPROPFLAGS);
+  constructor.setProperty("PreferQuality",       QScriptValue(engine, QFont::PreferQuality),       ENUMPROPFLAGS);
+  constructor.setProperty("ForceIntegerMetrics", QScriptValue(engine, QFont::ForceIntegerMetrics), ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, WeightToScriptValue, WeightFromScriptValue);
+  constructor.setProperty("Thin",       QScriptValue(engine, QFont::Thin),       ENUMPROPFLAGS);
+  constructor.setProperty("ExtraLight", QScriptValue(engine, QFont::ExtraLight), ENUMPROPFLAGS);
+  constructor.setProperty("Light",      QScriptValue(engine, QFont::Light),      ENUMPROPFLAGS);
+  constructor.setProperty("Normal",     QScriptValue(engine, QFont::Normal),     ENUMPROPFLAGS);
+  constructor.setProperty("Medium",     QScriptValue(engine, QFont::Medium),     ENUMPROPFLAGS);
+  constructor.setProperty("DemiBold",   QScriptValue(engine, QFont::DemiBold),   ENUMPROPFLAGS);
+  constructor.setProperty("Bold",       QScriptValue(engine, QFont::Bold),       ENUMPROPFLAGS);
+  constructor.setProperty("ExtraBold",  QScriptValue(engine, QFont::ExtraBold),  ENUMPROPFLAGS);
+  constructor.setProperty("Black",      QScriptValue(engine, QFont::Black),      ENUMPROPFLAGS);
+
 }
 
 QScriptValue constructQFont(QScriptContext *context,
@@ -212,17 +363,7 @@ int QFontProto::letterSpacingType() const
     return item->letterSpacingType();
   return 0;
 }
-#if QT_VERSION < 5
-#ifdef Q_OS_MAC
-quint32 QFontProto::macFontID() const
-{
-  QFont *item = qscriptvalue_cast<QFont*>(thisObject());
-  if (item)
-    return item->macFontID();
-  return quint32();
-}
-#endif
-#endif
+
 bool QFontProto::overline() const
 {
   QFont *item = qscriptvalue_cast<QFont*>(thisObject());

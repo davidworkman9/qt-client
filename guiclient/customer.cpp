@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -48,18 +48,18 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   setupUi(this);
   _number->setShowInactive(true);
 
-  _todoList = new todoList(this, "todoList", Qt::Widget);
-  _todoListPage->layout()->addWidget(_todoList);
-  _todoList->setCloseVisible(false);
-  _todoList->setParameterWidgetVisible(false);
-  _todoList->setQueryOnStartEnabled(false);
-  _todoList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
-  _todoList->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
-  _todoList->list()->hideColumn("crmacct_number");
-  _todoList->list()->hideColumn("crmacct_name");
-  _todoList->_projects->setForgetful(true);
-  _todoList->_projects->setVisible(false);
-  _todoList->_projects->setChecked(false);
+  _taskList = new taskList(this, "taskList", Qt::Widget);
+  _taskListPage->layout()->addWidget(_taskList);
+  _taskList->setCloseVisible(false);
+  _taskList->setParameterWidgetVisible(false);
+  _taskList->setQueryOnStartEnabled(false);
+  _taskList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _taskList->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
+  _taskList->list()->hideColumn("crmacct_number");
+  _taskList->list()->hideColumn("crmacct_name");
+  _taskList->_projects->setForgetful(true);
+  _taskList->_projects->setVisible(false);
+  _taskList->_projects->setChecked(false);
 
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _contactsPage->layout()->addWidget(_contacts);
@@ -172,7 +172,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_custtype, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
 
   connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_todoListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_taskListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_notesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_commentsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_summaryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -452,14 +452,14 @@ void customer::setValid(bool valid)
       !_privileges->check("MaintainPersonalContacts") && !_privileges->check("ViewPersonalContacts"))
   {
     _contactsButton->setEnabled(false);
-    _todoListButton->setChecked(true);
+    _taskListButton->setChecked(true);
     sHandleButtons();
   }
-  if (!_privileges->check("MaintainAllToDoItems") && !_privileges->check("ViewAllToDoItems") &&
-      !_privileges->check("MaintainPersonalToDoItems") && !_privileges->check("ViewPersonalToDoItems"))
+  if (!_privileges->check("MaintainAllTaskItems") && !_privileges->check("ViewAllTaskItems") &&
+      !_privileges->check("MaintainPersonalTaskItems") && !_privileges->check("ViewPersonalTaskItems"))
   {
-    _todoListButton->setEnabled(false);
-    if (_todoListButton->isChecked())
+    _taskListButton->setEnabled(false);
+    if (_taskListButton->isChecked())
       _tab->setTabEnabled(_tab->indexOf(_crmTab),false);
   }
 
@@ -479,7 +479,7 @@ void customer::setValid(bool valid)
   if (!valid)
   {
     _documents->setId(-1);
-    _todoList->list()->clear();
+    _taskList->list()->clear();
     _contacts->list()->clear();
     _quotes->list()->clear();
     _orders->list()->clear();
@@ -1288,12 +1288,11 @@ void customer::populate()
 
   _notice = false;
   cust.prepare( "SELECT custinfo.*, "
-                "       cust_commprcnt, cust_discntprcnt,"
                 "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
                 "       COALESCE(cust_financecharge, true) AS financecharge,"
-                "       crmacct_id, crmacct_owner_username "
+                "       crmacct_owner_username "
                 "FROM custinfo LEFT OUTER JOIN "
-                "     crmacct ON (cust_id=crmacct_cust_id) "
+                "     crmacct ON (cust_crmacct_id=crmacct_id) "
                 "WHERE (cust_id=:cust_id);" );
   cust.bindValue(":cust_id", _custid);
   cust.exec();
@@ -1306,7 +1305,7 @@ void customer::populate()
     }
     setValid(true);
 
-    _crmacctid = cust.value("crmacct_id").toInt();
+    _crmacctid = cust.value("cust_crmacct_id").toInt();
     _crmowner = cust.value("crmacct_owner_username").toString();
     _crmacct->setEnabled(_crmacctid > 0 &&
                          (_privileges->check("MaintainAllCRMAccounts") ||
@@ -1382,7 +1381,7 @@ void customer::populate()
     _comments->setId(_crmacctid);
     _documents->setId(_crmacctid);
 
-    _todoList->parameterWidget()->setDefault(tr("Account"), _crmacctid, true);
+    _taskList->parameterWidget()->setDefault(tr("Account"), _crmacctid, true);
     _contacts->setCrmacctid(_crmacctid);
 
     _quotes->parameterWidget()->setDefault(tr("Customer"), _custid, true);
@@ -1644,8 +1643,8 @@ void customer::sFillList()
   {
     if (_contactsButton->isChecked())
       _contacts->sFillList();
-    else if (_todoListButton->isChecked())
-      _todoList->sFillList();
+    else if (_taskListButton->isChecked())
+      _taskList->sFillList();
   }
   else if (_tab->currentIndex() == _tab->indexOf(_salesTab))
   {
@@ -1706,7 +1705,14 @@ void customer::sLoadCrmAcct(int crmacctId)
   _corrCntct->setSearchAcct(_crmacctid);
 
   XSqlQuery getq;
-  getq.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
+  getq.prepare("SELECT crm.*, pc.crmacctcntctass_cntct_id AS cntct_id_1, "
+               "              sc.crmacctcntctass_cntct_id AS cntct_id_2 " 
+               "  FROM crmacct crm "
+               "  LEFT OUTER JOIN crmacctcntctass pc ON (crmacct_id=pc.crmacctcntctass_crmacct_id "
+               "                      AND pc.crmacctcntctass_crmrole_id=getcrmroleid('Primary')) "
+               "  LEFT OUTER JOIN crmacctcntctass sc ON (crmacct_id=sc.crmacctcntctass_crmacct_id "
+               "                      AND sc.crmacctcntctass_crmrole_id=getcrmroleid('Secondary')) "
+               "  WHERE (crmacct_id=:crmacct_id);");
   getq.bindValue(":crmacct_id", crmacctId);
   getq.exec();
   if (getq.first())
@@ -1720,8 +1726,8 @@ void customer::sLoadCrmAcct(int crmacctId)
 //    _number->setCanEdit(false);
     _name->setText(getq.value("crmacct_name").toString());
     _active->setChecked(getq.value("crmacct_active").toBool());
-    _billCntct->setId(getq.value("crmacct_cntct_id_1").toInt());
-    _corrCntct->setId(getq.value("crmacct_cntct_id_1").toInt());
+    _billCntct->setId(getq.value("cntct_id_1").toInt());
+    _corrCntct->setId(getq.value("cntct_id_2").toInt());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Account"),
                            getq, __FILE__, __LINE__))
@@ -1791,7 +1797,7 @@ void customer::sHandleButtons()
 
   if (_contactsButton->isChecked())
     _crmStack->setCurrentIndex(0);
-  else if (_todoListButton->isChecked())
+  else if (_taskListButton->isChecked())
     _crmStack->setCurrentIndex(1);
   else
     _crmStack->setCurrentIndex(2);
@@ -1853,16 +1859,16 @@ void customer::sIdChanged(int id)
   _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
 
   XSqlQuery qry;
-  qry.prepare("SELECT crmacct_id "
-                    "FROM crmacct "
-                    "WHERE crmacct_cust_id=:cust_id;" );
+  qry.prepare("SELECT cust_crmacct_id "
+                    "FROM custinfo "
+                    "WHERE cust_id=:cust_id;" );
   qry.bindValue(":cust_id", id);
   qry.exec();
 
   if(qry.first())
   {
     _contacts->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
-    _todoList->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+    _taskList->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
     _billCntct->setSearchAcct(qry.value("crmacct_id").toInt());
     _corrCntct->setSearchAcct(qry.value("crmacct_id").toInt());
   }
@@ -1939,7 +1945,7 @@ void customer::sClear()
     _charass->clear();
     _widgetStack->setCurrentIndex(0);
 
-    _todoList->parameterWidget()->setDefault(tr("Account"), -1, true);
+    _taskList->parameterWidget()->setDefault(tr("Account"), -1, true);
     _contacts->setCrmacctid(_crmacctid);
 
     _quotes->parameterWidget()->setDefault(tr("Customer"), -1, true);

@@ -400,9 +400,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
   {
     _custid = param.toInt();
     setSales.prepare("SELECT COALESCE(cust_preferred_warehous_id, -1) AS preferredwarehousid, "
-              "(cust_number || '-' || cust_name) as f_name, crmacct_id "
+              "(cust_number || '-' || cust_name) as f_name, cust_crmacct_id "
               "  FROM custinfo"
-              "  JOIN crmacct ON (crmacct_cust_id = cust_id) "
               " WHERE (cust_id=:cust_id); ");
     setSales.bindValue(":cust_id", _custid);
     setSales.exec();
@@ -411,7 +410,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       if (setSales.value("preferredwarehousid").toInt() != -1)
         _preferredWarehouseid = setSales.value("preferredwarehousid").toInt();
       _custName = setSales.value("f_name").toString();
-      _item->setCRMAcctId(setSales.value("crmacct_id").toInt());
+      _item->setCRMAcctId(setSales.value("cust_crmacct_id").toInt());
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
                                   setSales, __FILE__, __LINE__))
@@ -2215,8 +2214,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
                                     "            ELSE 1 END AS orderby "
                                     "FROM itemalias"
                                     " LEFT OUTER JOIN crmacct ON (itemalias_crmacct_id=crmacct_id)"
+                                    " LEFT OUTER JOIN custinfo ON (cust_crmacct_id=crmacct_id) "
                                     "WHERE (itemalias_item_id=:item_id)"
-                                    "  AND (crmacct_cust_id=:cust_id OR itemalias_crmacct_id IS NULL) "
+                                    "  AND (cust_id=:cust_id OR itemalias_crmacct_id IS NULL) "
                                     "ORDER BY orderby, itemalias_number;" );
       salesPopulateItemInfo.bindValue(":item_id", _item->id());
       salesPopulateItemInfo.bindValue(":cust_id", _custid);

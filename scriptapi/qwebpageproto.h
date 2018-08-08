@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -33,7 +33,6 @@
 #include <QWidget>
 
 Q_DECLARE_METATYPE(QWebPage*)
-//Q_DECLARE_METATYPE(QWebPage) // Is private in qwebpage.h
 
 Q_DECLARE_METATYPE(class QWebPage::ChooseMultipleFilesExtensionOption)
 Q_DECLARE_METATYPE(class QWebPage::ChooseMultipleFilesExtensionReturn)
@@ -50,9 +49,7 @@ Q_DECLARE_METATYPE(enum QWebPage::FindFlag)
 Q_DECLARE_METATYPE(enum QWebPage::LinkDelegationPolicy)
 Q_DECLARE_METATYPE(enum QWebPage::NavigationType)
 Q_DECLARE_METATYPE(enum QWebPage::PermissionPolicy)
-#if QT_VERSION >= 0x050000
 Q_DECLARE_METATYPE(enum QWebPage::VisibilityState)
-#endif
 Q_DECLARE_METATYPE(enum QWebPage::WebAction)
 Q_DECLARE_METATYPE(enum QWebPage::WebWindowType)
 
@@ -73,9 +70,7 @@ class QWebPageProto : public QObject, public QScriptable
   Q_PROPERTY (const QString selectedHtml                            READ selectedHtml)
   Q_PROPERTY (const QString selectedText                            READ selectedText)
   Q_PROPERTY (QSize viewportSize                                    READ viewportSize               WRITE setViewportSize)
-#if QT_VERSION >= 0x050000
   Q_PROPERTY (QWebPage::VisibilityState visibilityState             READ visibilityState            WRITE setVisibilityState)
-#endif
 
   public:
     QWebPageProto(QObject *parent);
@@ -114,9 +109,7 @@ class QWebPageProto : public QObject, public QScriptable
     Q_INVOKABLE void                            setPreferredContentsSize(const QSize & size) const;
     Q_INVOKABLE void                            setView(QWidget * view);
     Q_INVOKABLE void                            setViewportSize(const QSize & size) const;
-#if QT_VERSION >= 0x050000
     Q_INVOKABLE void                            setVisibilityState(QWebPage::VisibilityState);
-#endif
     Q_INVOKABLE QWebSettings                   *settings() const;
     Q_INVOKABLE virtual bool                    shouldInterruptJavaScript();
     Q_INVOKABLE QStringList                     supportedContentTypes() const;
@@ -130,9 +123,7 @@ class QWebPageProto : public QObject, public QScriptable
     Q_INVOKABLE QWidget                        *view() const;
     Q_INVOKABLE QWebPage::ViewportAttributes    viewportAttributesForSize(const QSize & availableSize) const;
     Q_INVOKABLE QSize                           viewportSize() const;
-#if QT_VERSION >= 0x050000
     Q_INVOKABLE QWebPage::VisibilityState       visibilityState() const;
-#endif
 
   // Reimplemented Public Functions
     Q_INVOKABLE bool                            event(QEvent * ev);

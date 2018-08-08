@@ -17,6 +17,8 @@
 
 Q_DECLARE_METATYPE(QIcon*)
 Q_DECLARE_METATYPE(QIcon)
+Q_DECLARE_METATYPE(enum QIcon::Mode)
+Q_DECLARE_METATYPE(enum QIcon::State)
 
 void setupQIconProto(QScriptEngine *engine);
 QScriptValue constructQIcon(QScriptContext *context, QScriptEngine *engine);

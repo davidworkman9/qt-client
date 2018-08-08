@@ -142,6 +142,29 @@ void displayPrivate::sFilterChanged()
   _filterChanged = true;
 }
 
+void displayPrivate::sSavedFilterApplied(int pFilter, QString pColumns)
+{
+  QString     savedString;
+  QStringList savedParts;
+  QString     part, key, val;
+  bool        _forgetfulCache;
+
+  // Have to turn off list forgetfulness otherwise we override user preferences
+  _forgetfulCache = _list->_forgetful;
+  if (!_list->_forgetful)
+    _list->sToggleForgetfulness();
+
+  savedString = pColumns != "" ? pColumns : _x_preferences->value(_list->_settingsName + "/columnsShown");
+  foreach(QString part, savedString.split("|", QString::SkipEmptyParts))
+  {
+    QStringList elem(part.split(","));
+    _list->setColumnVisible(_list->column(elem.at(0)), elem.at(1) == "on");
+  }
+
+  if (_forgetfulCache != _list->_forgetful)
+    _list->sToggleForgetfulness();
+}
+
 void displayPrivate::print(ParameterList pParams, bool showPreview, bool forceSetParams)
 {
   int numCopies = 1;
@@ -241,10 +264,15 @@ void displayPrivate::setupCharacteristics(QStringList uses)
     column = QString("char%1").arg(chars.value("char_id").toString());
     name = chars.value("char_name").toString();
     _list->addColumn(name, -1, Qt::AlignLeft , false, column );
-    if (chartype == characteristic::Text || chartype == characteristic::Number)
+    if (chartype == characteristic::Text)
     {
       _charidstext.append(chars.value("char_id").toInt());
       _parameterWidget->append(name, column, ParameterWidget::Text);
+    }
+    if (chartype == characteristic::Number)
+    {
+      _charidstext.append(chars.value("char_id").toInt());
+      _parameterWidget->append(name, column, ParameterWidget::Numeric);
     }
     else if (chartype == characteristic::List)
     {
@@ -424,6 +452,7 @@ void display::showEvent(QShowEvent * e)
   // don't overwrite the user's filter when the window is minimized
   if (! _data->_filterChanged)
   {
+    connect(parameterWidget(), SIGNAL(filterApplySaved(int, QString)), _data, SLOT(sSavedFilterApplied(int, QString)), Qt::UniqueConnection);
     parameterWidget()->applyDefaultFilterSet();
     connect(parameterWidget(), SIGNAL(filterChanged()), _data, SLOT(sFilterChanged()), Qt::UniqueConnection);
   }
@@ -537,6 +566,15 @@ void display::setupCharacteristics(QString uses)
   QStringList ulist;
   ulist << uses;
   _data->setupCharacteristics(ulist);
+}
+
+QString display::listColumnVisibility()
+{
+  QString savedString = "";
+  for (int i = 0; i < _data->_list->header()->count(); i++)
+    savedString.append(_data->_list->column(i) + "," + (_data->_list->header()->isSectionHidden(i) ? "off" : "on") + "|");
+
+  return savedString;
 }
 
 void display::setReportName(const QString & reportName)

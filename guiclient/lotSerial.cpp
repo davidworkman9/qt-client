@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -43,7 +43,7 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFl
     _reg->addColumn(tr("Name"        ),	      -1,   Qt::AlignLeft, true, "crmacct_name" );
     _reg->addColumn(tr("First Name"  ),        80,  Qt::AlignLeft, true, "cntct_first_name" );
     _reg->addColumn(tr("Last Name"   ),        80,  Qt::AlignLeft, true, "cntct_last_name" );
-    _reg->addColumn(tr("Phone"       ),        80,  Qt::AlignLeft, true, "cntct_phone" );
+    _reg->addColumn(tr("Phone"       ),        80,  Qt::AlignLeft, true, "contact_phone" );
   
     _changed=false;
 }
@@ -202,7 +202,8 @@ void lotSerial::sFillList()
   _charass->setId(_lotSerial->id());
   XSqlQuery lotFillList;
   lotFillList.prepare( "SELECT lsreg_id,lsreg_number,crmacct_number,crmacct_name,"
-             "  cntct_first_name,cntct_last_name,cntct_phone "
+             "  cntct_first_name,cntct_last_name, "
+             "  getcontactphone(cntct_id, 'Office') AS contact_phone "
              "FROM lsreg "
              "  LEFT OUTER JOIN crmacct ON (lsreg_crmacct_id=crmacct_id), "
              "  cntct "

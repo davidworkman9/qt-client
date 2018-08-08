@@ -90,7 +90,6 @@ void PermissionPolicyFromScriptValue(const QScriptValue &obj, QWebPage::Permissi
   item = (QWebPage::PermissionPolicy)obj.toInt32();
 }
 
-#if QT_VERSION >= 0x050000
 QScriptValue VisibilityStateToScriptValue(QScriptEngine *engine, const QWebPage::VisibilityState &item)
 {
   return engine->newVariant(item);
@@ -99,7 +98,6 @@ void VisibilityStateFromScriptValue(const QScriptValue &obj, QWebPage::Visibilit
 {
   item = (QWebPage::VisibilityState)obj.toInt32();
 }
-#endif
 
 QScriptValue WebActionToScriptValue(QScriptEngine *engine, const QWebPage::WebAction &item)
 {
@@ -130,13 +128,12 @@ void QWebPagefromScriptValue(const QScriptValue &obj, QWebPage* &item)
 
 void setupQWebPageProto(QScriptEngine *engine)
 {
+  scriptDeprecated("QWebPage will not be available in Qt 5.9");
   qScriptRegisterMetaType(engine, QWebPagetoScriptValue, QWebPagefromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebPageProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebPage*>(), proto);
-  // Not allowed. Is private in qwebpage.h
-  //engine->setDefaultPrototype(qMetaTypeId<QWebPage>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebPage,
                                                  proto);
@@ -160,11 +157,9 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("FindCaseSensitively", QScriptValue(engine, QWebPage::FindCaseSensitively), permanent);
   constructor.setProperty("FindWrapsAroundDocument", QScriptValue(engine, QWebPage::FindWrapsAroundDocument), permanent);
   constructor.setProperty("HighlightAllOccurrences", QScriptValue(engine, QWebPage::HighlightAllOccurrences), permanent);
-#if QT_VERSION >= 0x050000
   constructor.setProperty("FindAtWordBeginningsOnly", QScriptValue(engine, QWebPage::FindAtWordBeginningsOnly), permanent);
   constructor.setProperty("TreatMedialCapitalAsWordBeginning", QScriptValue(engine, QWebPage::TreatMedialCapitalAsWordBeginning), permanent);
   constructor.setProperty("FindBeginsInSelection", QScriptValue(engine, QWebPage::FindBeginsInSelection), permanent);
-#endif
 
   qScriptRegisterMetaType(engine, LinkDelegationPolicyToScriptValue, LinkDelegationPolicyFromScriptValue);
   constructor.setProperty("DontDelegateLinks", QScriptValue(engine, QWebPage::DontDelegateLinks), permanent);
@@ -184,21 +179,17 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("PermissionGrantedByUser", QScriptValue(engine, QWebPage::PermissionGrantedByUser), permanent);
   constructor.setProperty("PermissionDeniedByUser", QScriptValue(engine, QWebPage::PermissionDeniedByUser), permanent);
 
-#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, VisibilityStateToScriptValue, VisibilityStateFromScriptValue);
   constructor.setProperty("VisibilityStateVisible", QScriptValue(engine, QWebPage::VisibilityStateVisible), permanent);
   constructor.setProperty("VisibilityStateHidden", QScriptValue(engine, QWebPage::VisibilityStateHidden), permanent);
   constructor.setProperty("VisibilityStatePrerender", QScriptValue(engine, QWebPage::VisibilityStatePrerender), permanent);
   constructor.setProperty("VisibilityStateUnloaded", QScriptValue(engine, QWebPage::VisibilityStateUnloaded), permanent);
-#endif
 
   qScriptRegisterMetaType(engine, WebActionToScriptValue, WebActionFromScriptValue);
   constructor.setProperty("NoWebAction", QScriptValue(engine, QWebPage::NoWebAction), permanent);
   constructor.setProperty("OpenLink", QScriptValue(engine, QWebPage::OpenLink), permanent);
   constructor.setProperty("OpenLinkInNewWindow", QScriptValue(engine, QWebPage::OpenLinkInNewWindow), permanent);
-#if QT_VERSION >= 0x050000
   constructor.setProperty("OpenLinkInThisWindow", QScriptValue(engine, QWebPage::OpenLinkInThisWindow), permanent);
-#endif
   constructor.setProperty("OpenFrameInNewWindow", QScriptValue(engine, QWebPage::OpenFrameInNewWindow), permanent);
   constructor.setProperty("DownloadLinkToDisk", QScriptValue(engine, QWebPage::DownloadLinkToDisk), permanent);
   constructor.setProperty("CopyLinkToClipboard", QScriptValue(engine, QWebPage::CopyLinkToClipboard), permanent);
@@ -266,7 +257,6 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("AlignJustified", QScriptValue(engine, QWebPage::AlignJustified), permanent);
   constructor.setProperty("AlignLeft", QScriptValue(engine, QWebPage::AlignLeft), permanent);
   constructor.setProperty("AlignRight", QScriptValue(engine, QWebPage::AlignRight), permanent);
-#if QT_VERSION >= 0x050000
   constructor.setProperty("DownloadMediaToDisk", QScriptValue(engine, QWebPage::DownloadMediaToDisk), permanent);
   constructor.setProperty("CopyMediaUrlToClipboard", QScriptValue(engine, QWebPage::CopyMediaUrlToClipboard), permanent);
   constructor.setProperty("ToggleMediaControls", QScriptValue(engine, QWebPage::ToggleMediaControls), permanent);
@@ -274,7 +264,6 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("ToggleMediaPlayPause", QScriptValue(engine, QWebPage::ToggleMediaPlayPause), permanent);
   constructor.setProperty("ToggleMediaMute", QScriptValue(engine, QWebPage::ToggleMediaMute), permanent);
   constructor.setProperty("ToggleVideoFullscreen", QScriptValue(engine, QWebPage::ToggleVideoFullscreen), permanent);
-#endif
 
   qScriptRegisterMetaType(engine, WebWindowTypeToScriptValue, WebWindowTypeFromScriptValue);
   constructor.setProperty("WebBrowserWindow", QScriptValue(engine, QWebPage::WebBrowserWindow), permanent);
@@ -589,7 +578,6 @@ void QWebPageProto::setViewportSize(const QSize & size) const
     item->setViewportSize(size);
 }
 
-#if QT_VERSION >= 0x050000
 void QWebPageProto::setVisibilityState(QWebPage::VisibilityState state)
 {
   scriptDeprecated("QWebPage will not be available in a future version");
@@ -597,7 +585,6 @@ void QWebPageProto::setVisibilityState(QWebPage::VisibilityState state)
   if (item)
     item->setVisibilityState(state);
 }
-#endif
 
 QWebSettings* QWebPageProto::settings() const
 {
@@ -714,7 +701,6 @@ QSize QWebPageProto::viewportSize() const
   return QSize();
 }
 
-#if QT_VERSION >= 0x050000
 QWebPage::VisibilityState QWebPageProto::visibilityState() const
 {
   scriptDeprecated("QWebPage will not be available in a future version");
@@ -723,7 +709,6 @@ QWebPage::VisibilityState QWebPageProto::visibilityState() const
     return item->visibilityState();
   return QWebPage::VisibilityStateVisible; // don't know the best default
 }
-#endif
 
 // Reimplemented Public Functions
 bool QWebPageProto::event(QEvent * ev)

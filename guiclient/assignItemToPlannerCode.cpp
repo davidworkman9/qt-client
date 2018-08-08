@@ -46,8 +46,7 @@ void assignItemToPlannerCode::sAssign()
   errors << GuiErrorCheck(!_item->isValid(), _item,
                           tr("You must select a valid Item before continuing.") )
          << GuiErrorCheck(!_plannerCode->isValid(), _plannerCode,
-                          tr("You must select a Planner Code to assign before continuing.") )
-  ;
+                          tr("You must select a Planner Code to assign before continuing.") );
 
   if (GuiErrorCheck::reportErrors(this, tr("Missing Information"), errors))
       return;

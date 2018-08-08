@@ -15,7 +15,6 @@
 
 void setupQHostAddressProto(QScriptEngine *engine);
 
-#if QT_VERSION >= 0x050000
 #include <QAbstractSocket>
 #include <QHostAddress>
 #include <QScriptable>
@@ -24,6 +23,10 @@ void setupQHostAddressProto(QScriptEngine *engine);
 Q_DECLARE_METATYPE(QHostAddress*)
 Q_DECLARE_METATYPE(QHostAddress)
 Q_DECLARE_METATYPE(enum QHostAddress::SpecialAddress)
+#if QT_VERSION >= 0x050800
+Q_DECLARE_METATYPE(enum QHostAddress::ConversionModeFlag)
+Q_DECLARE_METATYPE(QHostAddress::ConversionMode)
+#endif
 
 QScriptValue constructQHostAddress(QScriptContext *context, QScriptEngine *engine);
 
@@ -56,5 +59,4 @@ class QHostAddressProto : public QObject, public QScriptable
 
 };
 
-#endif
 #endif

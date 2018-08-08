@@ -34,44 +34,84 @@
 
 #define DEBUG false
 
+bool crmaccount::userHasPriv(const int pMode, const int pId)
+{
+  if (_privileges->check("MaintainAllCRMAccounts"))
+    return true;
+  bool personalPriv = _privileges->check("MaintainPersonalCRMAccounts");
+  if(pMode==cView)
+  {
+    if(_privileges->check("ViewAllCRMAccounts"))
+      return true;
+    personalPriv = personalPriv || _privileges->check("ViewPersonalCRMAccounts");
+  }
+
+  if(pMode==cNew)
+    return personalPriv;
+  else
+  {
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (crmacct_owner_username, crmacct_usr_username) AS canModify "
+                           "FROM crmacct "
+                            "WHERE (crmacct_id=:crmacct_id);" );
+    usernameCheck.bindValue(":crmacct_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
+  }
+}
+
 crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  _todoList = new todoList(this, "todoList", Qt::Widget);
-  _todoListTab->layout()->addWidget(_todoList);
-  _todoList->setCloseVisible(false);
-  _todoList->list()->hideColumn("crmacct_number");
-  _todoList->list()->hideColumn("crmacct_name");
-  _todoList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
-  _todoList->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
-  _todoList->setParameterWidgetVisible(false);
-  _todoList->setQueryOnStartEnabled(false);
-  _todoList->_projects->setForgetful(true);
-  _todoList->_projects->setVisible(false);
-  _todoList->_projects->setChecked(false);
+  _taskList = new taskList(this, "taskList", Qt::Widget);
+  _taskListTab->layout()->addWidget(_taskList);
+  _taskList->setCloseVisible(false);
+  _taskList->list()->hideColumn("crmacct_number");
+  _taskList->list()->hideColumn("crmacct_name");
+  _taskList->list()->hideColumn("parent");
+  _taskList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _taskList->parameterWidget()->append("hasContext", "hasContext", ParameterWidget::Exists, true);
+  _taskList->setParameterWidgetVisible(false);
+  _taskList->setQueryOnStartEnabled(false);
+  _taskList->setParent("CRMA");
+
+  ParameterList params;
+  params.append("showRole", true);
 
   _contacts = new contacts(this, "contacts", Qt::Widget);
-  _allPage->layout()->addWidget(_contacts);
+  _contactsPlaceholder->addWidget(_contacts);
   _contacts->setCloseVisible(false);
   _contacts->list()->hideColumn("crmacct_number");
   _contacts->list()->hideColumn("crmacct_name");
-  _contacts->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
+  _contacts->parameterWidget()->append("hasContext", "hasContext", ParameterWidget::Exists, true);
   _contacts->setParameterWidgetVisible(false);
   _contacts->setQueryOnStartEnabled(false);
+  _contacts->set(params);
+
+  _addresses = new addresses(this, "addresses", Qt::Widget);
+  _addressesPlaceholder->addWidget(_addresses);
+  _addresses->setCloseVisible(false);
+  _addresses->parameterWidget()->append("hasContext", "hasContext", ParameterWidget::Exists, true);
+  _addresses->setParameterWidgetVisible(false);
+  _addresses->setQueryOnStartEnabled(false);
+  _addresses->set(params);
 
   _owner->setUsername(omfgThis->username());
   _owner->setType(UsernameLineEdit::UsersActive);
 
+  connect(_addrAdd,             SIGNAL(clicked()), this, SLOT(sAddAddress()));
   connect(_close,               SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_competitor,          SIGNAL(clicked()), this, SLOT(sCompetitor()));
+  connect(_cntctAdd,            SIGNAL(clicked()), this, SLOT(sAddContact()));
   connect(_customerButton,      SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_deleteReg,           SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_editReg,             SIGNAL(clicked()), this, SLOT(sEditReg()));
   connect(_employeeButton,      SIGNAL(clicked()), this, SLOT(sEmployee()));
   connect(_newReg,              SIGNAL(clicked()), this, SLOT(sNewReg()));
-  connect(_partner,             SIGNAL(clicked()), this, SLOT(sPartner()));
   connect(_prospectButton,      SIGNAL(clicked()), this, SLOT(sProspect()));
   connect(_salesrepButton,      SIGNAL(clicked()), this, SLOT(sSalesRep()));
   connect(_save,                SIGNAL(clicked()), this, SLOT(sSave()));
@@ -89,11 +129,10 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
   connect(_number, SIGNAL(editingFinished()), this, SLOT(sCheckNumber()));
-  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));         
-  connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));       
-  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_contacts, SIGNAL(cntctDetached(int)), this, SLOT(sHandleCntctDetach(int)));
+  connect(_contactButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));         
+  connect(_addressButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));       
 
+  _comments->setType("CRMA");
   _charass->setType("CRMACCT");
 
   _reg->addColumn(tr("Lot/Serial")  ,  _itemColumn,  Qt::AlignLeft, true, "ls_number" );
@@ -110,10 +149,8 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _NumberGen    = -1;
   _mode         = cView;
   _crmacctId    = -1;   // TODO: setId(-1)?
-  _competitorId = -1;
   _custId       = -1;
   _empId        = -1;
-  _partnerId    = -1;
   _prospectId   = -1;
   _salesrepId   = -1;
   _taxauthId    = -1;
@@ -143,6 +180,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _active->setFocusPolicy(Qt::NoFocus);
   }
 
+  setupAdditionalRoles();
 }
 
 crmaccount::~crmaccount()
@@ -198,8 +236,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
         setId(insq.value("result").toInt());
         if (_NumberGen <= 0)
           _number->clear();     // don't show TEMPORARY#
-        _primary->setSearchAcct(-1);
-        _secondary->setSearchAcct(-1);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this,
                              tr("Error creating Initial Account"), insq,
@@ -229,7 +265,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
            why don't scripts just call setCurrentIndex if they care?
    */
   if(pParams.inList("scripted"))
-    _tab->setCurrentIndex(_tab->indexOf(_todoListTab));
+    _tab->setCurrentIndex(_tab->indexOf(_taskListTab));
 
   if (_mode == cEdit && !_lock.acquire("crmacct", _crmacctId, AppLock::Interactive))
   {
@@ -276,6 +312,30 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   return NoError;
 }
 
+void crmaccount::setupAdditionalRoles()
+{
+  XSqlQuery roles;
+  
+  roles.prepare("SELECT crmrole_id, crmrole_name FROM crmrole " 
+                "WHERE crmrole_crmacct ORDER BY crmrole_name");
+  roles.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this,
+                           tr("Error retrieving CRM Roles"),
+                             roles, __FILE__, __LINE__))
+     return;
+
+  int rowid = 0;
+  while (roles.next())
+  {
+    _roles[roles.value("crmrole_name").toString()] = roles.value("crmrole_id").toInt();
+    QCheckBox *cb = new QCheckBox(roles.value("crmrole_name").toString(), this);
+    cb->setObjectName(QString("_role%1").arg(roles.value("crmrole_id").toInt()));
+    additionalRoles->addWidget(cb, rowid, 0);
+
+    rowid++;
+  }
+}
+
 void crmaccount::setViewMode()
 {
   bool canEdit = (_mode == cNew || _mode == cEdit);
@@ -290,9 +350,10 @@ void crmaccount::setViewMode()
   _number->setEnabled(canEdit && _metrics->value("CRMAccountNumberGeneration") != "A");
   _owner->setEnabled(canEdit  && _privileges->check("EditOwner"));
   _parentCrmacct->setEnabled(canEdit);
-  _primary->setEnabled(canEdit);
-  _secondary->setEnabled(canEdit);
   _typeBox->setEnabled(canEdit);
+  _contactPage->setEnabled(canEdit);
+  _contactGroupBox->setVisible(canEdit);
+  _addressPage->setEnabled(canEdit);
 
   if (_mode == cView)
   {
@@ -324,9 +385,9 @@ void crmaccount::sClose()
     XSqlQuery begin("BEGIN;");
 
     XSqlQuery detachq;
-    detachq.prepare("SELECT MIN(detachContact(cntct_id, :crmacct_id)) AS returnVal "
-              "FROM cntct "
-              "WHERE (cntct_crmacct_id=:crmacct_id);");
+    detachq.prepare("SELECT MIN(detachContact(crmacctcntctass_cntct_id, crmacctcntctass_crmacct_id)) AS returnVal "
+              "FROM crmacctcntctass "
+              "WHERE (crmacctcntctass_crmacct_id=:crmacct_id);");
     detachq.bindValue(":crmacct_id", _crmacctId);
     detachq.exec();
     if (detachq.first())
@@ -336,7 +397,7 @@ void crmaccount::sClose()
       {
         rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this,
-                             tr("Error detaching Contact from Account."),
+                             tr("Error detaching Contacts from Account."),
                              storedProcErrorLookup("detachContact", returnVal),
                              __FILE__, __LINE__);
         return;
@@ -438,7 +499,7 @@ void crmaccount::sSave()
     return;
 
   QString incomplete = tr("The %1 relationship is selected but no appropriate "
-                          "data have been created. Either click the %2 button "
+                          "data has been created. Either click the %2 button "
                           " to enter the data or unselect the check box.");
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck(numberIsUsed, _number,
@@ -557,6 +618,32 @@ void crmaccount::sSave()
     return;
   }
 
+  XSqlQuery addq;
+  foreach (int i, _roles) 
+  {
+    QCheckBox *cRole   = findChild<QCheckBox*>(QString("_role%1").arg(i));
+    if (cRole->isChecked())
+      addq.prepare("INSERT INTO crmacctrole (crmacctrole_crmacct_id, crmacctrole_crmrole_id) "
+                   " SELECT :crmacct, :crmrole "
+                   " WHERE NOT EXISTS ( SELECT 1 FROM crmacctrole "
+                   "                    WHERE crmacctrole_crmacct_id=:crmacct "
+                   "                      AND crmacctrole_crmrole_id=:crmrole );" );
+    else
+      addq.prepare("DELETE FROM crmacctrole "
+                   "WHERE crmacctrole_crmacct_id=:crmacct "
+                   "  AND crmacctrole_crmrole_id=:crmrole;" );
+    addq.bindValue(":crmacct", _crmacctId);
+    addq.bindValue(":crmrole", i);
+    addq.exec();
+    if (err.type() != QSqlError::NoError)
+    {
+      rollback.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
+                         addq, __FILE__, __LINE__);
+      return;
+    }
+  }
+ 
   XSqlQuery commit("COMMIT;");
   _NumberGen = -1;
   if (commit.lastError().type() != QSqlError::NoError)
@@ -597,18 +684,8 @@ QSqlError crmaccount::saveNoErrorCheck(bool pInTxn)
                   "    crmacct_parent_id=:crmacct_parent_id,"
                   "    crmacct_active=:crmacct_active,"
                   "    crmacct_type=:crmacct_type,"
-                  "    crmacct_cust_id=:crmacct_cust_id,"
-                  "    crmacct_competitor_id=:crmacct_competitor_id,"
-                  "    crmacct_partner_id=:crmacct_partner_id,"
-                  "    crmacct_prospect_id=:crmacct_prospect_id,"
-                  "    crmacct_taxauth_id=:crmacct_taxauth_id,"
-                  "    crmacct_vend_id=:crmacct_vend_id,"
-                  "    crmacct_cntct_id_1=:crmacct_cntct_id_1,"
-                  "    crmacct_cntct_id_2 =:crmacct_cntct_id_2,"
                   "    crmacct_owner_username =:crmacct_owner_username,"
                   "    crmacct_notes=:crmacct_notes,"
-                  "    crmacct_emp_id=:crmacct_emp_id,"
-                  "    crmacct_salesrep_id=:crmacct_salesrep_id,"
                   "    crmacct_usr_username=:crmacct_usr_username"
                   " WHERE (crmacct_id=:crmacct_id);" );
 
@@ -619,28 +696,8 @@ QSqlError crmaccount::saveNoErrorCheck(bool pInTxn)
   updateq.bindValue(":crmacct_type",    _organization->isChecked() ? "O" : "I");
   updateq.bindValue(":crmacct_notes",   _notes->toPlainText());
 
-  if (_custId > 0)
-    updateq.bindValue(":crmacct_cust_id",        _custId);
-  if (_competitorId > 0)
-    updateq.bindValue(":crmacct_competitor_id",  _competitorId);
-  if (_partnerId > 0)
-    updateq.bindValue(":crmacct_partner_id",     _partnerId);
-  if (_prospectId > 0)
-    updateq.bindValue(":crmacct_prospect_id",    _prospectId);
-  if (_taxauthId > 0)
-    updateq.bindValue(":crmacct_taxauth_id",     _taxauthId);
-  if (_vendId > 0)
-    updateq.bindValue(":crmacct_vend_id",        _vendId);
-  if (_primary->id() > 0)
-    updateq.bindValue(":crmacct_cntct_id_1",     _primary->id());
-  if (_secondary->id() > 0)
-    updateq.bindValue(":crmacct_cntct_id_2",     _secondary->id());
   if (_parentCrmacct->id() > 0)
     updateq.bindValue(":crmacct_parent_id",      _parentCrmacct->id());
-  if (_empId > 0)
-    updateq.bindValue(":crmacct_emp_id",         _empId);
-  if (_salesrepId > 0)
-    updateq.bindValue(":crmacct_salesrep_id",    _salesrepId);
   if (! _username.isEmpty())
     updateq.bindValue(":crmacct_usr_username",   _username);
   if (! _owner->username().isEmpty())
@@ -663,8 +720,9 @@ int crmaccount::id()
 void crmaccount::setId(int id)
 {
   _crmacctId = id;
-  _todoList->parameterWidget()->setDefault(tr("Account"), _crmacctId, true);
+  _taskList->parameterWidget()->setDefault(tr("Account"), _crmacctId, true);
   _contacts->setCrmacctid(_crmacctId);
+  _addresses->setCrmacctid(_crmacctId);
   _charass->setId(_crmacctId);
   sPopulate();
 
@@ -677,7 +735,15 @@ void crmaccount::setId(int id)
 void crmaccount::sPopulate()
 {
   XSqlQuery getq;
-  getq.prepare( "SELECT *, userCanCreateUsers(getEffectiveXtUser()) AS cancreateusers "
+  XSqlQuery getr;
+  getq.prepare( "SELECT *, userCanCreateUsers(getEffectiveXtUser()) AS cancreateusers, "
+             "  (crmacctTypes(crmacct_id)#>>'{customer}')::INT AS customer,  "
+             "  (crmacctTypes(crmacct_id)#>>'{employee}')::INT AS employee, "
+             "  (crmacctTypes(crmacct_id)#>>'{prospect}')::INT AS prospect, "
+             "  (crmacctTypes(crmacct_id)#>>'{salesrep}')::INT AS salesrep, "
+             "  (crmacctTypes(crmacct_id)#>>'{taxauth}')::INT AS taxauth, "
+             "  (crmacctTypes(crmacct_id)#>>'{user}') AS user, "
+             "  (crmacctTypes(crmacct_id)#>>'{vendor}')::INT AS vendor "
              "FROM crmacct "
              "WHERE (crmacct_id=:crmacct_id);" );
   getq.bindValue(":crmacct_id", _crmacctId);
@@ -698,28 +764,32 @@ void crmaccount::sPopulate()
                qPrintable(acctType));
 
     _canCreateUsers = getq.value("cancreateusers").toBool();
-    _competitorId = getq.value("crmacct_competitor_id").toInt();
-    _custId     = getq.value("crmacct_cust_id").toInt();
-    _empId      = getq.value("crmacct_emp_id").toInt();
-    _partnerId  = getq.value("crmacct_partner_id").toInt();
-    _prospectId = getq.value("crmacct_prospect_id").toInt();
-    _salesrepId = getq.value("crmacct_salesrep_id").toInt();
-    _taxauthId  = getq.value("crmacct_taxauth_id").toInt();
-    _username   = getq.value("crmacct_usr_username").toString();
-    _vendId     = getq.value("crmacct_vend_id").toInt();
+    _custId     = getq.value("customer").toInt();
+    _empId      = getq.value("employee").toInt();
+    _prospectId = getq.value("prospect").toInt();
+    _salesrepId = getq.value("salesrep").toInt();
+    _taxauthId  = getq.value("taxauth").toInt();
+    _username   = getq.value("user").toString();
+    _vendId     = getq.value("vendor").toInt();
 
-    _primary->setId(getq.value("crmacct_cntct_id_1").toInt());
-    _secondary->setId(getq.value("crmacct_cntct_id_2").toInt());
     _notes->setText(getq.value("crmacct_notes").toString());
     _parentCrmacct->setId(getq.value("crmacct_parent_id").toInt());
     _comments->setId(_crmacctId);
     _documents->setId(_crmacctId);
     _charass->setId(_crmacctId);
-    _primary->setSearchAcct(_crmacctId);
-    _secondary->setSearchAcct(_crmacctId);
     _owner->setUsername(getq.value("crmacct_owner_username").toString());
 
     sHandleChildButtons();
+
+    getr.prepare("SELECT crmacctrole_crmrole_id FROM crmacctrole "
+                 "WHERE crmacctrole_crmacct_id=:crmacct_id;");
+    getr.bindValue(":crmacct_id", _crmacctId);
+    getr.exec();
+    while(getr.next())
+    {
+      QCheckBox *cb = findChild<QCheckBox*>(QString("_role%1").arg(getr.value("crmacctrole_crmrole_id").toInt()));
+      cb->setChecked(true);
+    }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this,
                                 tr("Error reading the Account"),
@@ -732,10 +802,8 @@ void crmaccount::sPopulate()
 
     _NumberGen    = -1;
     _crmacctId    = -1;
-    _competitorId = -1;
     _custId       = -1;
     _empId        = -1;
-    _partnerId    = -1;
     _prospectId   = -1;
     _salesrepId   = -1;
     _taxauthId    = -1;
@@ -751,12 +819,8 @@ void crmaccount::sPopulate()
 
   sPopulateRegistrations();
   _contacts->sFillList();
-  _todoList->sFillList();
-}
-
-void crmaccount::sCompetitor()
-{
-  _competitorId = (_competitor->isChecked() ? 1 : 0);
+  _addresses->sFillList();
+  _taskList->sFillList();
 }
 
 void crmaccount::sCustomer()
@@ -842,11 +906,6 @@ void crmaccount::sCustomer()
   customer *newdlg = new customer(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-}
-
-void crmaccount::sPartner()
-{
-  _partnerId = (_partner->isChecked() ? 1 : 0);
 }
 
 void crmaccount::sProspect()
@@ -999,22 +1058,28 @@ void crmaccount::sUpdateRelationships()
     qDebug("crmaccount::sUpdateRelationships() entered");
 
   XSqlQuery getq;
-  getq.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
+  getq.prepare("SELECT *, "
+               "  (crmacctTypes(crmacct_id)#>>'{customer}')::INT AS customer,  "
+               "  (crmacctTypes(crmacct_id)#>>'{employee}')::INT AS employee, "
+               "  (crmacctTypes(crmacct_id)#>>'{prospect}')::INT AS prospect, "
+               "  (crmacctTypes(crmacct_id)#>>'{salesrep}')::INT AS salesrep, "
+               "  (crmacctTypes(crmacct_id)#>>'{taxauth}')::INT AS taxauth, "
+               "  (crmacctTypes(crmacct_id)#>>'{user}') AS user, "
+               "  (crmacctTypes(crmacct_id)#>>'{vendor}')::INT AS vendor "
+               " FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
   getq.bindValue(":crmacct_id", _crmacctId);
   getq.exec();
   if (getq.first())
   {
     _number->setText(getq.value("crmacct_number").toString());
     _name->setText(getq.value("crmacct_name").toString());
-    _competitorId = getq.value("crmacct_competitor_id").toInt();
-    _custId     = getq.value("crmacct_cust_id").toInt();
-    _empId      = getq.value("crmacct_emp_id").toInt();
-    _partnerId  = getq.value("crmacct_partner_id").toInt();
-    _prospectId = getq.value("crmacct_prospect_id").toInt();
-    _salesrepId = getq.value("crmacct_salesrep_id").toInt();
-    _taxauthId  = getq.value("crmacct_taxauth_id").toInt();
-    _username   = getq.value("crmacct_usr_username").toString();
-    _vendId     = getq.value("crmacct_vend_id").toInt();
+    _custId     = getq.value("customer").toInt();
+    _empId      = getq.value("employee").toInt();
+    _prospectId = getq.value("prospect").toInt();
+    _salesrepId = getq.value("salesrep").toInt();
+    _taxauthId  = getq.value("taxauth").toInt();
+    _username   = getq.value("user").toString();
+    _vendId     = getq.value("vendor").toInt();
 
     sHandleChildButtons();
     _owner->setUsername(getq.value("crmacct_owner_username").toString());
@@ -1189,12 +1254,12 @@ void crmaccount::closeEvent(QCloseEvent *pEvent)
 
 void crmaccount::sHandleButtons()       
 {       
-  if (_primaryButton->isChecked())      
-    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_primaryPage));         
-  else if (_secondaryButton->isChecked())       
-    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_secondaryPage));       
+  if (_contactButton->isChecked())      
+    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_contactPage));         
+  else if (_addressButton->isChecked())       
+    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_addressPage));       
   else  
-    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_allPage));     
+    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_contactPage));     
 }
 
 void crmaccount::sHandleChildButtons()
@@ -1202,16 +1267,12 @@ void crmaccount::sHandleChildButtons()
   bool canEdit = (_mode == cNew || _mode == cEdit);
 
   if (DEBUG)
-    qDebug("sHandleChildButtons() entered with competitor %d, customer %d, "
-           "employee %d, partner %d, prospect %d, salesrep %d, taxauth %d, "
+    qDebug("sHandleChildButtons() entered with customer %d, "
+           "employee %d, prospect %d, salesrep %d, taxauth %d, "
            "user %s, vendor %d\tcanEdit %d and _modal %d",
-           _competitorId, _custId, _empId, _partnerId, _prospectId,
+           _custId, _empId, _prospectId,
            _salesrepId, _taxauthId, qPrintable(_username), _vendId,
            canEdit, _modal);
-
-  _competitor->setChecked(_competitorId > 0);
-  _competitor->setEnabled(canEdit &&
-                          _privileges->check("MaintainCompetitorMasters"));
 
   _customer->setChecked(_custId > 0);
   _customer->setEnabled(canEdit && !_modal &&
@@ -1228,9 +1289,6 @@ void crmaccount::sHandleChildButtons()
                               ! (parent() && parent()->inherits("employee")) &&
                               (_privileges->check("MaintainEmployees") ||
                                _privileges->check("ViewEmployees")));
-
-  _partner->setChecked(_partnerId > 0);
-  _partner->setEnabled(canEdit && _privileges->check("MaintainPartners"));
 
   _prospect->setChecked(_prospectId > 0);
   _prospect->setEnabled(canEdit && !_modal &&
@@ -1289,12 +1347,63 @@ void crmaccount::sHandleChildButtons()
     _vendorButton->setEnabled(false);
 }
 
-void crmaccount::sHandleCntctDetach(int cntctId)
+void crmaccount::sAddAddress()
 {
-  if (_primary->id() == cntctId)
-    _primary->clear();
-  if (_secondary->id() == cntctId)
-    _secondary->clear();
+  XSqlQuery adda;
+  QList<GuiErrorCheck> errors;
+
+  if ( !_address->isValid())
+    _address->save(AddressCluster::CHECK);
+
+  errors<< GuiErrorCheck(!_addrRole->isValid(), _addrRole,
+                         tr("Please first select a Role."))
+        <<  GuiErrorCheck(!_address->isValid(), _address,
+                         tr("Please first select an Address."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Add Address"), errors))
+    return;
+
+  adda.prepare("INSERT INTO crmacctaddrass (crmacctaddrass_crmacct_id, crmacctaddrass_addr_id, "
+               "                             crmacctaddrass_crmrole_id, crmacctaddrass_default)  "
+               " SELECT :crmacct_id, :addr_id, :crmrole_id, :default "
+               " ON CONFLICT DO NOTHING; ");
+  adda.bindValue(":crmacct_id", _crmacctId);
+  adda.bindValue(":addr_id",   _address->id());
+  adda.bindValue(":crmrole_id", _addrRole->id());
+  adda.bindValue(":default",   _addrDefault->isChecked());
+  adda.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error assigning Address"),
+                           adda, __FILE__, __LINE__))
+      return;
+  _addresses->sFillList();
+}
+
+void crmaccount::sAddContact()
+{
+  XSqlQuery addc;
+  QList<GuiErrorCheck> errors;
+
+  errors<< GuiErrorCheck(!_cntctRole->isValid(), _cntctRole,
+                         tr("Please first select a Role."))
+        <<  GuiErrorCheck(!_contact->isValid(), _contact,
+                         tr("Please first select a Contact."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Add Contact"), errors))
+    return;
+
+  addc.prepare("INSERT INTO crmacctcntctass (crmacctcntctass_crmacct_id, crmacctcntctass_cntct_id, "
+               "                             crmacctcntctass_crmrole_id, crmacctcntctass_default)  "
+               " SELECT :crmacct_id, :cntct_id, :crmrole_id, :default "
+               " ON CONFLICT DO NOTHING; ");
+  addc.bindValue(":crmacct_id", _crmacctId);
+  addc.bindValue(":cntct_id",   _contact->id());
+  addc.bindValue(":crmrole_id", _cntctRole->id());
+  addc.bindValue(":default",   _cntctDefault->isChecked());
+  addc.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error assigning Contact"),
+                           addc, __FILE__, __LINE__))
+      return;
+  _contacts->sFillList();
 }
 
 void crmaccount::sEmployee()

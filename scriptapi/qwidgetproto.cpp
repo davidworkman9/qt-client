@@ -1,13 +1,14 @@
 /*
- *This file is part of the xTuple ERP: PostBooks Edition, a free and
- *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
- *It is licensed to you under the Common Public Attribution License
- *version 1.0, the full text of which(including xTuple-specific Exhibits)
- *is available at www.xtuple.com/CPAL.  By using this software, you agree
- *to be bound by its terms.
+ * This file is part of the xTuple ERP: PostBooks Edition, a free and
+ * open source Enterprise Resource Planning software suite,
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which(including xTuple-specific Exhibits)
+ * is available at www.xtuple.com/CPAL.  By using this software, you agree
+ * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qwidgetproto.h"
 
 #include <QApplication>
@@ -55,19 +56,22 @@ QScriptValue scriptSetTabOrder(QScriptContext *context, QScriptEngine *engine)
   return QScriptValue();
 }
 
-void setupQWidgetProto(QScriptEngine *engine)
+static QScriptValue RenderFlagToScriptValue(QScriptEngine *engine, const enum QWidget::RenderFlag &p)
 {
-  QScriptValue proto = engine->newQObject(new QWidgetProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QWidget*>(), proto);
+  return QScriptValue(engine, (int)p);
+}
+static void RenderFlagFromScriptValue(const QScriptValue &obj, enum QWidget::RenderFlag &p)
+{
+  p = (enum QWidget::RenderFlag)obj.toInt32();
+}
 
-  QScriptValue constructor = engine->newFunction(constructQWidget,
-                                                 proto);
-  engine->globalObject().setProperty("QWidget", constructor);
-
-  constructor.setProperty("find",           engine->newFunction(scriptFind));
-  constructor.setProperty("keyboardGrabber",engine->newFunction(scriptKeyboardGrabber));
-  constructor.setProperty("mouseGrabber",   engine->newFunction(scriptMouseGrabber));
-  constructor.setProperty("setTabOrder",    engine->newFunction(scriptSetTabOrder));
+static QScriptValue RenderFlagsToScriptValue(QScriptEngine *engine, const QWidget::RenderFlags &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+static void RenderFlagsFromScriptValue(const QScriptValue &obj, QWidget::RenderFlags &p)
+{
+  p = (QWidget::RenderFlags)obj.toInt32();
 }
 
 QScriptValue constructQWidget(QScriptContext *context, QScriptEngine  *engine)
@@ -81,6 +85,27 @@ QScriptValue constructQWidget(QScriptContext *context, QScriptEngine  *engine)
   else
     obj = new QWidget();
   return engine->toScriptValue(obj);
+}
+
+void setupQWidgetProto(QScriptEngine *engine)
+{
+  QScriptValue proto = engine->newQObject(new QWidgetProto(engine));
+  engine->setDefaultPrototype(qMetaTypeId<QWidget*>(), proto);
+
+  QScriptValue constructor = engine->newFunction(constructQWidget,
+                                                 proto);
+  engine->globalObject().setProperty("QWidget", constructor);
+
+  constructor.setProperty("find",           engine->newFunction(scriptFind));
+  constructor.setProperty("keyboardGrabber",engine->newFunction(scriptKeyboardGrabber));
+  constructor.setProperty("mouseGrabber",   engine->newFunction(scriptMouseGrabber));
+  constructor.setProperty("setTabOrder",    engine->newFunction(scriptSetTabOrder));
+
+  qScriptRegisterMetaType(engine, RenderFlagToScriptValue,  RenderFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, RenderFlagsToScriptValue, RenderFlagsFromScriptValue);
+  constructor.setProperty("DrawWindowBackground", QScriptValue(engine, QWidget::DrawWindowBackground), ENUMPROPFLAGS);
+  constructor.setProperty("DrawChildren",         QScriptValue(engine, QWidget::DrawChildren),         ENUMPROPFLAGS);
+  constructor.setProperty("IgnoreMask",           QScriptValue(engine, QWidget::IgnoreMask),           ENUMPROPFLAGS);
 }
 
 QWidgetProto::QWidgetProto(QObject *parent)

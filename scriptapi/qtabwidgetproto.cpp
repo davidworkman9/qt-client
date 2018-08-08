@@ -1,16 +1,35 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qtabwidgetproto.h"
 
 #include <QString>
+
+QScriptValue TabPositionToScriptValue(QScriptEngine *engine, const enum QTabWidget::TabPosition &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void TabPositionFromScriptValue(const QScriptValue &obj, enum QTabWidget::TabPosition &p)
+{
+  p = (enum QTabWidget::TabPosition)obj.toInt32();
+}
+
+QScriptValue TabShapeToScriptValue(QScriptEngine *engine, const enum QTabWidget::TabShape &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void TabShapeFromScriptValue(const QScriptValue &obj, enum QTabWidget::TabShape &p)
+{
+  p = (enum QTabWidget::TabShape)obj.toInt32();
+}
 
 void setupQTabWidgetProto(QScriptEngine *engine)
 {
@@ -18,9 +37,19 @@ void setupQTabWidgetProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<QTabWidget*>(), proto);
   //engine->setDefaultPrototype(qMetaTypeId<QTabWidget>(),  proto);
 
-  QScriptValue constructor = engine->newFunction(constructQTabWidget,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQTabWidget, proto);
   engine->globalObject().setProperty("QTabWidget",  constructor);
+
+  qScriptRegisterMetaType(engine, TabPositionToScriptValue, TabPositionFromScriptValue);
+  constructor.setProperty("North", QScriptValue(engine, QTabWidget::North), ENUMPROPFLAGS);
+  constructor.setProperty("South", QScriptValue(engine, QTabWidget::South), ENUMPROPFLAGS);
+  constructor.setProperty("West",  QScriptValue(engine, QTabWidget::West),  ENUMPROPFLAGS);
+  constructor.setProperty("East",  QScriptValue(engine, QTabWidget::North), ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, TabShapeToScriptValue, TabShapeFromScriptValue);
+  constructor.setProperty("Rounded",    QScriptValue(engine, QTabWidget::Rounded),    ENUMPROPFLAGS);
+  constructor.setProperty("Triangular", QScriptValue(engine, QTabWidget::Triangular), ENUMPROPFLAGS);
+
 }
 
 QScriptValue constructQTabWidget(QScriptContext * /*context*/,

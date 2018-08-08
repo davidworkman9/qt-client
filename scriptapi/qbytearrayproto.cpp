@@ -43,14 +43,9 @@ QScriptValue fromBase64ForJS(QScriptContext* context, QScriptEngine* engine)
     QByteArray qba = QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit());
     return engine->toScriptValue(qba);
   } else if (context->argumentCount() == 2) {
-#if QT_VERSION < 0x050000
-    QByteArray qba = QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit());
-    return engine->toScriptValue(qba);
-#else
     QByteArray::Base64Option options = static_cast<QByteArray::Base64Option>(context->argument(1).toInt32());
     QByteArray qba = QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit(), options);
     return engine->toScriptValue(qba);
-#endif
   }
   return engine->undefinedValue();
 }
@@ -102,15 +97,11 @@ QScriptValue fromRawNSDataForJS(QScriptContext* context, QScriptEngine* engine)
   return engine->toScriptValue(QByteArray::fromRawNSData(context->argument(0).toString()));
 }
 */
-#if QT_VERSION >= 0x050000
 QScriptValue fromStdStringForJS(QScriptContext* context, QScriptEngine* engine)
 {
   return engine->toScriptValue(QByteArray::fromStdString(context->argument(0).toString().toStdString()));
 }
-#endif
 
-#if QT_VERSION >= 0x050000
-// enum QByteArray::Base64Option
 QScriptValue Base64OptionToScriptValue(QScriptEngine *engine, const enum QByteArray::Base64Option &p)
 {
   return QScriptValue(engine, (int)p);
@@ -119,15 +110,21 @@ void Base64OptionFromScriptValue(const QScriptValue &obj, enum QByteArray::Base6
 {
   p = (enum QByteArray::Base64Option)obj.toInt32();
 }
-#endif
+
+QScriptValue Base64OptionsToScriptValue(QScriptEngine *engine, const QByteArray::Base64Options &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void Base64OptionsFromScriptValue(const QScriptValue &obj, QByteArray::Base64Options &p)
+{
+  p = (QByteArray::Base64Options)obj.toInt32();
+}
 
 void setupQByteArrayProto(QScriptEngine *engine)
 {
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
-#endif
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
   //engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
@@ -135,7 +132,6 @@ void setupQByteArrayProto(QScriptEngine *engine)
 
   QScriptValue constructor = engine->newFunction(constructQByteArray, proto);
 
-#if QT_VERSION >= 0x050000
   // Static Public Members:
   QScriptValue fromBase64 = engine->newFunction(fromBase64ForJS);
   constructor.setProperty("fromBase64", fromBase64);
@@ -172,13 +168,12 @@ void setupQByteArrayProto(QScriptEngine *engine)
   QScriptValue fromStdString = engine->newFunction(fromStdStringForJS);
   constructor.setProperty("fromStdString", fromStdString);
 
-  // enum QByteArray::Base64Option
-  qScriptRegisterMetaType(engine, Base64OptionToScriptValue, Base64OptionFromScriptValue);
+  qScriptRegisterMetaType(engine, Base64OptionToScriptValue,  Base64OptionFromScriptValue);
+  qScriptRegisterMetaType(engine, Base64OptionsToScriptValue, Base64OptionsFromScriptValue);
   constructor.setProperty("Base64Encoding", QScriptValue(engine, QByteArray::Base64Encoding), permanent);
   constructor.setProperty("Base64UrlEncoding", QScriptValue(engine, QByteArray::Base64UrlEncoding), permanent);
   constructor.setProperty("KeepTrailingEquals", QScriptValue(engine, QByteArray::KeepTrailingEquals), permanent);
   constructor.setProperty("OmitTrailingEquals", QScriptValue(engine, QByteArray::OmitTrailingEquals), permanent);
-#endif
 
   engine->globalObject().setProperty("QByteArray", constructor);
 }

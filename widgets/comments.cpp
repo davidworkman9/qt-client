@@ -104,6 +104,7 @@ QMap<QString, struct CommentMap *> &Comments::commentMap() {
     addToMap(LotSerial,         "LS",    tr("Lot/Serial"),               "ls_id",        "lotSerial"         );
     addToMap(Opportunity,       "OPP",   tr("Opportunity"),              "ophead_id",    "opportunity",  "MaintainPersonalOpportunities MaintainAllOpportunities");
     addToMap(Project,           "J",     tr("Project"),                  "prj_id",       "project",      "MaintainPersonalProjects MaintainAllProjects");
+    addToMap(Prospect,          "PSPCT", tr("Prospect"),                 "prospect_id",  "prospect",     "MaintainProspectMasters");
     addToMap(PurchaseOrder,     "P",     tr("Purchase Order"),           "pohead_id",   "purchaseOrder"      );
     addToMap(PurchaseOrderItem, "PI",    tr("Purchase Order Item")                                           );
     addToMap(ReturnAuth,        "RA",    tr("Return Authorization"),     "rahead_id",   "returnAuthorization");
@@ -116,14 +117,14 @@ QMap<QString, struct CommentMap *> &Comments::commentMap() {
 //  addToMap(ShipTo,            "SHP",   tr("Ship To"),                  "shipto_id",   "shipTo"             );
     addToMap(TimeAttendance,    "TATC",  tr("Time Attendance")                                               );
 //  addToMap(TimeExpense,       "TE",    tr("Time Expense")                                                  );
-    addToMap(TodoItem,          "TD",    tr("To-Do"),                    "todoitem_id", "todoItem",     "MaintainPersonalToDoItems MaintainAllTodoItems");
+    addToMap(TodoItem,          "TD",    tr("To-Do"),                    "task_id",     "task",          "MaintainPersonalTaskItems MaintainAllTodoItems");
     addToMap(TransferOrder,     "TO",    tr("Transfer Order"),           "tohead_id",   "transferOrder"      );
     addToMap(TransferOrderItem, "TI",    tr("Transfer Order Item")                                           );
     addToMap(Vendor,            "V",     tr("Vendor"),                   "vend_id",     "vendor"             );
     addToMap(Voucher,           "VCH",   tr("Voucher"),                  "vohead_id",   "voucher"            );
     addToMap(Warehouse,         "WH",    tr("Site")                                                          );
     addToMap(WorkOrder,         "W",     tr("Work Order"),               "wo_id",       "workOrder"          );
-    addToMap(Task,              "TA",    tr("Project Task"),             "prjtask_id",  "projectTask"        );
+    addToMap(Task,              "TA",    tr("Project Task"),             "task_id",     "task"               );
   }
 
   return _strMap;
@@ -342,7 +343,8 @@ void Comments::refresh()
                      "       COALESCE(cmnttype_editable,false) AS editable, "
                      "       comment_public, "
                      "       comment_user=getEffectiveXtUser() AS self "
-                     "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     "  FROM comment "
+                     "  JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:source)"
                      "   AND (comment_source_id=:sourceid) ) "
                      " UNION "
@@ -355,10 +357,11 @@ void Comments::refresh()
                      "       COALESCE(cmnttype_editable,false) AS editable, "
                      "       comment_public, "
                      "       comment_user=getEffectiveXtUser() AS self "
-                     "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
-                     " WHERE((comment_source=:sourceCust)"
-                     "   AND ( (crmacct_id=:sourceid) OR (crmacct_parent_id=:sourceid) )"
-                     "   AND (comment_source_id=crmacct_cust_id) ) "
+                     "  FROM crmacct "
+                     "  JOIN custinfo ON (cust_crmacct_id=crmacct_id) "
+                     "  JOIN comment ON (comment_source=:sourceCust AND comment_source_id=cust_id ) "
+                     "  JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     " WHERE (crmacct_id=:sourceid) OR (crmacct_parent_id=:sourceid) "
                      " UNION "
                      "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
@@ -369,10 +372,11 @@ void Comments::refresh()
                      "       COALESCE(cmnttype_editable,false) AS editable, "
                      "       comment_public, "
                      "       comment_user=getEffectiveXtUser() AS self "
-                     "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
-                     " WHERE((comment_source=:sourceVend)"
-                     "   AND ( (crmacct_id=:sourceid) OR (crmacct_parent_id=:sourceid) )"
-                     "   AND (comment_source_id=crmacct_vend_id) ) "
+                     "  FROM crmacct "
+                     "  JOIN vendinfo ON (vend_crmacct_id=crmacct_id) "
+                     "  JOIN comment ON ((comment_source=:sourceVend) AND (comment_source_id=vend_id) ) "
+                     "  JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) " 
+                     " WHERE (crmacct_id=:sourceid) OR (crmacct_parent_id=:sourceid) "
                      " UNION "
                      "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
@@ -383,10 +387,11 @@ void Comments::refresh()
                      "       COALESCE(cmnttype_editable,false) AS editable, "
                      "       comment_public, "
                      "       comment_user=getEffectiveXtUser() AS self "
-                     "  FROM cntct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
-                     " WHERE((comment_source=:sourceContact)"
-                     "   AND (cntct_crmacct_id=:sourceid)"
-                     "   AND (comment_source_id=cntct_id) ) "
+                     "  FROM cntct "
+                     "  JOIN comment ON (comment_source=:sourceContact AND comment_source_id=cntct_id ) "
+                     "  JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id)   "
+                     "  JOIN crmacctcntctass ON (crmacctcntctass_cntct_id=cntct_id)  "
+                     " WHERE crmacctcntctass_crmacct_id=:sourceid "
                      "ORDER BY comment_date DESC;" );
     comment.bindValue(":sourceCust", "C");
     comment.bindValue(":sourceContact", "T");

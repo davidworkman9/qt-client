@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -93,12 +93,12 @@
 #include "printSoForm.h"
 #include "printRaForm.h"
 
+#include "crmGroups.h"
 #include "customer.h"
 #include "customers.h"
 #include "prospect.h"
 #include "prospects.h"
 #include "updateCreditStatusByCustomer.h"
-#include "customerGroups.h"
 
 #include "reassignCustomerTypeByCustomerType.h"
 #include "characteristics.h"
@@ -289,6 +289,8 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Prospect"),       (char*)prospectMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.enterNewProspect", tr("&New..."),	SLOT(sNewProspect()), prospectMenu, "MaintainProspectMasters",	NULL, NULL, true, NULL },
     { "so.prospects", tr("&List..."),	SLOT(sProspects()), prospectMenu, "MaintainProspectMasters ViewProspectMasters",	NULL, NULL, true, NULL },
+    { "separator",	NULL,	NULL,	prospectMenu,	"true",		NULL, NULL, true, NULL },
+    { "so.prospectGroups", tr("&Groups..."),	SLOT(sProspectGroups()), prospectMenu, "MaintainProspectGroups ViewProspectGroups",	NULL, NULL, true, NULL },
 
     // Sales | Customer
     { "menu",	tr("&Customer"),       (char*)customerMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
@@ -833,7 +835,12 @@ void menuSales::sUpdateCreditStatusByCustomer()
 
 void menuSales::sCustomerGroups()
 {
-  omfgThis->handleNewWindow(new customerGroups());
+  ParameterList params;
+  params.append("groupType", crmGroups::Customer);
+
+  crmGroups *newdlg = new crmGroups();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSales::sNewProspect()
@@ -849,6 +856,16 @@ void menuSales::sNewProspect()
 void menuSales::sProspects()
 {
   omfgThis->handleNewWindow(new prospects());
+}
+
+void menuSales::sProspectGroups()
+{
+  ParameterList params;
+  params.append("groupType", crmGroups::Prospect);
+
+  crmGroups *newdlg = new crmGroups();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSales::sReassignCustomerTypeByCustomerType()

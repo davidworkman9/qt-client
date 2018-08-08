@@ -181,8 +181,8 @@ void cashReceiptMiscDistrib::showCustomers(int group, int customer)
   //Set Up Customer widget
   XSqlQuery query;
   query.prepare("SELECT custinfo.cust_id,custinfo.cust_name FROM custinfo, custgrpitem "
-                "WHERE custgrpitem.custgrpitem_cust_id = custinfo.cust_id "
-                "AND (custgrpitem_custgrp_id =:group);");
+                "WHERE custgrpitem.groupsitem_reference_id = custinfo.cust_id "
+                "AND (groupsitem_groups_id =:group);");
   query.bindValue(":group", group);
   query.exec();
   if (query.first())

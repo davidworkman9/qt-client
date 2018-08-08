@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -415,6 +415,12 @@ to be bound by its terms.</comment>
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="_taskListTab">
+      <attribute name="title">
+       <string>Tasks</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_task"/> 
+     </widget>    
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">
        <string>Notes</string>
@@ -680,64 +686,6 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_todoTab">
-      <attribute name="title">
-       <string>To-Do List Items</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="XTreeWidget" name="_todoList"/>
-       </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_newTodoItem">
-           <property name="text">
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_editTodoItem">
-           <property name="text">
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_viewTodoItem">
-           <property name="text">
-            <string>View</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_deleteTodoItem">
-           <property name="text">
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="_historyTab">
       <attribute name="title">
        <string>History</string>
@@ -900,7 +848,7 @@ to be bound by its terms.</comment>
   <tabstop>_docType</tabstop>
   <tabstop>_docNumber</tabstop>
   <tabstop>_viewAR</tabstop>
-  <tabstop>_todoList</tabstop>
+  <tabstop>_taskList</tabstop>
   <tabstop>_newTodoItem</tabstop>
   <tabstop>_editTodoItem</tabstop>
   <tabstop>_viewTodoItem</tabstop>

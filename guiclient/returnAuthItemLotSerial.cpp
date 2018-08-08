@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -81,15 +81,15 @@ enum SetResponse returnAuthItemLotSerial::set(const ParameterList &pParams)
   if (valid)
   {
     _raitemid = param.toInt();
-    returnet.prepare("SELECT crmacct_id "
-		"FROM raitem,rahead,crmacct "
+    returnet.prepare("SELECT cust_crmacct_id "
+		"FROM raitem,rahead,custinfo "
 		"WHERE ((raitem_id=:raitem_id) "
 		"AND (raitem_rahead_id=rahead_id) "
-		"AND (crmacct_cust_id=rahead_cust_id)); ");
+		"AND (cust_id=rahead_cust_id)); ");
     returnet.bindValue(":raitem_id", _raitemid);
     returnet.exec();
     if (returnet.first())
-      _crmacctid = returnet.value("crmacct_id").toInt();
+      _crmacctid = returnet.value("cust_crmacct_id").toInt();
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
                                   returnet, __FILE__, __LINE__))
     {

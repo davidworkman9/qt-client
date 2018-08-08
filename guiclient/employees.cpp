@@ -32,9 +32,7 @@ employees::employees(QWidget* parent, const char*, Qt::WindowFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
-  QString qryEmpGrp = QString( "SELECT  empgrp_id, empgrp_name FROM empgrp;");
-
-  parameterWidget()->appendComboBox(tr("Employee Group"), "emp_group", qryEmpGrp);
+  parameterWidget()->appendComboBox(tr("Employee Group"), "emp_group", XComboBox::EmployeeGroups);
   parameterWidget()->append(tr("Show Active Only"), "activeOnly", ParameterWidget::Exists);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
@@ -88,7 +86,7 @@ void employees::sDelete()
 
   XSqlQuery delq;
   delq.prepare("DELETE FROM charass WHERE charass_target_type = 'EMP' AND charass_target_id = :emp_id;"
-               "DELETE FROM empgrpitem WHERE empgrpitem_emp_id = :emp_id;"
+               "DELETE FROM empgrpitem WHERE groupsitem_reference_id = :emp_id;"
                "DELETE FROM emp WHERE emp_id = :emp_id;");
   delq.bindValue(":emp_id", list()->id());
   delq.exec();

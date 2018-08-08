@@ -14,6 +14,7 @@
 #include <QVariant>
 
 #include "guiclient.h"
+#include "guiErrorCheck.h"
 
 configureWO::configureWO(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -78,7 +79,14 @@ void configureWO::languageChange()
 bool configureWO::sSave()
 {
   XSqlQuery configureSave;
+  QList<GuiErrorCheck> errors;
+
   emit saving();
+
+  errors << GuiErrorCheck(_nextWoNumber->text().trimmed().isEmpty(), _nextWoNumber, tr("Enter Next Work Order Number"));
+
+  if (GuiErrorCheck::reportErrors(this, tr("Configure WO Error"), errors))
+      return false;
 
   configureSave.prepare("SELECT setNextWoNumber(:woNumber) AS result;");
   configureSave.bindValue(":woNumber", _nextWoNumber->text().toInt());

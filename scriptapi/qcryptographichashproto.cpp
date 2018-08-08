@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qcryptographichashproto.h"
 
 #if QT_VERSION < 0x050000
@@ -38,8 +39,6 @@ QScriptValue hashForJS(QScriptContext* context, QScriptEngine* engine)
 
 void setupQCryptographicHashProto(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-
   QScriptValue proto = engine->newQObject(new QCryptographicHashProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QCryptographicHash*>(), proto);
 
@@ -47,17 +46,23 @@ void setupQCryptographicHashProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QCryptographicHash", constructor);
 
   qScriptRegisterMetaType(engine, AlgorithmToScriptValue, AlgorithmFromScriptValue);
-  constructor.setProperty("Md4", QScriptValue(engine, QCryptographicHash::Md4), permanent);
-  constructor.setProperty("Md5", QScriptValue(engine, QCryptographicHash::Md5), permanent);
-  constructor.setProperty("Sha1", QScriptValue(engine, QCryptographicHash::Sha1), permanent);
-  constructor.setProperty("Sha224", QScriptValue(engine, QCryptographicHash::Sha224), permanent);
-  constructor.setProperty("Sha256", QScriptValue(engine, QCryptographicHash::Sha256), permanent);
-  constructor.setProperty("Sha384", QScriptValue(engine, QCryptographicHash::Sha384), permanent);
-  constructor.setProperty("Sha512", QScriptValue(engine, QCryptographicHash::Sha512), permanent);
-  constructor.setProperty("Sha3_224", QScriptValue(engine, QCryptographicHash::Sha3_224), permanent);
-  constructor.setProperty("Sha3_256", QScriptValue(engine, QCryptographicHash::Sha3_256), permanent);
-  constructor.setProperty("Sha3_384", QScriptValue(engine, QCryptographicHash::Sha3_384), permanent);
-  constructor.setProperty("Sha3_512", QScriptValue(engine, QCryptographicHash::Sha3_512), permanent);
+  constructor.setProperty("Md4",        QScriptValue(engine, QCryptographicHash::Md4),        ENUMPROPFLAGS);
+  constructor.setProperty("Md5",        QScriptValue(engine, QCryptographicHash::Md5),        ENUMPROPFLAGS);
+  constructor.setProperty("Sha1",       QScriptValue(engine, QCryptographicHash::Sha1),       ENUMPROPFLAGS);
+  constructor.setProperty("Sha224",     QScriptValue(engine, QCryptographicHash::Sha224),     ENUMPROPFLAGS);
+  constructor.setProperty("Sha256",     QScriptValue(engine, QCryptographicHash::Sha256),     ENUMPROPFLAGS);
+  constructor.setProperty("Sha384",     QScriptValue(engine, QCryptographicHash::Sha384),     ENUMPROPFLAGS);
+  constructor.setProperty("Sha512",     QScriptValue(engine, QCryptographicHash::Sha512),     ENUMPROPFLAGS);
+  constructor.setProperty("Sha3_224",   QScriptValue(engine, QCryptographicHash::Sha3_224),   ENUMPROPFLAGS);
+  constructor.setProperty("Sha3_256",   QScriptValue(engine, QCryptographicHash::Sha3_256),   ENUMPROPFLAGS);
+  constructor.setProperty("Sha3_384",   QScriptValue(engine, QCryptographicHash::Sha3_384),   ENUMPROPFLAGS);
+  constructor.setProperty("Sha3_512",   QScriptValue(engine, QCryptographicHash::Sha3_512),   ENUMPROPFLAGS);
+#if QT_VERSION >= 0x050900
+  constructor.setProperty("Keccak_224", QScriptValue(engine, QCryptographicHash::Keccak_224), ENUMPROPFLAGS);
+  constructor.setProperty("Keccak_256", QScriptValue(engine, QCryptographicHash::Keccak_256), ENUMPROPFLAGS);
+  constructor.setProperty("Keccak_384", QScriptValue(engine, QCryptographicHash::Keccak_384), ENUMPROPFLAGS);
+  constructor.setProperty("Keccak_512", QScriptValue(engine, QCryptographicHash::Keccak_512), ENUMPROPFLAGS);
+#endif
 
   QScriptValue hash = engine->newFunction(hashForJS);
   constructor.setProperty("hash", hash);

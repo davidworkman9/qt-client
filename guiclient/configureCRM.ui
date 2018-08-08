@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -45,23 +45,7 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="_acctGeneration">
-               <item>
-                <property name="text">
-                 <string>Manual</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Automatic</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Automatic, Allow Override</string>
-                </property>
-               </item>
-              </widget>
+              <widget class="XComboBox" name="_acctGeneration" />
              </item>
              <item row="0" column="2">
               <widget class="QLabel" name="_nextAcctNumberLit">
@@ -106,15 +90,10 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="_incidentGeneration">
+              <widget class="XComboBox" name="_incidentGeneration">
                <property name="enabled">
                 <bool>false</bool>
                </property>
-               <item>
-                <property name="text">
-                 <string>Automatic</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item row="1" column="2">
@@ -132,6 +111,96 @@ to be bound by its terms.</comment>
              </item>
              <item row="1" column="3">
               <widget class="XLineEdit" name="_nextInNumber">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="_projectGenerationLit">
+               <property name="text">
+                <string>Project # Generation:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>_projectGeneration</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="XComboBox" name="_projectGeneration" />
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="_nextProjectNumberLit">
+               <property name="text">
+                <string>Next #:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>_nextProjectNumber</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="XLineEdit" name="_nextProjectNumber">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="_taskGenerationLit">
+               <property name="text">
+                <string>Task # Generation:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>_taskGeneration</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="XComboBox" name="_taskGeneration" />
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="_nextTaskNumberLit">
+               <property name="text">
+                <string>Next #:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>_nextTaskNumber</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="XLineEdit" name="_nextTaskNumber">
                <property name="minimumSize">
                 <size>
                  <width>100</width>
@@ -183,9 +252,12 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="_opportunityChangeLog">
+            <widget class="QCheckBox" name="_requireProjectAssignment">
+             <property name="toolTip">
+              <string>Require assignment of a Project # to Sales Order/Purchase Order/Work Order</string>
+             </property>
              <property name="text">
-              <string>Post Opportunity Changes to the Change Log</string>
+              <string>Require SO/PO/WO assignment to Project</string>
              </property>
             </widget>
            </item>
@@ -204,12 +276,32 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="_requireProjectAssignment">
+            <widget class="QCheckBox" name="_requireUniqueEmails">
              <property name="toolTip">
-              <string>Require assignment of a Project # to Sales Order/Purchase Order/Work Order</string>
+              <string>Require unique email addresses across Contacts.  System checks uniqueness when activating this setting.</string>
              </property>
              <property name="text">
-              <string>Require SO/PO/WO assignment to Project</string>
+              <string>Require Unique Contact Email Addresses</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_defaultEmailopt">
+             <property name="toolTip">
+              <string>When adding email addresses default the Opt In/Opt out setting for that email (check yes to opt in).</string>
+             </property>
+             <property name="text">
+              <string>Email Addresses Default Marketing Opt In / Opt Out</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_defaultAddropt">
+             <property name="toolTip">
+              <string>When adding postal addresses default the Opt In/Opt out setting for that address (check yes to opt in).</string>
+             </property>
+             <property name="text">
+              <string>Address Default Marketing Opt In / Opt Out</string>
              </property>
             </widget>
            </item>
@@ -289,6 +381,43 @@ to be bound by its terms.</comment>
             </layout>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="_changeLog">
+           <property name="title">
+            <string>Change Log</string>
+           </property>
+           <layout class="QVBoxLayout" name="vboxLayout_9">
+            <item>
+             <widget class="QCheckBox" name="_accountChangeLog">
+              <property name="text">
+               <string>Post Account Changes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_addressChangeLog">
+              <property name="text">
+               <string>Post Address Changes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_contactChangeLog">
+              <property name="text">
+               <string>Post Contact Changes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_opportunityChangeLog">
+              <property name="text">
+               <string>Post Opportunity Changes</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">

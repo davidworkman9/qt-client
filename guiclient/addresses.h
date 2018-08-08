@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -21,16 +21,31 @@ class addresses : public display
 public:
     addresses(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
 
+    virtual void setCrmacctid(int crmacctId);
+    virtual int crmacctId();
+
+    QAction * detachAction();
+
 public slots:
+    virtual enum SetResponse set(const ParameterList&);
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem* = NULL, int = 0);
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
+    virtual void sDetach();
     virtual void sNewProspect();
     virtual void sEditProspect();
     virtual void sViewProspect();
     virtual void sOpenProspect(QString);
+
+signals:
+    void cntctDetached(int);
+
+private:
+    int _crmacctid;
+
+    QAction * _detachAct;
 
 };
 

@@ -30,12 +30,6 @@ ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pNa
   setEditOwnPriv("MaintainPersonalContacts");
   setViewOwnPriv("ViewPersonalContacts");
 
-  _query = "SELECT cntct_id AS id, cntct_name AS number, cntct_title AS description, "
-           " cntct_active AS active, "
-           " cntct_first_name, cntct_last_name, crmacct_name, cntct_title, cntct_phone, "
-           " cntct_phone2,cntct_fax, cntct_email, cntct_webaddr "
-           "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) "
-           "WHERE (true) ";
 }
 
 void ContactClusterLineEdit::setNewAddr(QString line1, QString line2, QString line3,
@@ -50,7 +44,8 @@ void ContactClusterLineEdit::setSearchAcct(int crmAcctId)
 {
   _searchAcctId = crmAcctId;
   if (crmAcctId != -1)
-    _extraClause = QString(" (cntct_crmacct_id=%1) ").arg(crmAcctId);
+    _extraClause = QString(" cntct_id IN (SELECT crmacctcntctass_cntct_id FROM crmacctcntctass "
+                           "                          WHERE crmacctcntctass_crmacct_id = %1) ").arg(crmAcctId);
   else
     _extraClause = "";
 }
@@ -333,10 +328,11 @@ void ContactCluster::populate()
     XSqlQuery dataQ;
     dataQ.prepare("SELECT cntct_honorific, cntct_first_name, "
                   "  cntct_middle, cntct_last_name, cntct_suffix, "
-                  "  cntct_phone, cntct_phone2, "
-                  "  cntct_fax, cntct_email, cntct_webaddr, "
-                  "  formatAddr(cntct_addr_id) AS address, "
-                  "  cntct_crmacct_id "
+                  "  getcontactphone(cntct_id, 'Office') AS contact_phone, "
+                  "  getcontactphone(cntct_id, 'Mobile') AS contact_phone2, "
+                  "  getcontactphone(cntct_id, 'Fax') AS contact_fax, "
+                  "  cntct_email, cntct_webaddr, "
+                  "  formatAddr(cntct_addr_id) AS address "
                   "FROM cntct "
                   "WHERE (cntct_id=:id);");
     dataQ.bindValue(":id", id());
@@ -347,9 +343,9 @@ void ContactCluster::populate()
       setName(2, dataQ.value("cntct_middle").toString());
       setName(3, dataQ.value("cntct_last_name").toString());
       setName(4, dataQ.value("cntct_suffix").toString());
-      _phone->setText(dataQ.value("cntct_phone").toString());
-      _phone2->setText(dataQ.value("cntct_phone2").toString());
-      _fax->setText(dataQ.value("cntct_fax").toString());
+      _phone->setText(dataQ.value("contact_phone").toString());
+      _phone2->setText(dataQ.value("contact_phone2").toString());
+      _fax->setText(dataQ.value("contact_fax").toString());
       _email->setText(dataQ.value("cntct_email").toString());
       _webaddr->setText(dataQ.value("cntct_webaddr").toString());
       _email->setURL("mailto:" + dataQ.value("cntct_email").toString());

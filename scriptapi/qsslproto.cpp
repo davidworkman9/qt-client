@@ -1,22 +1,17 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qsslproto.h"
 #include <QScriptValueIterator>
 
-#if QT_VERSION < 0x050000
-void setupQSslProto(QScriptEngine *engine)
-{
-  Q_UNUSED(engine);
-}
-#else
 QScriptValue AlternativeNameEntryTypeToScriptValue(QScriptEngine *engine, const QSsl::AlternativeNameEntryType &item)
 {
   return engine->newVariant(item);
@@ -138,53 +133,55 @@ void QMultiMapQSslAlternativeNameEntryTypeQStringFromScriptValue(const QScriptVa
 void setupQSslProto(QScriptEngine *engine)
 {
   QScriptValue obj = engine->newObject();
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   qScriptRegisterMetaType(engine, AlternativeNameEntryTypeToScriptValue, AlternativeNameEntryTypeFromScriptValue);
-  obj.setProperty("EmailEntry", QScriptValue(engine, QSsl::EmailEntry), permanent);
-  obj.setProperty("DnsEntry",   QScriptValue(engine, QSsl::DnsEntry), permanent);
+  obj.setProperty("EmailEntry", QScriptValue(engine, QSsl::EmailEntry), ENUMPROPFLAGS);
+  obj.setProperty("DnsEntry",   QScriptValue(engine, QSsl::DnsEntry),   ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, EncodingFormatToScriptValue, EncodingFormatFromScriptValue);
-  obj.setProperty("Pem",  QScriptValue(engine, QSsl::Pem), permanent);
-  obj.setProperty("Der",  QScriptValue(engine, QSsl::Der), permanent);
+  obj.setProperty("Pem",  QScriptValue(engine, QSsl::Pem), ENUMPROPFLAGS);
+  obj.setProperty("Der",  QScriptValue(engine, QSsl::Der), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, KeyAlgorithmToScriptValue, KeyAlgorithmFromScriptValue);
-  obj.setProperty("Rsa",    QScriptValue(engine, QSsl::Rsa), permanent);
-  obj.setProperty("Dsa",    QScriptValue(engine, QSsl::Dsa), permanent);
-  obj.setProperty("Ec",     QScriptValue(engine, QSsl::Ec), permanent);
-  obj.setProperty("Opaque", QScriptValue(engine, QSsl::Opaque), permanent);
+  obj.setProperty("Rsa",    QScriptValue(engine, QSsl::Rsa),    ENUMPROPFLAGS);
+  obj.setProperty("Dsa",    QScriptValue(engine, QSsl::Dsa),    ENUMPROPFLAGS);
+  obj.setProperty("Ec",     QScriptValue(engine, QSsl::Ec),     ENUMPROPFLAGS);
+  obj.setProperty("Opaque", QScriptValue(engine, QSsl::Opaque), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, KeyTypeToScriptValue, KeyTypeFromScriptValue);
-  obj.setProperty("PrivateKey", QScriptValue(engine, QSsl::PrivateKey), permanent);
-  obj.setProperty("PublicKey",  QScriptValue(engine, QSsl::PublicKey), permanent);
+  obj.setProperty("PrivateKey", QScriptValue(engine, QSsl::PrivateKey), ENUMPROPFLAGS);
+  obj.setProperty("PublicKey",  QScriptValue(engine, QSsl::PublicKey),  ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, SslOptionToScriptValue, SslOptionFromScriptValue);
-  obj.setProperty("SslOptionDisableEmptyFragments",       QScriptValue(engine, QSsl::SslOptionDisableEmptyFragments), permanent);
-  obj.setProperty("SslOptionDisableSessionTickets",       QScriptValue(engine, QSsl::SslOptionDisableSessionTickets), permanent);
-  obj.setProperty("SslOptionDisableCompression",          QScriptValue(engine, QSsl::SslOptionDisableCompression), permanent);
-  obj.setProperty("SslOptionDisableServerNameIndication", QScriptValue(engine, QSsl::SslOptionDisableServerNameIndication), permanent);
-  obj.setProperty("SslOptionDisableLegacyRenegotiation",  QScriptValue(engine, QSsl::SslOptionDisableLegacyRenegotiation), permanent);
-  obj.setProperty("SslOptionDisableSessionSharing",       QScriptValue(engine, QSsl::SslOptionDisableSessionSharing), permanent);
-  obj.setProperty("SslOptionDisableSessionPersistence",   QScriptValue(engine, QSsl::SslOptionDisableSessionPersistence), permanent);
+  obj.setProperty("SslOptionDisableEmptyFragments",         QScriptValue(engine, QSsl::SslOptionDisableEmptyFragments),         ENUMPROPFLAGS);
+  obj.setProperty("SslOptionDisableSessionTickets",         QScriptValue(engine, QSsl::SslOptionDisableSessionTickets),         ENUMPROPFLAGS);
+  obj.setProperty("SslOptionDisableCompression",            QScriptValue(engine, QSsl::SslOptionDisableCompression),            ENUMPROPFLAGS);
+  obj.setProperty("SslOptionDisableServerNameIndication",   QScriptValue(engine, QSsl::SslOptionDisableServerNameIndication),   ENUMPROPFLAGS);
+  obj.setProperty("SslOptionDisableLegacyRenegotiation",    QScriptValue(engine, QSsl::SslOptionDisableLegacyRenegotiation),    ENUMPROPFLAGS);
+  obj.setProperty("SslOptionDisableSessionSharing",         QScriptValue(engine, QSsl::SslOptionDisableSessionSharing),         ENUMPROPFLAGS);
+  obj.setProperty("SslOptionDisableSessionPersistence",     QScriptValue(engine, QSsl::SslOptionDisableSessionPersistence),     ENUMPROPFLAGS);
+#if QT_VERSION >= 0x050900
+  obj.setProperty("SslOptionDisableServerCipherPreference", QScriptValue(engine, QSsl::SslOptionDisableServerCipherPreference), ENUMPROPFLAGS);
+#endif
+
 
   qScriptRegisterMetaType(engine, SslProtocolToScriptValue, SslProtocolFromScriptValue);
-  obj.setProperty("SslV3",            QScriptValue(engine, QSsl::SslV3), permanent);
-  obj.setProperty("SslV2",            QScriptValue(engine, QSsl::SslV2), permanent);
-  obj.setProperty("TlsV1_0",          QScriptValue(engine, QSsl::TlsV1_0), permanent);
-  obj.setProperty("TlsV1_0OrLater",   QScriptValue(engine, QSsl::TlsV1_0OrLater), permanent);
-  obj.setProperty("TlsV1_1",          QScriptValue(engine, QSsl::TlsV1_1), permanent);
-  obj.setProperty("TlsV1_1OrLater",   QScriptValue(engine, QSsl::TlsV1_1OrLater), permanent);
-  obj.setProperty("TlsV1_2",          QScriptValue(engine, QSsl::TlsV1_2), permanent);
-  obj.setProperty("TlsV1_2OrLater",   QScriptValue(engine, QSsl::TlsV1_2OrLater), permanent);
-  obj.setProperty("UnknownProtocol",  QScriptValue(engine, QSsl::UnknownProtocol), permanent);
-  obj.setProperty("AnyProtocol",      QScriptValue(engine, QSsl::AnyProtocol), permanent);
-  obj.setProperty("TlsV1SslV3",       QScriptValue(engine, QSsl::TlsV1SslV3), permanent);
-  obj.setProperty("SecureProtocols",  QScriptValue(engine, QSsl::SecureProtocols), permanent);
+  obj.setProperty("SslV3",            QScriptValue(engine, QSsl::SslV3), ENUMPROPFLAGS);
+  obj.setProperty("SslV2",            QScriptValue(engine, QSsl::SslV2), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1_0",          QScriptValue(engine, QSsl::TlsV1_0), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1_0OrLater",   QScriptValue(engine, QSsl::TlsV1_0OrLater), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1_1",          QScriptValue(engine, QSsl::TlsV1_1), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1_1OrLater",   QScriptValue(engine, QSsl::TlsV1_1OrLater), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1_2",          QScriptValue(engine, QSsl::TlsV1_2), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1_2OrLater",   QScriptValue(engine, QSsl::TlsV1_2OrLater), ENUMPROPFLAGS);
+  obj.setProperty("UnknownProtocol",  QScriptValue(engine, QSsl::UnknownProtocol), ENUMPROPFLAGS);
+  obj.setProperty("AnyProtocol",      QScriptValue(engine, QSsl::AnyProtocol), ENUMPROPFLAGS);
+  obj.setProperty("TlsV1SslV3",       QScriptValue(engine, QSsl::TlsV1SslV3), ENUMPROPFLAGS);
+  obj.setProperty("SecureProtocols",  QScriptValue(engine, QSsl::SecureProtocols), ENUMPROPFLAGS);
 
   // TODO: Figure out how to convert QMultiMap.
   //qScriptRegisterMetaType(engine, QMultiMapQSslAlternativeNameEntryTypeQStringToScriptValue, QMultiMapQSslAlternativeNameEntryTypeQStringFromScriptValue);
 
-  engine->globalObject().setProperty("QSsl", obj, permanent);
+  engine->globalObject().setProperty("QSsl", obj, ENUMPROPFLAGS);
 }
 
-#endif

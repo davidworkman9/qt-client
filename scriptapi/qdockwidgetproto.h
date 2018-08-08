@@ -16,6 +16,8 @@
 #include <QDockWidget>
 
 Q_DECLARE_METATYPE(QDockWidget*)
+Q_DECLARE_METATYPE(enum QDockWidget::DockWidgetFeature)
+Q_DECLARE_METATYPE(QDockWidget::DockWidgetFeatures)
 
 void setupQDockWidgetProto(QScriptEngine *engine);
 QScriptValue constructQDockWidget(QScriptContext *context, QScriptEngine *engine);

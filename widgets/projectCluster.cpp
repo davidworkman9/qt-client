@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -43,6 +43,11 @@ void ProjectCluster::setAllowedStatuses(const int p)
   ((ProjectLineEdit*)_number)->setAllowedStatuses((ProjectLineEdit::ProjectStatuses)p);
 }
 
+void ProjectCluster::setAccount(const int p)
+{
+  return (static_cast<ProjectLineEdit*>(_number))->setAccount(p);
+}
+
 ProjectLineEdit::ProjectType ProjectCluster::type()
 {
   return (static_cast<ProjectLineEdit*>(_number))->type();
@@ -74,6 +79,7 @@ ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, co
 
   _type = pPrjType;
   _allowedStatuses = 0x00;
+  _crma = -1;
 
 }
 
@@ -98,6 +104,11 @@ void ProjectLineEdit::buildExtraClause()
 
   if (!typeClause.isEmpty())
     extraClause.append(typeClause);
+
+  if (_crma > 0 && !extraClause.isEmpty())
+    extraClause.append(" AND ");
+  if (_crma > 0 )
+    extraClause.append(QString("prj_crmacct_id=%1").arg(_crma));
 
   // Add in status clause
   if (_allowedStatuses &&
@@ -135,6 +146,12 @@ void ProjectLineEdit::setExtraClause(const QString& pExt)
 void ProjectLineEdit::setType(ProjectType ptype)
 {
   _type = ptype;
+  buildExtraClause();
+}
+
+void ProjectLineEdit::setAccount(const int pCrma)
+{
+  _crma = pCrma;
   buildExtraClause();
 }
 

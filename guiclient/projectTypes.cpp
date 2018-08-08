@@ -10,7 +10,10 @@
 
 #include "projectTypes.h"
 
+#include <QMessageBox>
+
 #include <parameter.h>
+
 #include "projectType.h"
 #include "errorReporter.h"
 #include "guiclient.h"
@@ -60,6 +63,19 @@ void projectTypes::languageChange()
 void projectTypes::sDelete()
 {
   XSqlQuery typeDelete;
+
+  typeDelete.prepare( "SELECT 1 FROM prj WHERE prj_prjtype_id=:prjtype_id;" );
+  typeDelete.bindValue(":prjtype_id", _projecttype->id());
+  typeDelete.exec();
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project Type"),
+                            typeDelete, __FILE__, __LINE__);
+  if (typeDelete.size() > 0)
+  {
+    QMessageBox::warning( this, tr("Error Deleting Project Type"),
+                          tr( "You cannot delete this Project Type as it is used on project(s)." ) );
+    return;
+  }
+
   typeDelete.prepare( "DELETE FROM prjtype "
              "WHERE (prjtype_id=:prjtype_id);" );
   typeDelete.bindValue(":prjtype_id", _projecttype->id());

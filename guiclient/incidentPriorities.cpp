@@ -38,6 +38,7 @@ incidentPriorities::incidentPriorities(QWidget* parent, const char* name, Qt::Wi
   _incidentPriorities->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight, true, "incdtpriority_order");
   _incidentPriorities->addColumn(tr("Priority"),      100, Qt::AlignLeft, true, "incdtpriority_name" );
   _incidentPriorities->addColumn(tr("Description"),    -1, Qt::AlignLeft, true, "incdtpriority_descrip" );
+  _incidentPriorities->addColumn(tr("Default"),        -1, Qt::AlignLeft, true, "incdtpriority_default" );
 
   if (_privileges->check("MaintainIncidentPriorities"))
   {
@@ -67,7 +68,7 @@ void incidentPriorities::languageChange()
 void incidentPriorities::sFillList()
 {
   XSqlQuery incidentFillList;
-  incidentFillList.prepare( "SELECT incdtpriority_id, incdtpriority_order, "
+  incidentFillList.prepare( "SELECT incdtpriority_id, incdtpriority_order, incdtpriority_default, "
 	     "       incdtpriority_name, firstLine(incdtpriority_descrip) AS incdtpriority_descrip "
              "FROM incdtpriority "
              "ORDER BY incdtpriority_order, incdtpriority_name;" );

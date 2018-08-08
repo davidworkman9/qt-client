@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -31,6 +31,8 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt
 
   _nextInNumber->setValidator(omfgThis->orderVal());
   _nextAcctNumber->setValidator(omfgThis->orderVal());
+  _nextProjectNumber->setValidator(omfgThis->orderVal());
+  _nextTaskNumber->setValidator(omfgThis->orderVal());
 
   configureconfigureCRM.exec( "SELECT orderseq_number AS innumber "
           "  FROM orderseq"
@@ -44,20 +46,44 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt
   if (configureconfigureCRM.first())
     _nextAcctNumber->setText(configureconfigureCRM.value("acnumber"));
 
-  QString metric = _metrics->value("CRMAccountNumberGeneration");
-  if (metric == "M")
-    _acctGeneration->setCurrentIndex(0);
-  else if (metric == "A")
-    _acctGeneration->setCurrentIndex(1);
-  else if (metric == "O")
-    _acctGeneration->setCurrentIndex(2);
+  configureconfigureCRM.exec( "SELECT orderseq_number AS prjnumber "
+          "  FROM orderseq"
+          " WHERE (orderseq_name='ProjectNumber');" );
+  if (configureconfigureCRM.first())
+    _nextProjectNumber->setText(configureconfigureCRM.value("prjnumber"));
 
+  configureconfigureCRM.exec( "SELECT orderseq_number AS tsknumber "
+          "  FROM orderseq"
+          " WHERE (orderseq_name='TaskNumber');" );
+  if (configureconfigureCRM.first())
+    _nextTaskNumber->setText(configureconfigureCRM.value("tsknumber"));
+
+  _acctGeneration->append(0, tr("Manual"), "M");
+  _acctGeneration->append(1, tr("Automatic"), "A");
+  _acctGeneration->append(2, tr("Automatic, Allow Override"), "O");
+  _incidentGeneration->append(1, tr("Automatic"), "A");
+  _projectGeneration->append(0, tr("Manual"), "M");
+  _projectGeneration->append(1, tr("Automatic"), "A");
+  _projectGeneration->append(2, tr("Automatic, Allow Override"), "O");
+  _taskGeneration->append(0, tr("Manual"), "M");
+  _taskGeneration->append(1, tr("Automatic"), "A");
+  _taskGeneration->append(2, tr("Automatic, Allow Override"), "O");
+
+  _acctGeneration->setCode(_metrics->value("CRMAccountNumberGeneration"));
+  _projectGeneration->setCode(_metrics->value("ProjectNumberGeneration"));
+  _taskGeneration->setCode(_metrics->value("TaskNumberGeneration"));
     
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));
+  _accountChangeLog->setChecked(_metrics->boolean("AccountChangeLog"));
+  _addressChangeLog->setChecked(_metrics->boolean("AddressChangeLog"));
+  _contactChangeLog->setChecked(_metrics->boolean("ContactChangeLog"));
   _opportunityChangeLog->setChecked(_metrics->boolean("OpportunityChangeLog"));
   _requireProjectAssignment->setChecked(_metrics->boolean("RequireProjectAssignment"));
   _projectWarningDays->setValue(_metrics->value("ProjectDueDateWarning").toInt());
+  _requireUniqueEmails->setChecked(_metrics->boolean("EnforceUniqueContactEmails"));
+  _defaultEmailopt->setChecked(_metrics->boolean("DefaultEmailOptIn"));
+  _defaultAddropt->setChecked(_metrics->boolean("DefaultAddressOptIn"));
 
   if (! _metrics->value("DefaultAddressCountry").isEmpty())
     _country->setText(_metrics->value("DefaultAddressCountry"));
@@ -122,24 +148,39 @@ bool configureCRM::sSave()
 {
   emit saving();
 
-  const char *numberGenerationTypes[] = { "M", "A", "O" };
-
   XSqlQuery configq;
   configq.prepare( "SELECT setNextIncidentNumber(:innumber);" );
   configq.bindValue(":innumber", _nextInNumber->text().toInt());
   configq.exec();
   
-  if (QString(numberGenerationTypes[_acctGeneration->currentIndex()]) != "M" && _nextAcctNumber->text().toInt() < 1)
+  if (_acctGeneration->code() != "M" && _nextAcctNumber->text().toInt() < 1)
     _nextAcctNumber->setText("1");
+  if (_projectGeneration->code() != "M" && _nextProjectNumber->text().toInt() < 1)
+    _nextProjectNumber->setText("1");
+  if (_taskGeneration->code() != "M" && _nextTaskNumber->text().toInt() < 1)
+    _nextTaskNumber->setText("1");
 
   configq.prepare( "SELECT setNextCRMAccountNumber(:acnumber);" );
   configq.bindValue(":acnumber", _nextAcctNumber->text().toInt());
   configq.exec();
 
-  _metrics->set("CRMAccountNumberGeneration", QString(numberGenerationTypes[_acctGeneration->currentIndex()]));
+  configq.prepare( "SELECT setNextProjectNumber(:prjnumber);" );
+  configq.bindValue(":prjnumber", _nextProjectNumber->text().toInt());
+  configq.exec();
+
+  configq.prepare( "SELECT setNextTaskNumber(:tsknumber);" );
+  configq.bindValue(":tsknumber", _nextTaskNumber->text().toInt());
+  configq.exec();
+
+  _metrics->set("CRMAccountNumberGeneration", _acctGeneration->code());
+  _metrics->set("ProjectNumberGeneration", _projectGeneration->code());
+  _metrics->set("TaskNumberGeneration", _taskGeneration->code());
   
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));
+  _metrics->set("AccountChangeLog", _accountChangeLog->isChecked());
+  _metrics->set("AddressChangeLog", _addressChangeLog->isChecked());
+  _metrics->set("ContactChangeLog", _contactChangeLog->isChecked());
   _metrics->set("OpportunityChangeLog", _opportunityChangeLog->isChecked());
   _metrics->set("RequireProjectAssignment", _requireProjectAssignment->isChecked());
   _metrics->set("ProjectDueDateWarning", _projectWarningDays->value());
@@ -153,6 +194,27 @@ bool configureCRM::sSave()
   
   _metrics->set("IncidentsPublicPrivate", _incidentsPublicShow->isChecked());
   _metrics->set("IncidentPublicDefault", _incidentsPublicDefault->isChecked());
+
+  if (!_metrics->boolean("EnforceUniqueContactEmails") && (_requireUniqueEmails->isChecked()))
+  {
+    // Check for existing duplicated Contact email addresses if switching on
+    QString usql = "SELECT EXISTS(SELECT 1 FROM cntcteml "
+                   "GROUP BY cntcteml_email "
+                   "HAVING count(*) > 1) AS result;";
+    configq.exec(usql);
+    if (configq.first() && (configq.value("result").toBool()))
+    {
+      QMessageBox::warning(this, tr("Unique Emails"),
+      tr("You cannot enable unique email addresses on contacts "
+         "when duplicates exist.  Please first remove all "
+         "duplicate email addresses on contacts, then enable this setting."));
+      _requireUniqueEmails->setChecked(false);
+      return false;
+    }
+  }
+  _metrics->set("EnforceUniqueContactEmails", _requireUniqueEmails->isChecked());
+  _metrics->set("DefaultEmailOptIn", _defaultEmailopt->isChecked());
+  _metrics->set("DefaultAddressOptIn", _defaultAddropt->isChecked());
 
   if (_metrics->boolean("EnableBatchManager"))
   {

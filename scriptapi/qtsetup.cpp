@@ -10,107 +10,168 @@
 
 #include "qtsetup.h"
 
-QScriptValue AlignmentFlagtoScriptValue(QScriptEngine *engine, const enum Qt::AlignmentFlag &p)
+// To Script Values ////////////////////////////////////////////////////////////
+
+QScriptValue AlignmentToScriptValue(QScriptEngine *engine, const Qt::Alignment &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-/*QScriptValue AnchorAttributetoScriptValue(QScriptEngine *engine, const enum Qt::AnchorAttribute &p)
-{
-  return QScriptValue(engine, (int)p);
-}*/
-
-QScriptValue ApplicationAttributetoScriptValue(QScriptEngine *engine, const enum Qt::ApplicationAttribute &p)
+QScriptValue AlignmentFlagToScriptValue(QScriptEngine *engine, const enum Qt::AlignmentFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ArrowTypetoScriptValue(QScriptEngine *engine, const enum Qt::ArrowType &p)
+QScriptValue AnchorPointToScriptValue(QScriptEngine *engine, const enum Qt::AnchorPoint &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue AspectRatioModetoScriptValue(QScriptEngine *engine, const enum Qt::AspectRatioMode &p)
+QScriptValue ApplicationAttributeToScriptValue(QScriptEngine *engine, const enum Qt::ApplicationAttribute &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue AxistoScriptValue(QScriptEngine *engine, const enum Qt::Axis &p)
+QScriptValue ApplicationStateToScriptValue(QScriptEngine *engine, const enum Qt::ApplicationState &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue BGModetoScriptValue(QScriptEngine *engine, const enum Qt::BGMode &p)
+QScriptValue ApplicationStatesToScriptValue(QScriptEngine *engine, const Qt::ApplicationStates &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue BrushStyletoScriptValue(QScriptEngine *engine, const enum Qt::BrushStyle &p)
+QScriptValue ArrowTypeToScriptValue(QScriptEngine *engine, const enum Qt::ArrowType &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue CaseSensitivitytoScriptValue(QScriptEngine *engine, const enum Qt::CaseSensitivity &p)
+QScriptValue AspectRatioModeToScriptValue(QScriptEngine *engine, const enum Qt::AspectRatioMode &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue CheckStatetoScriptValue(QScriptEngine *engine, const enum Qt::CheckState &p)
+QScriptValue AxisToScriptValue(QScriptEngine *engine, const enum Qt::Axis &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ClipOperationtoScriptValue(QScriptEngine *engine, const enum Qt::ClipOperation &p)
+QScriptValue BGModeToScriptValue(QScriptEngine *engine, const enum Qt::BGMode &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ConnectionTypetoScriptValue(QScriptEngine *engine, const enum Qt::ConnectionType &p)
+QScriptValue BrushStyleToScriptValue(QScriptEngine *engine, const enum Qt::BrushStyle &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ContextMenuPolicytoScriptValue(QScriptEngine *engine, const enum Qt::ContextMenuPolicy &p)
+QScriptValue CaseSensitivityToScriptValue(QScriptEngine *engine, const enum Qt::CaseSensitivity &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue CornertoScriptValue(QScriptEngine *engine, const enum Qt::Corner &p)
+QScriptValue CheckStateToScriptValue(QScriptEngine *engine, const enum Qt::CheckState &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue CursorShapetoScriptValue(QScriptEngine *engine, const enum Qt::CursorShape &p)
+#if QT_VERSION >= 0x050900
+QScriptValue ChecksumTypeToScriptValue(QScriptEngine *engine, const enum Qt::ChecksumType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+#endif
+
+QScriptValue ClipOperationToScriptValue(QScriptEngine *engine, const enum Qt::ClipOperation &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue DateFormattoScriptValue(QScriptEngine *engine, const enum Qt::DateFormat &p)
+QScriptValue ConnectionTypeToScriptValue(QScriptEngine *engine, const enum Qt::ConnectionType &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue DayOfWeektoScriptValue(QScriptEngine *engine, const enum Qt::DayOfWeek &p)
+QScriptValue ContextMenuPolicyToScriptValue(QScriptEngine *engine, const enum Qt::ContextMenuPolicy &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue DockWidgetAreatoScriptValue(QScriptEngine *engine, const enum Qt::DockWidgetArea &p)
+QScriptValue CoordinateSystemToScriptValue(QScriptEngine *engine, const enum Qt::CoordinateSystem &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue DropActiontoScriptValue(QScriptEngine *engine, const enum Qt::DropAction &p)
+QScriptValue CornerToScriptValue(QScriptEngine *engine, const enum Qt::Corner &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue EventPrioritytoScriptValue(QScriptEngine *engine, const enum Qt::EventPriority &p)
+QScriptValue CursorMoveStyleToScriptValue(QScriptEngine *engine, const enum Qt::CursorMoveStyle &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue FillRuletoScriptValue(QScriptEngine *engine, const enum Qt::FillRule &p)
+QScriptValue CursorShapeToScriptValue(QScriptEngine *engine, const enum Qt::CursorShape &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue DateFormatToScriptValue(QScriptEngine *engine, const enum Qt::DateFormat &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue DayOfWeekToScriptValue(QScriptEngine *engine, const enum Qt::DayOfWeek &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue DockWidgetAreaToScriptValue(QScriptEngine *engine, const enum Qt::DockWidgetArea &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue DockWidgetAreasToScriptValue(QScriptEngine *engine, const Qt::DockWidgetAreas &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue DropActionToScriptValue(QScriptEngine *engine, const enum Qt::DropAction &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue DropActionsToScriptValue(QScriptEngine *engine, const Qt::DropActions &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue EdgeToScriptValue(QScriptEngine *engine, const enum Qt::Edge &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue EdgesToScriptValue(QScriptEngine *engine, const Qt::Edges &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+#if QT_VERSION >= 0x050600
+QScriptValue EnterKeyTypeToScriptValue(QScriptEngine *engine, const enum Qt::EnterKeyType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+#endif
+
+QScriptValue EventPriorityToScriptValue(QScriptEngine *engine, const enum Qt::EventPriority &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue FillRuleToScriptValue(QScriptEngine *engine, const enum Qt::FillRule &p)
 {
   return QScriptValue(engine, (int)p);
 }
@@ -125,321 +186,523 @@ QScriptValue FindChildOptionsToScriptValue(QScriptEngine *engine, const Qt::Find
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue FocusPolicytoScriptValue(QScriptEngine *engine, const Qt::FocusPolicy &p)
+QScriptValue FocusPolicyToScriptValue(QScriptEngine *engine, const Qt::FocusPolicy &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue FocusReasontoScriptValue(QScriptEngine *engine, const enum Qt::FocusReason &p)
+QScriptValue FocusReasonToScriptValue(QScriptEngine *engine, const enum Qt::FocusReason &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue GlobalColortoScriptValue(QScriptEngine *engine, const enum Qt::GlobalColor &p)
+QScriptValue GestureFlagToScriptValue(QScriptEngine *engine, const enum Qt::GestureFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue HitTestAccuracytoScriptValue(QScriptEngine *engine, const enum Qt::HitTestAccuracy &p)
+QScriptValue GestureFlagsToScriptValue(QScriptEngine *engine, const Qt::GestureFlags &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ImageConversionFlagtoScriptValue(QScriptEngine *engine, const enum Qt::ImageConversionFlag &p)
+QScriptValue GestureStateToScriptValue(QScriptEngine *engine, const enum Qt::GestureState &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue InputMethodQuerytoScriptValue(QScriptEngine *engine, const enum Qt::InputMethodQuery &p)
+QScriptValue GestureTypeToScriptValue(QScriptEngine *engine, const enum Qt::GestureType &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ItemDataRoletoScriptValue(QScriptEngine *engine, const enum Qt::ItemDataRole &p)
+QScriptValue GlobalColorToScriptValue(QScriptEngine *engine, const enum Qt::GlobalColor &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ItemFlagtoScriptValue(QScriptEngine *engine, const enum Qt::ItemFlag &p)
+QScriptValue HitTestAccuracyToScriptValue(QScriptEngine *engine, const enum Qt::HitTestAccuracy &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ItemSelectionModetoScriptValue(QScriptEngine *engine, const enum Qt::ItemSelectionMode &p)
+QScriptValue ImageConversionFlagToScriptValue(QScriptEngine *engine, const enum Qt::ImageConversionFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue KeytoScriptValue(QScriptEngine *engine, const enum Qt::Key &p)
+QScriptValue ImageConversionFlagsToScriptValue(QScriptEngine *engine, const Qt::ImageConversionFlags &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue KeyboardModifiertoScriptValue(QScriptEngine *engine, const enum Qt::KeyboardModifier &p)
+QScriptValue InputMethodHintToScriptValue(QScriptEngine *engine, const enum Qt::InputMethodHint &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue LayoutDirectiontoScriptValue(QScriptEngine *engine, const enum Qt::LayoutDirection &p)
+QScriptValue InputMethodHintsToScriptValue(QScriptEngine *engine, const Qt::InputMethodHints &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue MaskModetoScriptValue(QScriptEngine *engine, const enum Qt::MaskMode &p)
+QScriptValue InputMethodQueriesToScriptValue(QScriptEngine *engine, const Qt::InputMethodQueries &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue MatchFlagtoScriptValue(QScriptEngine *engine, const enum Qt::MatchFlag &p)
+QScriptValue InputMethodQueryToScriptValue(QScriptEngine *engine, const enum Qt::InputMethodQuery &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue MatchFlagstoScriptValue(QScriptEngine *engine, const Qt::MatchFlags &p)
+QScriptValue ItemDataRoleToScriptValue(QScriptEngine *engine, const enum Qt::ItemDataRole &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ModifiertoScriptValue(QScriptEngine *engine, const enum Qt::Modifier &p)
+QScriptValue ItemFlagToScriptValue(QScriptEngine *engine, const enum Qt::ItemFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue MouseButtontoScriptValue(QScriptEngine *engine, const enum Qt::MouseButton &p)
+QScriptValue ItemFlagsToScriptValue(QScriptEngine *engine, const Qt::ItemFlags &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-/*
-QScriptValue OrientationtoScriptValue(QScriptEngine *engine, const enum Qt::Orientation &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-*/
-
-QScriptValue PenCapStyletoScriptValue(QScriptEngine *engine, const enum Qt::PenCapStyle &p)
+QScriptValue ItemSelectionModeToScriptValue(QScriptEngine *engine, const enum Qt::ItemSelectionMode &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue PenJoinStyletoScriptValue(QScriptEngine *engine, const enum Qt::PenJoinStyle &p)
+QScriptValue ItemSelectionOperationToScriptValue(QScriptEngine *engine, const enum Qt::ItemSelectionOperation &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue PenStyletoScriptValue(QScriptEngine *engine, const enum Qt::PenStyle &p)
+QScriptValue KeyToScriptValue(QScriptEngine *engine, const enum Qt::Key &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ScrollBarPolicytoScriptValue(QScriptEngine *engine, const enum Qt::ScrollBarPolicy &p)
+QScriptValue KeyboardModifierToScriptValue(QScriptEngine *engine, const enum Qt::KeyboardModifier &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ShortcutContexttoScriptValue(QScriptEngine *engine, const enum Qt::ShortcutContext &p)
+QScriptValue KeyboardModifiersToScriptValue(QScriptEngine *engine, const Qt::KeyboardModifiers &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue SizeHinttoScriptValue(QScriptEngine *engine, const enum Qt::SizeHint &p)
+QScriptValue LayoutDirectionToScriptValue(QScriptEngine *engine, const enum Qt::LayoutDirection &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue SizeModetoScriptValue(QScriptEngine *engine, const enum Qt::SizeMode &p)
+QScriptValue MaskModeToScriptValue(QScriptEngine *engine, const enum Qt::MaskMode &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue SortOrdertoScriptValue(QScriptEngine *engine, const enum Qt::SortOrder &p)
+QScriptValue MatchFlagToScriptValue(QScriptEngine *engine, const enum Qt::MatchFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue TextElideModetoScriptValue(QScriptEngine *engine, const enum Qt::TextElideMode &p)
+QScriptValue MatchFlagsToScriptValue(QScriptEngine *engine, const Qt::MatchFlags &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue TextFlagtoScriptValue(QScriptEngine *engine, const enum Qt::TextFlag &p)
+QScriptValue ModifierToScriptValue(QScriptEngine *engine, const enum Qt::Modifier &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue TextFormattoScriptValue(QScriptEngine *engine, const enum Qt::TextFormat &p)
+QScriptValue MouseButtonToScriptValue(QScriptEngine *engine, const enum Qt::MouseButton &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue TextInteractionFlagtoScriptValue(QScriptEngine *engine, const enum Qt::TextInteractionFlag &p)
+QScriptValue MouseButtonsToScriptValue(QScriptEngine *engine, const Qt::MouseButtons &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-#if QT_VERSION >= 0x050000
-QScriptValue TimerTypetoScriptValue(QScriptEngine *engine, const enum Qt::TimerType &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-#endif
-
-QScriptValue TimeSpectoScriptValue(QScriptEngine *engine, const enum Qt::TimeSpec &p)
+QScriptValue MouseEventFlagToScriptValue(QScriptEngine *engine, const enum Qt::MouseEventFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ToolBarAreatoScriptValue(QScriptEngine *engine, const enum Qt::ToolBarArea &p)
+QScriptValue MouseEventFlagsToScriptValue(QScriptEngine *engine, const Qt::MouseEventFlags &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue ToolButtonStyletoScriptValue(QScriptEngine *engine, const enum Qt::ToolButtonStyle &p)
+QScriptValue MouseEventSourceToScriptValue(QScriptEngine *engine, const enum Qt::MouseEventSource &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue TransformationModetoScriptValue(QScriptEngine *engine, const enum Qt::TransformationMode &p)
+QScriptValue NativeGestureTypeToScriptValue(QScriptEngine *engine, const enum Qt::NativeGestureType &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue UIEffecttoScriptValue(QScriptEngine *engine, const enum Qt::UIEffect &p)
+QScriptValue NavigationModeToScriptValue(QScriptEngine *engine, const enum Qt::NavigationMode &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue WhiteSpaceModetoScriptValue(QScriptEngine *engine, const enum Qt::WhiteSpaceMode &p)
+QScriptValue OrientationToScriptValue(QScriptEngine *engine, const enum Qt::Orientation &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue WidgetAttributetoScriptValue(QScriptEngine *engine, const enum Qt::WidgetAttribute &p)
+QScriptValue OrientationsToScriptValue(QScriptEngine *engine, const Qt::Orientations &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue WindowFrameSectiontoScriptValue(QScriptEngine *engine, const enum Qt::WindowFrameSection &p)
+QScriptValue PenCapStyleToScriptValue(QScriptEngine *engine, const enum Qt::PenCapStyle &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue WindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &p)
+QScriptValue PenJoinStyleToScriptValue(QScriptEngine *engine, const enum Qt::PenJoinStyle &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue WindowStatetoScriptValue(QScriptEngine *engine, const enum Qt::WindowState &p)
+QScriptValue PenStyleToScriptValue(QScriptEngine *engine, const enum Qt::PenStyle &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue WindowTypetoScriptValue(QScriptEngine *engine, const enum Qt::WindowType &p)
+QScriptValue ScreenOrientationToScriptValue(QScriptEngine *engine, const enum Qt::ScreenOrientation &p)
 {
   return QScriptValue(engine, (int)p);
 }
 
-void AlignmentFlagfromScriptValue(const QScriptValue &obj, enum Qt::AlignmentFlag &p)
+QScriptValue ScreenOrientationsToScriptValue(QScriptEngine *engine, const Qt::ScreenOrientations &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue ScrollBarPolicyToScriptValue(QScriptEngine *engine, const enum Qt::ScrollBarPolicy &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue ScrollPhaseToScriptValue(QScriptEngine *engine, const enum Qt::ScrollPhase &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue ShortcutContextToScriptValue(QScriptEngine *engine, const enum Qt::ShortcutContext &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue SizeHintToScriptValue(QScriptEngine *engine, const enum Qt::SizeHint &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue SizeModeToScriptValue(QScriptEngine *engine, const enum Qt::SizeMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue SortOrderToScriptValue(QScriptEngine *engine, const enum Qt::SortOrder &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TabFocusBehaviorToScriptValue(QScriptEngine *engine, const enum Qt::TabFocusBehavior &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TextElideModeToScriptValue(QScriptEngine *engine, const enum Qt::TextElideMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TextFlagToScriptValue(QScriptEngine *engine, const enum Qt::TextFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TextFormatToScriptValue(QScriptEngine *engine, const enum Qt::TextFormat &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TextInteractionFlagToScriptValue(QScriptEngine *engine, const enum Qt::TextInteractionFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TextInteractionFlagsToScriptValue(QScriptEngine *engine, const Qt::TextInteractionFlags &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TileRuleToScriptValue(QScriptEngine *engine, const enum Qt::TileRule &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TimeSpecToScriptValue(QScriptEngine *engine, const enum Qt::TimeSpec &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TimerTypeToScriptValue(QScriptEngine *engine, const enum Qt::TimerType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue ToolBarAreaToScriptValue(QScriptEngine *engine, const enum Qt::ToolBarArea &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue ToolBarAreasToScriptValue(QScriptEngine *engine, const Qt::ToolBarAreas &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue ToolButtonStyleToScriptValue(QScriptEngine *engine, const enum Qt::ToolButtonStyle &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TouchPointStateToScriptValue(QScriptEngine *engine, const enum Qt::TouchPointState &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TouchPointStatesToScriptValue(QScriptEngine *engine, const Qt::TouchPointStates &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue TransformationModeToScriptValue(QScriptEngine *engine, const enum Qt::TransformationMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue UIEffectToScriptValue(QScriptEngine *engine, const enum Qt::UIEffect &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WhiteSpaceModeToScriptValue(QScriptEngine *engine, const enum Qt::WhiteSpaceMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WidgetAttributeToScriptValue(QScriptEngine *engine, const enum Qt::WidgetAttribute &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WindowFlagsToScriptValue(QScriptEngine *engine, const Qt::WindowFlags &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WindowFrameSectionToScriptValue(QScriptEngine *engine, const enum Qt::WindowFrameSection &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WindowModalityToScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WindowStateToScriptValue(QScriptEngine *engine, const enum Qt::WindowState &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WindowStatesToScriptValue(QScriptEngine *engine, const Qt::WindowStates &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue WindowTypeToScriptValue(QScriptEngine *engine, const enum Qt::WindowType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+// From Script Values //////////////////////////////////////////////////////////
+
+void AlignmentFromScriptValue(const QScriptValue &obj, Qt::Alignment &p)
+{
+  p = (Qt::Alignment)obj.toInt32();
+}
+
+void AlignmentFlagFromScriptValue(const QScriptValue &obj, enum Qt::AlignmentFlag &p)
 {
   p = (enum Qt::AlignmentFlag)obj.toInt32();
 }
 
-/*void AnchorAttributefromScriptValue(const QScriptValue &obj, enum Qt::AnchorAttribute &p)
+void AnchorPointFromScriptValue(const QScriptValue &obj, enum Qt::AnchorPoint &p)
 {
-  p = (enum Qt::AnchorAttribute)obj.toInt32();
-}*/
+  p = (enum Qt::AnchorPoint)obj.toInt32();
+}
 
-void ApplicationAttributefromScriptValue(const QScriptValue &obj, enum Qt::ApplicationAttribute &p)
+void ApplicationAttributeFromScriptValue(const QScriptValue &obj, enum Qt::ApplicationAttribute &p)
 {
   p = (enum Qt::ApplicationAttribute)obj.toInt32();
 }
 
-void ArrowTypefromScriptValue(const QScriptValue &obj, enum Qt::ArrowType &p)
+void ApplicationStateFromScriptValue(const QScriptValue &obj, enum Qt::ApplicationState &p)
+{
+  p = (enum Qt::ApplicationState)obj.toInt32();
+}
+
+void ApplicationStatesFromScriptValue(const QScriptValue &obj, Qt::ApplicationStates &p)
+{
+  p = (Qt::ApplicationStates)obj.toInt32();
+}
+
+void ArrowTypeFromScriptValue(const QScriptValue &obj, enum Qt::ArrowType &p)
 {
   p = (enum Qt::ArrowType)obj.toInt32();
 }
 
-void AspectRatioModefromScriptValue(const QScriptValue &obj, enum Qt::AspectRatioMode &p)
+void AspectRatioModeFromScriptValue(const QScriptValue &obj, enum Qt::AspectRatioMode &p)
 {
   p = (enum Qt::AspectRatioMode)obj.toInt32();
 }
 
-void AxisfromScriptValue(const QScriptValue &obj, enum Qt::Axis &p)
+void AxisFromScriptValue(const QScriptValue &obj, enum Qt::Axis &p)
 {
   p = (enum Qt::Axis)obj.toInt32();
 }
 
-void BGModefromScriptValue(const QScriptValue &obj, enum Qt::BGMode &p)
+void BGModeFromScriptValue(const QScriptValue &obj, enum Qt::BGMode &p)
 {
   p = (enum Qt::BGMode)obj.toInt32();
 }
 
-void BrushStylefromScriptValue(const QScriptValue &obj, enum Qt::BrushStyle &p)
+void BrushStyleFromScriptValue(const QScriptValue &obj, enum Qt::BrushStyle &p)
 {
   p = (enum Qt::BrushStyle)obj.toInt32();
 }
 
-void CaseSensitivityfromScriptValue(const QScriptValue &obj, enum Qt::CaseSensitivity &p)
+void CaseSensitivityFromScriptValue(const QScriptValue &obj, enum Qt::CaseSensitivity &p)
 {
   p = (enum Qt::CaseSensitivity)obj.toInt32();
 }
 
-void CheckStatefromScriptValue(const QScriptValue &obj, enum Qt::CheckState &p)
+void CheckStateFromScriptValue(const QScriptValue &obj, enum Qt::CheckState &p)
 {
   p = (enum Qt::CheckState)obj.toInt32();
 }
 
-void ClipOperationfromScriptValue(const QScriptValue &obj, enum Qt::ClipOperation &p)
+#if QT_VERSION >= 0x050900
+void ChecksumTypeFromScriptValue(const QScriptValue &obj, enum Qt::ChecksumType &p)
+{
+  p = (enum Qt::ChecksumType)obj.toInt32();
+}
+#endif
+
+void ClipOperationFromScriptValue(const QScriptValue &obj, enum Qt::ClipOperation &p)
 {
   p = (enum Qt::ClipOperation)obj.toInt32();
 }
 
-void ConnectionTypefromScriptValue(const QScriptValue &obj, enum Qt::ConnectionType &p)
+void ConnectionTypeFromScriptValue(const QScriptValue &obj, enum Qt::ConnectionType &p)
 {
   p = (enum Qt::ConnectionType)obj.toInt32();
 }
 
-void ContextMenuPolicyfromScriptValue(const QScriptValue &obj, enum Qt::ContextMenuPolicy &p)
+void ContextMenuPolicyFromScriptValue(const QScriptValue &obj, enum Qt::ContextMenuPolicy &p)
 {
   p = (enum Qt::ContextMenuPolicy)obj.toInt32();
 }
 
-void CornerfromScriptValue(const QScriptValue &obj, enum Qt::Corner &p)
+void CoordinateSystemFromScriptValue(const QScriptValue &obj, enum Qt::CoordinateSystem &p)
+{
+  p = (enum Qt::CoordinateSystem)obj.toInt32();
+}
+
+void CornerFromScriptValue(const QScriptValue &obj, enum Qt::Corner &p)
 {
   p = (enum Qt::Corner)obj.toInt32();
 }
 
-void CursorShapefromScriptValue(const QScriptValue &obj, enum Qt::CursorShape &p)
+void CursorMoveStyleFromScriptValue(const QScriptValue &obj, enum Qt::CursorMoveStyle &p)
+{
+  p = (enum Qt::CursorMoveStyle)obj.toInt32();
+}
+
+void CursorShapeFromScriptValue(const QScriptValue &obj, enum Qt::CursorShape &p)
 {
   p = (enum Qt::CursorShape)obj.toInt32();
 }
 
-void DateFormatfromScriptValue(const QScriptValue &obj, enum Qt::DateFormat &p)
+void DateFormatFromScriptValue(const QScriptValue &obj, enum Qt::DateFormat &p)
 {
   p = (enum Qt::DateFormat)obj.toInt32();
 }
 
-void DayOfWeekfromScriptValue(const QScriptValue &obj, enum Qt::DayOfWeek &p)
+void DayOfWeekFromScriptValue(const QScriptValue &obj, enum Qt::DayOfWeek &p)
 {
   p = (enum Qt::DayOfWeek)obj.toInt32();
 }
 
-void DockWidgetAreafromScriptValue(const QScriptValue &obj, enum Qt::DockWidgetArea &p)
+void DockWidgetAreaFromScriptValue(const QScriptValue &obj, enum Qt::DockWidgetArea &p)
 {
   p = (enum Qt::DockWidgetArea)obj.toInt32();
 }
 
-void DropActionfromScriptValue(const QScriptValue &obj, enum Qt::DropAction &p)
+void DockWidgetAreasFromScriptValue(const QScriptValue &obj, Qt::DockWidgetAreas &p)
+{
+  p = (Qt::DockWidgetAreas)obj.toInt32();
+}
+
+void DropActionFromScriptValue(const QScriptValue &obj, enum Qt::DropAction &p)
 {
   p = (enum Qt::DropAction)obj.toInt32();
 }
 
-void EventPriorityfromScriptValue(const QScriptValue &obj, enum Qt::EventPriority &p)
+void DropActionsFromScriptValue(const QScriptValue &obj, Qt::DropActions &p)
+{
+  p = (Qt::DropActions)obj.toInt32();
+}
+
+void EdgeFromScriptValue(const QScriptValue &obj, enum Qt::Edge &p)
+{
+  p = (enum Qt::Edge)obj.toInt32();
+}
+
+void EdgesFromScriptValue(const QScriptValue &obj, Qt::Edges &p)
+{
+  p = (Qt::Edges)obj.toInt32();
+}
+
+#if QT_VERSION >= 0x050600
+void EnterKeyTypeFromScriptValue(const QScriptValue &obj, enum Qt::EnterKeyType &p)
+{
+  p = (enum Qt::EnterKeyType)obj.toInt32();
+}
+#endif
+
+void EventPriorityFromScriptValue(const QScriptValue &obj, enum Qt::EventPriority &p)
 {
   p = (enum Qt::EventPriority)obj.toInt32();
 }
 
-void FillRulefromScriptValue(const QScriptValue &obj, enum Qt::FillRule &p)
+void FillRuleFromScriptValue(const QScriptValue &obj, enum Qt::FillRule &p)
 {
   p = (enum Qt::FillRule)obj.toInt32();
 }
@@ -454,226 +717,370 @@ void FindChildOptionsFromScriptValue(const QScriptValue &obj, Qt::FindChildOptio
   p = (Qt::FindChildOptions)obj.toInt32();
 }
 
-void FocusPolicyfromScriptValue(const QScriptValue &obj, Qt::FocusPolicy &p)
+void FocusPolicyFromScriptValue(const QScriptValue &obj, Qt::FocusPolicy &p)
 {
   p = (Qt::FocusPolicy)obj.toInt32();
 }
 
-void FocusReasonfromScriptValue(const QScriptValue &obj, enum Qt::FocusReason &p)
+void FocusReasonFromScriptValue(const QScriptValue &obj, enum Qt::FocusReason &p)
 {
   p = (enum Qt::FocusReason)obj.toInt32();
 }
 
-void GlobalColorfromScriptValue(const QScriptValue &obj, enum Qt::GlobalColor &p)
+void GestureFlagFromScriptValue(const QScriptValue &obj, enum Qt::GestureFlag &p)
+{
+  p = (enum Qt::GestureFlag)obj.toInt32();
+}
+
+void GestureFlagsFromScriptValue(const QScriptValue &obj, Qt::GestureFlags &p)
+{
+  p = (Qt::GestureFlags)obj.toInt32();
+}
+
+void GestureStateFromScriptValue(const QScriptValue &obj, enum Qt::GestureState &p)
+{
+  p = (enum Qt::GestureState)obj.toInt32();
+}
+
+void GestureTypeFromScriptValue(const QScriptValue &obj, enum Qt::GestureType &p)
+{
+  p = (enum Qt::GestureType)obj.toInt32();
+}
+
+void GlobalColorFromScriptValue(const QScriptValue &obj, enum Qt::GlobalColor &p)
 {
   p = (enum Qt::GlobalColor)obj.toInt32();
 }
 
-void HitTestAccuracyfromScriptValue(const QScriptValue &obj, enum Qt::HitTestAccuracy &p)
+void HitTestAccuracyFromScriptValue(const QScriptValue &obj, enum Qt::HitTestAccuracy &p)
 {
   p = (enum Qt::HitTestAccuracy)obj.toInt32();
 }
 
-void ImageConversionFlagfromScriptValue(const QScriptValue &obj, enum Qt::ImageConversionFlag &p)
+void ImageConversionFlagFromScriptValue(const QScriptValue &obj, enum Qt::ImageConversionFlag &p)
 {
   p = (enum Qt::ImageConversionFlag)obj.toInt32();
 }
 
-void InputMethodQueryfromScriptValue(const QScriptValue &obj, enum Qt::InputMethodQuery &p)
+void ImageConversionFlagsFromScriptValue(const QScriptValue &obj, Qt::ImageConversionFlags &p)
+{
+  p = (Qt::ImageConversionFlags)obj.toInt32();
+}
+
+void InputMethodHintFromScriptValue(const QScriptValue &obj, enum Qt::InputMethodHint &p)
+{
+  p = (enum Qt::InputMethodHint)obj.toInt32();
+}
+
+void InputMethodHintsFromScriptValue(const QScriptValue &obj, Qt::InputMethodHints &p)
+{
+  p = (Qt::InputMethodHints)obj.toInt32();
+}
+
+void InputMethodQueriesFromScriptValue(const QScriptValue &obj, Qt::InputMethodQueries &p)
+{
+  p = (Qt::InputMethodQueries)obj.toInt32();
+}
+
+void InputMethodQueryFromScriptValue(const QScriptValue &obj, enum Qt::InputMethodQuery &p)
 {
   p = (enum Qt::InputMethodQuery)obj.toInt32();
 }
 
-void ItemDataRolefromScriptValue(const QScriptValue &obj, enum Qt::ItemDataRole &p)
+void ItemDataRoleFromScriptValue(const QScriptValue &obj, enum Qt::ItemDataRole &p)
 {
   p = (enum Qt::ItemDataRole)obj.toInt32();
 }
 
-void ItemFlagfromScriptValue(const QScriptValue &obj, enum Qt::ItemFlag &p)
+void ItemFlagFromScriptValue(const QScriptValue &obj, enum Qt::ItemFlag &p)
 {
   p = (enum Qt::ItemFlag)obj.toInt32();
 }
 
-void ItemSelectionModefromScriptValue(const QScriptValue &obj, enum Qt::ItemSelectionMode &p)
+void ItemFlagsFromScriptValue(const QScriptValue &obj, Qt::ItemFlags &p)
+{
+  p = (Qt::ItemFlags)obj.toInt32();
+}
+
+void ItemSelectionModeFromScriptValue(const QScriptValue &obj, enum Qt::ItemSelectionMode &p)
 {
   p = (enum Qt::ItemSelectionMode)obj.toInt32();
 }
 
-void KeyfromScriptValue(const QScriptValue &obj, enum Qt::Key &p)
+void ItemSelectionOperationFromScriptValue(const QScriptValue &obj, enum Qt::ItemSelectionOperation &p)
+{
+  p = (enum Qt::ItemSelectionOperation)obj.toInt32();
+}
+
+void KeyFromScriptValue(const QScriptValue &obj, enum Qt::Key &p)
 {
   p = (enum Qt::Key)obj.toInt32();
 }
 
-void KeyboardModifierfromScriptValue(const QScriptValue &obj, enum Qt::KeyboardModifier &p)
+void KeyboardModifierFromScriptValue(const QScriptValue &obj, enum Qt::KeyboardModifier &p)
 {
   p = (enum Qt::KeyboardModifier)obj.toInt32();
 }
 
-void LayoutDirectionfromScriptValue(const QScriptValue &obj, enum Qt::LayoutDirection &p)
+void KeyboardModifiersFromScriptValue(const QScriptValue &obj, Qt::KeyboardModifiers &p)
+{
+  p = (Qt::KeyboardModifiers)obj.toInt32();
+}
+
+void LayoutDirectionFromScriptValue(const QScriptValue &obj, enum Qt::LayoutDirection &p)
 {
   p = (enum Qt::LayoutDirection)obj.toInt32();
 }
 
-void MaskModefromScriptValue(const QScriptValue &obj, enum Qt::MaskMode &p)
+void MaskModeFromScriptValue(const QScriptValue &obj, enum Qt::MaskMode &p)
 {
   p = (enum Qt::MaskMode)obj.toInt32();
 }
 
-void MatchFlagfromScriptValue(const QScriptValue &obj, enum Qt::MatchFlag &p)
+void MatchFlagFromScriptValue(const QScriptValue &obj, enum Qt::MatchFlag &p)
 {
   p = (enum Qt::MatchFlag)obj.toInt32();
 }
 
-void MatchFlagsfromScriptValue(const QScriptValue &obj, Qt::MatchFlags &p)
+void MatchFlagsFromScriptValue(const QScriptValue &obj, Qt::MatchFlags &p)
 {
   p = (Qt::MatchFlags)obj.toInt32();
 }
 
-void ModifierfromScriptValue(const QScriptValue &obj, enum Qt::Modifier &p)
+void ModifierFromScriptValue(const QScriptValue &obj, enum Qt::Modifier &p)
 {
   p = (enum Qt::Modifier)obj.toInt32();
 }
 
-void MouseButtonfromScriptValue(const QScriptValue &obj, enum Qt::MouseButton &p)
+void MouseButtonFromScriptValue(const QScriptValue &obj, enum Qt::MouseButton &p)
 {
   p = (enum Qt::MouseButton)obj.toInt32();
 }
 
-/*
-void OrientationfromScriptValue(const QScriptValue &obj, enum Qt::Orientation &p)
+void MouseButtonsFromScriptValue(const QScriptValue &obj, Qt::MouseButtons &p)
+{
+  p = (Qt::MouseButtons)obj.toInt32();
+}
+
+void MouseEventFlagFromScriptValue(const QScriptValue &obj, enum Qt::MouseEventFlag &p)
+{
+  p = (enum Qt::MouseEventFlag)obj.toInt32();
+}
+
+void MouseEventFlagsFromScriptValue(const QScriptValue &obj, Qt::MouseEventFlags &p)
+{
+  p = (Qt::MouseEventFlags)obj.toInt32();
+}
+
+void MouseEventSourceFromScriptValue(const QScriptValue &obj, enum Qt::MouseEventSource &p)
+{
+  p = (enum Qt::MouseEventSource)obj.toInt32();
+}
+
+void NativeGestureTypeFromScriptValue(const QScriptValue &obj, enum Qt::NativeGestureType &p)
+{
+  p = (enum Qt::NativeGestureType)obj.toInt32();
+}
+
+void NavigationModeFromScriptValue(const QScriptValue &obj, enum Qt::NavigationMode &p)
+{
+  p = (enum Qt::NavigationMode)obj.toInt32();
+}
+
+void OrientationFromScriptValue(const QScriptValue &obj, enum Qt::Orientation &p)
 {
   p = (enum Qt::Orientation)obj.toInt32();
 }
-*/
 
-void PenCapStylefromScriptValue(const QScriptValue &obj, enum Qt::PenCapStyle &p)
+void OrientationsFromScriptValue(const QScriptValue &obj, Qt::Orientations &p)
+{
+  p = (Qt::Orientations)obj.toInt32();
+}
+
+void PenCapStyleFromScriptValue(const QScriptValue &obj, enum Qt::PenCapStyle &p)
 {
   p = (enum Qt::PenCapStyle)obj.toInt32();
 }
 
-void PenJoinStylefromScriptValue(const QScriptValue &obj, enum Qt::PenJoinStyle &p)
+void PenJoinStyleFromScriptValue(const QScriptValue &obj, enum Qt::PenJoinStyle &p)
 {
   p = (enum Qt::PenJoinStyle)obj.toInt32();
 }
 
-void PenStylefromScriptValue(const QScriptValue &obj, enum Qt::PenStyle &p)
+void PenStyleFromScriptValue(const QScriptValue &obj, enum Qt::PenStyle &p)
 {
   p = (enum Qt::PenStyle)obj.toInt32();
 }
 
-void ScrollBarPolicyfromScriptValue(const QScriptValue &obj, enum Qt::ScrollBarPolicy &p)
+void ScreenOrientationFromScriptValue(const QScriptValue &obj, enum Qt::ScreenOrientation &p)
+{
+  p = (enum Qt::ScreenOrientation)obj.toInt32();
+}
+
+void ScreenOrientationsFromScriptValue(const QScriptValue &obj, Qt::ScreenOrientations &p)
+{
+  p = (Qt::ScreenOrientations)obj.toInt32();
+}
+
+void ScrollBarPolicyFromScriptValue(const QScriptValue &obj, enum Qt::ScrollBarPolicy &p)
 {
   p = (enum Qt::ScrollBarPolicy)obj.toInt32();
 }
 
-void ShortcutContextfromScriptValue(const QScriptValue &obj, enum Qt::ShortcutContext &p)
+void ScrollPhaseFromScriptValue(const QScriptValue &obj, enum Qt::ScrollPhase &p)
+{
+  p = (enum Qt::ScrollPhase)obj.toInt32();
+}
+
+void ShortcutContextFromScriptValue(const QScriptValue &obj, enum Qt::ShortcutContext &p)
 {
   p = (enum Qt::ShortcutContext)obj.toInt32();
 }
 
-void SizeHintfromScriptValue(const QScriptValue &obj, enum Qt::SizeHint &p)
+void SizeHintFromScriptValue(const QScriptValue &obj, enum Qt::SizeHint &p)
 {
   p = (enum Qt::SizeHint)obj.toInt32();
 }
 
-void SizeModefromScriptValue(const QScriptValue &obj, enum Qt::SizeMode &p)
+void SizeModeFromScriptValue(const QScriptValue &obj, enum Qt::SizeMode &p)
 {
   p = (enum Qt::SizeMode)obj.toInt32();
 }
 
-void SortOrderfromScriptValue(const QScriptValue &obj, enum Qt::SortOrder &p)
+void SortOrderFromScriptValue(const QScriptValue &obj, enum Qt::SortOrder &p)
 {
   p = (enum Qt::SortOrder)obj.toInt32();
 }
 
-void TextElideModefromScriptValue(const QScriptValue &obj, enum Qt::TextElideMode &p)
+void TabFocusBehaviorFromScriptValue(const QScriptValue &obj, enum Qt::TabFocusBehavior &p)
+{
+  p = (enum Qt::TabFocusBehavior)obj.toInt32();
+}
+
+void TextElideModeFromScriptValue(const QScriptValue &obj, enum Qt::TextElideMode &p)
 {
   p = (enum Qt::TextElideMode)obj.toInt32();
 }
 
-void TextFlagfromScriptValue(const QScriptValue &obj, enum Qt::TextFlag &p)
+void TextFlagFromScriptValue(const QScriptValue &obj, enum Qt::TextFlag &p)
 {
   p = (enum Qt::TextFlag)obj.toInt32();
 }
 
-void TextFormatfromScriptValue(const QScriptValue &obj, enum Qt::TextFormat &p)
+void TextFormatFromScriptValue(const QScriptValue &obj, enum Qt::TextFormat &p)
 {
   p = (enum Qt::TextFormat)obj.toInt32();
 }
 
-void TextInteractionFlagfromScriptValue(const QScriptValue &obj, enum Qt::TextInteractionFlag &p)
+void TextInteractionFlagFromScriptValue(const QScriptValue &obj, enum Qt::TextInteractionFlag &p)
 {
   p = (enum Qt::TextInteractionFlag)obj.toInt32();
 }
 
-#if QT_VERSION >= 0x050000
-void TimerTypefromScriptValue(const QScriptValue &obj, enum Qt::TimerType &p)
+void TextInteractionFlagsFromScriptValue(const QScriptValue &obj, Qt::TextInteractionFlags &p)
 {
-  p = (enum Qt::TimerType)obj.toInt32();
+  p = (Qt::TextInteractionFlags)obj.toInt32();
 }
-#endif
 
-void TimeSpecfromScriptValue(const QScriptValue &obj, enum Qt::TimeSpec &p)
+void TileRuleFromScriptValue(const QScriptValue &obj, enum Qt::TileRule &p)
+{
+  p = (enum Qt::TileRule)obj.toInt32();
+}
+
+void TimeSpecFromScriptValue(const QScriptValue &obj, enum Qt::TimeSpec &p)
 {
   p = (enum Qt::TimeSpec)obj.toInt32();
 }
 
-void ToolBarAreafromScriptValue(const QScriptValue &obj, enum Qt::ToolBarArea &p)
+void TimerTypeFromScriptValue(const QScriptValue &obj, enum Qt::TimerType &p)
+{
+  p = (enum Qt::TimerType)obj.toInt32();
+}
+
+void ToolBarAreaFromScriptValue(const QScriptValue &obj, enum Qt::ToolBarArea &p)
 {
   p = (enum Qt::ToolBarArea)obj.toInt32();
 }
 
-void ToolButtonStylefromScriptValue(const QScriptValue &obj, enum Qt::ToolButtonStyle &p)
+void ToolBarAreasFromScriptValue(const QScriptValue &obj, Qt::ToolBarAreas &p)
+{
+  p = (Qt::ToolBarAreas)obj.toInt32();
+}
+
+void ToolButtonStyleFromScriptValue(const QScriptValue &obj, enum Qt::ToolButtonStyle &p)
 {
   p = (enum Qt::ToolButtonStyle)obj.toInt32();
 }
 
-void TransformationModefromScriptValue(const QScriptValue &obj, enum Qt::TransformationMode &p)
+void TouchPointStateFromScriptValue(const QScriptValue &obj, enum Qt::TouchPointState &p)
+{
+  p = (enum Qt::TouchPointState)obj.toInt32();
+}
+
+void TouchPointStatesFromScriptValue(const QScriptValue &obj, Qt::TouchPointStates &p)
+{
+  p = (Qt::TouchPointStates)obj.toInt32();
+}
+
+void TransformationModeFromScriptValue(const QScriptValue &obj, enum Qt::TransformationMode &p)
 {
   p = (enum Qt::TransformationMode)obj.toInt32();
 }
 
-void UIEffectfromScriptValue(const QScriptValue &obj, enum Qt::UIEffect &p)
+void UIEffectFromScriptValue(const QScriptValue &obj, enum Qt::UIEffect &p)
 {
   p = (enum Qt::UIEffect)obj.toInt32();
 }
 
-void WhiteSpaceModefromScriptValue(const QScriptValue &obj, enum Qt::WhiteSpaceMode &p)
+void WhiteSpaceModeFromScriptValue(const QScriptValue &obj, enum Qt::WhiteSpaceMode &p)
 {
   p = (enum Qt::WhiteSpaceMode)obj.toInt32();
 }
 
-void WidgetAttributefromScriptValue(const QScriptValue &obj, enum Qt::WidgetAttribute &p)
+void WidgetAttributeFromScriptValue(const QScriptValue &obj, enum Qt::WidgetAttribute &p)
 {
   p = (enum Qt::WidgetAttribute)obj.toInt32();
 }
 
-void WindowFrameSectionfromScriptValue(const QScriptValue &obj, enum Qt::WindowFrameSection &p)
+void WindowFlagsFromScriptValue(const QScriptValue &obj, Qt::WindowFlags &p)
+{
+  p = (Qt::WindowFlags)obj.toInt32();
+}
+
+void WindowFrameSectionFromScriptValue(const QScriptValue &obj, enum Qt::WindowFrameSection &p)
 {
   p = (enum Qt::WindowFrameSection)obj.toInt32();
 }
 
-void WindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &p)
+void WindowModalityFromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &p)
 {
   p = (enum Qt::WindowModality)obj.toInt32();
 }
 
-void WindowStatefromScriptValue(const QScriptValue &obj, enum Qt::WindowState &p)
+void WindowStateFromScriptValue(const QScriptValue &obj, enum Qt::WindowState &p)
 {
   p = (enum Qt::WindowState)obj.toInt32();
 }
 
-void WindowTypefromScriptValue(const QScriptValue &obj, enum Qt::WindowType &p)
+void WindowStatesFromScriptValue(const QScriptValue &obj, Qt::WindowStates &p)
+{
+  p = (Qt::WindowStates)obj.toInt32();
+}
+
+void WindowTypeFromScriptValue(const QScriptValue &obj, enum Qt::WindowType &p)
 {
   p = (enum Qt::WindowType)obj.toInt32();
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 void setupQt(QScriptEngine *engine)
 {
   QScriptValue widget = engine->newObject();
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-  qScriptRegisterMetaType(engine, AlignmentFlagtoScriptValue, AlignmentFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, AlignmentToScriptValue,     AlignmentFromScriptValue);
+  qScriptRegisterMetaType(engine, AlignmentFlagToScriptValue, AlignmentFlagFromScriptValue);
   widget.setProperty("AlignLeft",            QScriptValue(engine, Qt::AlignLeft),            ro);
   widget.setProperty("AlignRight",           QScriptValue(engine, Qt::AlignRight),           ro);
   widget.setProperty("AlignHCenter",         QScriptValue(engine, Qt::AlignHCenter),         ro);
@@ -681,6 +1088,7 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("AlignTop",             QScriptValue(engine, Qt::AlignTop),             ro);
   widget.setProperty("AlignBottom",          QScriptValue(engine, Qt::AlignBottom),          ro);
   widget.setProperty("AlignVCenter",         QScriptValue(engine, Qt::AlignVCenter),         ro);
+  widget.setProperty("AlignBaseline",        QScriptValue(engine, Qt::AlignBaseline),        ro);
   widget.setProperty("AlignCenter",          QScriptValue(engine, Qt::AlignCenter),          ro);
   widget.setProperty("AlignAbsolute",        QScriptValue(engine, Qt::AlignAbsolute),        ro);
   widget.setProperty("AlignLeading",         QScriptValue(engine, Qt::AlignLeading),         ro);
@@ -688,36 +1096,84 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("AlignHorizontal_Mask", QScriptValue(engine, Qt::AlignHorizontal_Mask), ro);
   widget.setProperty("AlignVertical_Mask",   QScriptValue(engine, Qt::AlignVertical_Mask),   ro);
 
-  qScriptRegisterMetaType(engine, ApplicationAttributetoScriptValue, ApplicationAttributefromScriptValue);
-  widget.setProperty("AA_ImmediateWidgetCreation",        QScriptValue(engine, Qt::AA_ImmediateWidgetCreation),        ro);
-  widget.setProperty("AA_MSWindowsUseDirect3DByDefault",  QScriptValue(engine, Qt::AA_MSWindowsUseDirect3DByDefault),  ro);
-  widget.setProperty("AA_DontShowIconsInMenus",           QScriptValue(engine, Qt::AA_DontShowIconsInMenus),           ro);
-  widget.setProperty("AA_NativeWindows",                  QScriptValue(engine, Qt::AA_NativeWindows),                  ro);
-  widget.setProperty("AA_DontCreateNativeWidgetSiblings", QScriptValue(engine, Qt::AA_DontCreateNativeWidgetSiblings), ro);
-  widget.setProperty("AA_MacPluginApplication",           QScriptValue(engine, Qt::AA_MacPluginApplication),           ro);
+  qScriptRegisterMetaType(engine, AnchorPointToScriptValue, AnchorPointFromScriptValue);
+  widget.setProperty("AnchorLeft",             QScriptValue(engine, Qt::AnchorLeft),             ro);
+  widget.setProperty("AnchorHorizontalCenter", QScriptValue(engine, Qt::AnchorHorizontalCenter), ro);
+  widget.setProperty("AnchorRight",            QScriptValue(engine, Qt::AnchorRight),            ro);
+  widget.setProperty("AnchorTop",              QScriptValue(engine, Qt::AnchorTop),              ro);
+  widget.setProperty("AnchorVerticalCenter",   QScriptValue(engine, Qt::AnchorVerticalCenter),   ro);
+  widget.setProperty("AnchorBottom",           QScriptValue(engine, Qt::AnchorBottom),           ro);
 
-  qScriptRegisterMetaType(engine, ArrowTypetoScriptValue, ArrowTypefromScriptValue);
+  qScriptRegisterMetaType(engine, ApplicationAttributeToScriptValue, ApplicationAttributeFromScriptValue);
+  widget.setProperty("AA_DontShowIconsInMenus",                    QScriptValue(engine, Qt::AA_DontShowIconsInMenus),                    ro);
+  widget.setProperty("AA_NativeWindows",                           QScriptValue(engine, Qt::AA_NativeWindows),                           ro);
+  widget.setProperty("AA_DontCreateNativeWidgetSiblings",          QScriptValue(engine, Qt::AA_DontCreateNativeWidgetSiblings),          ro);
+#if QT_VERSION >= 0x050700
+  widget.setProperty("AA_PluginApplication",                       QScriptValue(engine, Qt::AA_PluginApplication),                       ro);
+#endif
+  widget.setProperty("AA_DontUseNativeMenuBar",                    QScriptValue(engine, Qt::AA_DontUseNativeMenuBar),                    ro);
+  widget.setProperty("AA_MacDontSwapCtrlAndMeta",                  QScriptValue(engine, Qt::AA_MacDontSwapCtrlAndMeta),                  ro);
+  widget.setProperty("AA_Use96Dpi",                                QScriptValue(engine, Qt::AA_Use96Dpi),                                ro);
+  widget.setProperty("AA_SynthesizeTouchForUnhandledMouseEvents",  QScriptValue(engine, Qt::AA_SynthesizeTouchForUnhandledMouseEvents),  ro);
+  widget.setProperty("AA_SynthesizeMouseForUnhandledTouchEvents",  QScriptValue(engine, Qt::AA_SynthesizeMouseForUnhandledTouchEvents),  ro);
+  widget.setProperty("AA_UseHighDpiPixmaps",                       QScriptValue(engine, Qt::AA_UseHighDpiPixmaps),                       ro);
+  widget.setProperty("AA_ForceRasterWidgets",                      QScriptValue(engine, Qt::AA_ForceRasterWidgets),                      ro);
+  widget.setProperty("AA_UseDesktopOpenGL",                        QScriptValue(engine, Qt::AA_UseDesktopOpenGL),                        ro);
+  widget.setProperty("AA_UseOpenGLES",                             QScriptValue(engine, Qt::AA_UseOpenGLES),                             ro);
+  widget.setProperty("AA_UseSoftwareOpenGL",                       QScriptValue(engine, Qt::AA_UseSoftwareOpenGL),                       ro);
+  widget.setProperty("AA_ShareOpenGLContexts",                     QScriptValue(engine, Qt::AA_ShareOpenGLContexts),                     ro);
+  widget.setProperty("AA_SetPalette",                              QScriptValue(engine, Qt::AA_SetPalette),                              ro);
+#if QT_VERSION >= 0x050600
+  widget.setProperty("AA_EnableHighDpiScaling",                    QScriptValue(engine, Qt::AA_EnableHighDpiScaling),                    ro);
+  widget.setProperty("AA_DisableHighDpiScaling",                   QScriptValue(engine, Qt::AA_DisableHighDpiScaling),                   ro);
+#endif
+#if QT_VERSION >= 0x050700
+  widget.setProperty("AA_UseStyleSheetPropagationInWidgetStyles",  QScriptValue(engine, Qt::AA_UseStyleSheetPropagationInWidgetStyles),  ro);
+  widget.setProperty("AA_DontUseNativeDialogs",                    QScriptValue(engine, Qt::AA_DontUseNativeDialogs),                    ro);
+  widget.setProperty("AA_SynthesizeMouseForUnhandledTabletEvents", QScriptValue(engine, Qt::AA_SynthesizeMouseForUnhandledTabletEvents), ro);
+  widget.setProperty("AA_CompressHighFrequencyEvents",             QScriptValue(engine, Qt::AA_CompressHighFrequencyEvents),             ro);
+#endif
+#if QT_VERSION >= 0x050800
+  widget.setProperty("AA_DontCheckOpenGLContextThreadAffinity",    QScriptValue(engine, Qt::AA_DontCheckOpenGLContextThreadAffinity),    ro);
+  widget.setProperty("AA_DisableShaderDiskCache",                  QScriptValue(engine, Qt::AA_DisableShaderDiskCache),                  ro);
+#endif
+
+  // deprecated, but how do we warn people about using them? {
+  widget.setProperty("AA_ImmediateWidgetCreation",                 QScriptValue(engine, Qt::AA_ImmediateWidgetCreation),        ro);
+  widget.setProperty("AA_MacPluginApplication",                    QScriptValue(engine, Qt::AA_MacPluginApplication),           ro);
+  widget.setProperty("AA_MSWindowsUseDirect3DByDefault",           QScriptValue(engine, Qt::AA_MSWindowsUseDirect3DByDefault),  ro);
+  widget.setProperty("AA_X11InitThreads",                          QScriptValue(engine, Qt::AA_X11InitThreads),                 ro);
+  // }
+
+  qScriptRegisterMetaType(engine, ApplicationStateToScriptValue,  ApplicationStateFromScriptValue);
+  qScriptRegisterMetaType(engine, ApplicationStatesToScriptValue, ApplicationStatesFromScriptValue);
+  widget.setProperty("ApplicationSuspended", QScriptValue(engine, Qt::ApplicationSuspended), ro);
+  widget.setProperty("ApplicationHidden",    QScriptValue(engine, Qt::ApplicationHidden),    ro);
+  widget.setProperty("ApplicationInactive",  QScriptValue(engine, Qt::ApplicationInactive),  ro);
+  widget.setProperty("ApplicationActive",    QScriptValue(engine, Qt::ApplicationActive),    ro);
+
+  qScriptRegisterMetaType(engine, ArrowTypeToScriptValue, ArrowTypeFromScriptValue);
   widget.setProperty("NoArrow",                    QScriptValue(engine, Qt::NoArrow),                    ro);
   widget.setProperty("UpArrow",                    QScriptValue(engine, Qt::UpArrow),                    ro);
   widget.setProperty("DownArrow",                  QScriptValue(engine, Qt::DownArrow),                  ro);
   widget.setProperty("LeftArrow",                  QScriptValue(engine, Qt::LeftArrow),                  ro);
   widget.setProperty("RightArrow",                 QScriptValue(engine, Qt::RightArrow),                 ro);
 
-  qScriptRegisterMetaType(engine, AspectRatioModetoScriptValue, AspectRatioModefromScriptValue);
+  qScriptRegisterMetaType(engine, AspectRatioModeToScriptValue, AspectRatioModeFromScriptValue);
   widget.setProperty("IgnoreAspectRatio",          QScriptValue(engine, Qt::IgnoreAspectRatio),          ro);
   widget.setProperty("KeepAspectRatio",            QScriptValue(engine, Qt::KeepAspectRatio),            ro);
   widget.setProperty("KeepAspectRatioByExpanding", QScriptValue(engine, Qt::KeepAspectRatioByExpanding), ro);
 
-  qScriptRegisterMetaType(engine, AxistoScriptValue,  AxisfromScriptValue);
+  qScriptRegisterMetaType(engine, AxisToScriptValue,  AxisFromScriptValue);
   widget.setProperty("XAxis",                   QScriptValue(engine, Qt::XAxis),                ro);
   widget.setProperty("YAxis",                   QScriptValue(engine, Qt::YAxis),                ro);
   widget.setProperty("ZAxis",                   QScriptValue(engine, Qt::ZAxis),                ro);
 
-  qScriptRegisterMetaType(engine, BGModetoScriptValue, BGModefromScriptValue);
+  qScriptRegisterMetaType(engine, BGModeToScriptValue, BGModeFromScriptValue);
   widget.setProperty("TransparentMode",         QScriptValue(engine, Qt::TransparentMode),      ro);
   widget.setProperty("OpaqueMode",              QScriptValue(engine, Qt::OpaqueMode),           ro);
 
-  qScriptRegisterMetaType(engine, BrushStyletoScriptValue, BrushStylefromScriptValue);
+  qScriptRegisterMetaType(engine, BrushStyleToScriptValue, BrushStyleFromScriptValue);
   widget.setProperty("NoBrush",                 QScriptValue(engine, Qt::NoBrush),              ro);
   widget.setProperty("SolidPattern",            QScriptValue(engine, Qt::SolidPattern),         ro);
   widget.setProperty("Dense1Pattern",           QScriptValue(engine, Qt::Dense1Pattern),        ro);
@@ -738,40 +1194,55 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("RadialGradientPattern",   QScriptValue(engine, Qt::RadialGradientPattern),  ro);
   widget.setProperty("TexturePattern",          QScriptValue(engine, Qt::TexturePattern),         ro);
 
-  qScriptRegisterMetaType(engine, CaseSensitivitytoScriptValue, CaseSensitivityfromScriptValue);
+  qScriptRegisterMetaType(engine, CaseSensitivityToScriptValue, CaseSensitivityFromScriptValue);
   widget.setProperty("CaseInsensitive",         QScriptValue(engine, Qt::CaseInsensitive),      ro);
   widget.setProperty("CaseSensitive",           QScriptValue(engine, Qt::CaseSensitive),        ro);
 
-  qScriptRegisterMetaType(engine, CheckStatetoScriptValue, CheckStatefromScriptValue);
+  qScriptRegisterMetaType(engine, CheckStateToScriptValue, CheckStateFromScriptValue);
   widget.setProperty("Unchecked",               QScriptValue(engine, Qt::Unchecked),            ro);
   widget.setProperty("PartiallyChecked",        QScriptValue(engine, Qt::PartiallyChecked),     ro);
   widget.setProperty("Checked",                 QScriptValue(engine, Qt::Checked),              ro);
 
-  qScriptRegisterMetaType(engine, ClipOperationtoScriptValue, ClipOperationfromScriptValue);
+#if QT_VERSION >= 0x050900
+  qScriptRegisterMetaType(engine, ChecksumTypeToScriptValue, ChecksumTypeFromScriptValue);
+  widget.setProperty("ChecksumIso3309",         QScriptValue(engine, Qt::ChecksumIso3309),      ro);
+  widget.setProperty("ChecksumItuV41",          QScriptValue(engine, Qt::ChecksumItuV41),       ro);
+#endif
+
+  qScriptRegisterMetaType(engine, ClipOperationToScriptValue, ClipOperationFromScriptValue);
   widget.setProperty("NoClip",                  QScriptValue(engine, Qt::NoClip),               ro);
   widget.setProperty("ReplaceClip",             QScriptValue(engine, Qt::ReplaceClip),          ro);
   widget.setProperty("IntersectClip",           QScriptValue(engine, Qt::IntersectClip),        ro);
 
-  qScriptRegisterMetaType(engine, ConnectionTypetoScriptValue, ConnectionTypefromScriptValue);
-  widget.setProperty("DirectConnection",          QScriptValue(engine, Qt::DirectConnection),       ro);
-  widget.setProperty("QueuedConnection",          QScriptValue(engine, Qt::QueuedConnection),       ro);
-  widget.setProperty("BlockingQueuedConnection",  QScriptValue(engine, Qt::BlockingQueuedConnection),                        ro);
-  widget.setProperty("AutoConnection",            QScriptValue(engine, Qt::AutoConnection),         ro);
+  qScriptRegisterMetaType(engine, ConnectionTypeToScriptValue, ConnectionTypeFromScriptValue);
+  widget.setProperty("AutoConnection",           QScriptValue(engine, Qt::AutoConnection),           ro);
+  widget.setProperty("DirectConnection",         QScriptValue(engine, Qt::DirectConnection),         ro);
+  widget.setProperty("QueuedConnection",         QScriptValue(engine, Qt::QueuedConnection),         ro);
+  widget.setProperty("BlockingQueuedConnection", QScriptValue(engine, Qt::BlockingQueuedConnection), ro);
+  widget.setProperty("UniqueConnection",         QScriptValue(engine, Qt::UniqueConnection),         ro);
 
-  qScriptRegisterMetaType(engine, ContextMenuPolicytoScriptValue, ContextMenuPolicyfromScriptValue);
+  qScriptRegisterMetaType(engine, ContextMenuPolicyToScriptValue, ContextMenuPolicyFromScriptValue);
   widget.setProperty("NoContextMenu",             QScriptValue(engine, Qt::NoContextMenu),          ro);
   widget.setProperty("PreventContextMenu",        QScriptValue(engine, Qt::PreventContextMenu),     ro);
   widget.setProperty("DefaultContextMenu",        QScriptValue(engine, Qt::DefaultContextMenu),     ro);
   widget.setProperty("ActionsContextMenu",        QScriptValue(engine, Qt::ActionsContextMenu),     ro);
   widget.setProperty("CustomContextMenu",         QScriptValue(engine, Qt::CustomContextMenu),      ro);
 
-  qScriptRegisterMetaType(engine, CornertoScriptValue, CornerfromScriptValue);
+  qScriptRegisterMetaType(engine, CoordinateSystemToScriptValue, CoordinateSystemFromScriptValue);
+  widget.setProperty("DeviceCoordinates",         QScriptValue(engine, Qt::DeviceCoordinates),      ro);
+  widget.setProperty("LogicalCoordinates",        QScriptValue(engine, Qt::LogicalCoordinates),     ro);
+
+  qScriptRegisterMetaType(engine, CornerToScriptValue, CornerFromScriptValue);
   widget.setProperty("TopLeftCorner",             QScriptValue(engine, Qt::TopLeftCorner),          ro);
   widget.setProperty("TopRightCorner",            QScriptValue(engine, Qt::TopRightCorner),         ro);
   widget.setProperty("BottomLeftCorner",          QScriptValue(engine, Qt::BottomLeftCorner),       ro);
   widget.setProperty("BottomRightCorner",         QScriptValue(engine, Qt::BottomRightCorner),      ro);
 
-  qScriptRegisterMetaType(engine, CursorShapetoScriptValue, CursorShapefromScriptValue);
+  qScriptRegisterMetaType(engine, CursorMoveStyleToScriptValue, CursorMoveStyleFromScriptValue);
+  widget.setProperty("LogicalMoveStyle",          QScriptValue(engine, Qt::LogicalMoveStyle),       ro);
+  widget.setProperty("VisualMoveStyle",           QScriptValue(engine, Qt::VisualMoveStyle),        ro);
+
+  qScriptRegisterMetaType(engine, CursorShapeToScriptValue, CursorShapeFromScriptValue);
   widget.setProperty("ArrowCursor",               QScriptValue(engine, Qt::ArrowCursor),            ro);
   widget.setProperty("UpArrowCursor",             QScriptValue(engine, Qt::UpArrowCursor),          ro);
   widget.setProperty("CrossCursor",               QScriptValue(engine, Qt::CrossCursor),            ro);
@@ -791,11 +1262,17 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("ClosedHandCursor",          QScriptValue(engine, Qt::ClosedHandCursor),       ro);
   widget.setProperty("WhatsThisCursor",           QScriptValue(engine, Qt::WhatsThisCursor),        ro);
   widget.setProperty("BusyCursor",                QScriptValue(engine, Qt::BusyCursor),             ro);
+  widget.setProperty("DragMoveCursor",            QScriptValue(engine, Qt::DragMoveCursor),         ro);
+  widget.setProperty("DragCopyCursor",            QScriptValue(engine, Qt::DragCopyCursor),         ro);
+  widget.setProperty("DragLinkCursor",            QScriptValue(engine, Qt::DragLinkCursor),         ro);
   widget.setProperty("BitmapCursor",              QScriptValue(engine, Qt::BitmapCursor),           ro);
 
-  qScriptRegisterMetaType(engine, DateFormattoScriptValue, DateFormatfromScriptValue);
+  qScriptRegisterMetaType(engine, DateFormatToScriptValue, DateFormatFromScriptValue);
   widget.setProperty("TextDate",                  QScriptValue(engine, Qt::TextDate),               ro);
   widget.setProperty("ISODate",                   QScriptValue(engine, Qt::ISODate),                ro);
+#if QT_VERSION >= 0x050900
+  widget.setProperty("ISODateWithMs",             QScriptValue(engine, Qt::ISODateWithMs),          ro);
+#endif
   widget.setProperty("SystemLocaleShortDate",     QScriptValue(engine, Qt::SystemLocaleShortDate),  ro);
   widget.setProperty("SystemLocaleLongDate",      QScriptValue(engine, Qt::SystemLocaleLongDate),   ro);
   widget.setProperty("DefaultLocaleShortDate",    QScriptValue(engine, Qt::DefaultLocaleShortDate), ro);
@@ -803,8 +1280,9 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("SystemLocaleDate",          QScriptValue(engine, Qt::SystemLocaleDate),       ro);
   widget.setProperty("LocaleDate",                QScriptValue(engine, Qt::LocaleDate),             ro);
   widget.setProperty("LocalDate",                 QScriptValue(engine, Qt::LocalDate),              ro);
+  widget.setProperty("RFC2822Date",               QScriptValue(engine, Qt::RFC2822Date),            ro);
 
-  qScriptRegisterMetaType(engine, DayOfWeektoScriptValue, DayOfWeekfromScriptValue);
+  qScriptRegisterMetaType(engine, DayOfWeekToScriptValue, DayOfWeekFromScriptValue);
   widget.setProperty("Monday",                    QScriptValue(engine, Qt::Monday),                 ro);
   widget.setProperty("Tuesday",                   QScriptValue(engine, Qt::Tuesday),                ro);
   widget.setProperty("Wednesday",                 QScriptValue(engine, Qt::Wednesday),              ro);
@@ -813,7 +1291,7 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("Saturday",                  QScriptValue(engine, Qt::Saturday),               ro);
   widget.setProperty("Sunday",                    QScriptValue(engine, Qt::Sunday),                 ro);
 
-  qScriptRegisterMetaType(engine, DockWidgetAreatoScriptValue, DockWidgetAreafromScriptValue);
+  qScriptRegisterMetaType(engine, DockWidgetAreaToScriptValue, DockWidgetAreaFromScriptValue);
   widget.setProperty("LeftDockWidgetArea",        QScriptValue(engine, Qt::LeftDockWidgetArea),     ro);
   widget.setProperty("RightDockWidgetArea",       QScriptValue(engine, Qt::RightDockWidgetArea),    ro);
   widget.setProperty("TopDockWidgetArea",         QScriptValue(engine, Qt::TopDockWidgetArea),      ro);
@@ -821,7 +1299,8 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("AllDockWidgetAreas",        QScriptValue(engine, Qt::AllDockWidgetAreas),     ro);
   widget.setProperty("NoDockWidgetArea",          QScriptValue(engine, Qt::NoDockWidgetArea),       ro);
 
-  qScriptRegisterMetaType(engine, DropActiontoScriptValue, DropActionfromScriptValue);
+  qScriptRegisterMetaType(engine, DropActionToScriptValue,  DropActionFromScriptValue);
+  qScriptRegisterMetaType(engine, DropActionsToScriptValue, DropActionsFromScriptValue);
   widget.setProperty("CopyAction",                QScriptValue(engine, Qt::CopyAction),             ro);
   widget.setProperty("MoveAction",                QScriptValue(engine, Qt::MoveAction),             ro);
   widget.setProperty("LinkAction",                QScriptValue(engine, Qt::LinkAction),             ro);
@@ -829,27 +1308,47 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("IgnoreAction",              QScriptValue(engine, Qt::IgnoreAction),           ro);
   widget.setProperty("TargetMoveAction",          QScriptValue(engine, Qt::TargetMoveAction),       ro);
 
-  qScriptRegisterMetaType(engine, EventPrioritytoScriptValue, EventPriorityfromScriptValue);
+  qScriptRegisterMetaType(engine, EdgeToScriptValue,  EdgeFromScriptValue);
+  qScriptRegisterMetaType(engine, EdgesToScriptValue, EdgesFromScriptValue);
+  widget.setProperty("TopEdge",                   QScriptValue(engine, Qt::TopEdge),                ro);
+  widget.setProperty("LeftEdge",                  QScriptValue(engine, Qt::LeftEdge),               ro);
+  widget.setProperty("RightEdge",                 QScriptValue(engine, Qt::RightEdge),              ro);
+  widget.setProperty("BottomEdge",                QScriptValue(engine, Qt::BottomEdge),             ro);
+
+#if QT_VERSION >= 0x050600
+  qScriptRegisterMetaType(engine, EnterKeyTypeToScriptValue, EnterKeyTypeFromScriptValue);
+  widget.setProperty("EnterKeyDefault",           QScriptValue(engine, Qt::EnterKeyDefault),  ro);
+  widget.setProperty("EnterKeyReturn",            QScriptValue(engine, Qt::EnterKeyReturn),   ro);
+  widget.setProperty("EnterKeyDone",              QScriptValue(engine, Qt::EnterKeyDone),     ro);
+  widget.setProperty("EnterKeyGo",                QScriptValue(engine, Qt::EnterKeyGo),       ro);
+  widget.setProperty("EnterKeySend",              QScriptValue(engine, Qt::EnterKeySend),     ro);
+  widget.setProperty("EnterKeySearch",            QScriptValue(engine, Qt::EnterKeySearch),   ro);
+  widget.setProperty("EnterKeyNext",              QScriptValue(engine, Qt::EnterKeyNext),     ro);
+  widget.setProperty("EnterKeyPrevious",          QScriptValue(engine, Qt::EnterKeyPrevious), ro);
+#endif
+
+  qScriptRegisterMetaType(engine, EventPriorityToScriptValue, EventPriorityFromScriptValue);
   widget.setProperty("HighEventPriority",         QScriptValue(engine, Qt::HighEventPriority),      ro);
   widget.setProperty("NormalEventPriority",       QScriptValue(engine, Qt::NormalEventPriority),    ro);
   widget.setProperty("LowEventPriority",          QScriptValue(engine, Qt::LowEventPriority),       ro);
 
-  qScriptRegisterMetaType(engine, FillRuletoScriptValue, FillRulefromScriptValue);
+  qScriptRegisterMetaType(engine, FillRuleToScriptValue, FillRuleFromScriptValue);
   widget.setProperty("OddEvenFill",               QScriptValue(engine, Qt::OddEvenFill),            ro);
   widget.setProperty("WindingFill",               QScriptValue(engine, Qt::WindingFill),            ro);
-
-  widget.setProperty("TabFocus",                  QScriptValue(engine, Qt::TabFocus),               ro);
-  widget.setProperty("ClickFocus",                QScriptValue(engine, Qt::ClickFocus),             ro);
-  widget.setProperty("StrongFocus",               QScriptValue(engine, Qt::StrongFocus),            ro);
-  widget.setProperty("WheelFocus",                QScriptValue(engine, Qt::WheelFocus),             ro);
-  widget.setProperty("NoFocus",                   QScriptValue(engine, Qt::NoFocus),                ro);
 
   qScriptRegisterMetaType(engine,  FindChildOptionToScriptValue,  FindChildOptionFromScriptValue);
   qScriptRegisterMetaType(engine,  FindChildOptionsToScriptValue, FindChildOptionsFromScriptValue);
   widget.setProperty("FindDirectChildrenOnly",    QScriptValue(engine, Qt::FindDirectChildrenOnly), ro);
   widget.setProperty("FindChildrenRecursively",   QScriptValue(engine, Qt::FindChildrenRecursively),ro);
 
-  qScriptRegisterMetaType(engine, FocusReasontoScriptValue, FocusReasonfromScriptValue);
+  qScriptRegisterMetaType(engine,  FocusPolicyToScriptValue,  FocusPolicyFromScriptValue);
+  widget.setProperty("TabFocus",                  QScriptValue(engine, Qt::TabFocus),               ro);
+  widget.setProperty("ClickFocus",                QScriptValue(engine, Qt::ClickFocus),             ro);
+  widget.setProperty("StrongFocus",               QScriptValue(engine, Qt::StrongFocus),            ro);
+  widget.setProperty("WheelFocus",                QScriptValue(engine, Qt::WheelFocus),             ro);
+  widget.setProperty("NoFocus",                   QScriptValue(engine, Qt::NoFocus),                ro);
+
+  qScriptRegisterMetaType(engine, FocusReasonToScriptValue, FocusReasonFromScriptValue);
   widget.setProperty("MouseFocusReason",          QScriptValue(engine, Qt::MouseFocusReason),       ro);
   widget.setProperty("TabFocusReason",            QScriptValue(engine, Qt::TabFocusReason),         ro);
   widget.setProperty("BacktabFocusReason",        QScriptValue(engine, Qt::BacktabFocusReason),     ro);
@@ -859,7 +1358,28 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("MenuBarFocusReason",        QScriptValue(engine, Qt::MenuBarFocusReason),     ro);
   widget.setProperty("OtherFocusReason",          QScriptValue(engine, Qt::OtherFocusReason),       ro);
 
-  qScriptRegisterMetaType(engine, GlobalColortoScriptValue, GlobalColorfromScriptValue);
+  qScriptRegisterMetaType(engine, GestureFlagToScriptValue,  GestureFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, GestureFlagsToScriptValue, GestureFlagsFromScriptValue);
+  widget.setProperty("DontStartGestureOnChildren",       QScriptValue(engine, Qt::DontStartGestureOnChildren),       ro);
+  widget.setProperty("ReceivePartialGestures",           QScriptValue(engine, Qt::ReceivePartialGestures),           ro);
+  widget.setProperty("IgnoredGesturesPropagateToParent", QScriptValue(engine, Qt::IgnoredGesturesPropagateToParent), ro);
+
+  qScriptRegisterMetaType(engine, GestureStateToScriptValue, GestureStateFromScriptValue);
+  widget.setProperty("NoGesture",                 QScriptValue(engine, Qt::NoGesture),              ro);
+  widget.setProperty("GestureStarted",            QScriptValue(engine, Qt::GestureStarted),         ro);
+  widget.setProperty("GestureUpdated",            QScriptValue(engine, Qt::GestureUpdated),         ro);
+  widget.setProperty("GestureFinished",           QScriptValue(engine, Qt::GestureFinished),        ro);
+  widget.setProperty("GestureCanceled",           QScriptValue(engine, Qt::GestureCanceled),        ro);
+
+  qScriptRegisterMetaType(engine, GestureTypeToScriptValue, GestureTypeFromScriptValue);
+  widget.setProperty("TapGesture",                QScriptValue(engine, Qt::TapGesture),             ro);
+  widget.setProperty("TapAndHoldGesture",         QScriptValue(engine, Qt::TapAndHoldGesture),      ro);
+  widget.setProperty("PanGesture",                QScriptValue(engine, Qt::PanGesture),             ro);
+  widget.setProperty("PinchGesture",              QScriptValue(engine, Qt::PinchGesture),           ro);
+  widget.setProperty("SwipeGesture",              QScriptValue(engine, Qt::SwipeGesture),           ro);
+  widget.setProperty("CustomGesture",             QScriptValue(engine, Qt::CustomGesture),          ro);
+
+  qScriptRegisterMetaType(engine, GlobalColorToScriptValue, GlobalColorFromScriptValue);
   widget.setProperty("white",                     QScriptValue(engine, Qt::white),                  ro);
   widget.setProperty("black",                     QScriptValue(engine, Qt::black),                  ro);
   widget.setProperty("red",                       QScriptValue(engine, Qt::red),                    ro);
@@ -881,11 +1401,12 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("color0",                    QScriptValue(engine, Qt::color0),                 ro);
   widget.setProperty("color1",                    QScriptValue(engine, Qt::color1),                 ro);
 
-  qScriptRegisterMetaType(engine, HitTestAccuracytoScriptValue, HitTestAccuracyfromScriptValue);
+  qScriptRegisterMetaType(engine, HitTestAccuracyToScriptValue, HitTestAccuracyFromScriptValue);
   widget.setProperty("ExactHit",                  QScriptValue(engine, Qt::ExactHit),               ro);
   widget.setProperty("FuzzyHit",                  QScriptValue(engine, Qt::FuzzyHit),               ro);
 
-  qScriptRegisterMetaType(engine, ImageConversionFlagtoScriptValue, ImageConversionFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, ImageConversionFlagToScriptValue,  ImageConversionFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, ImageConversionFlagsToScriptValue, ImageConversionFlagsFromScriptValue);
   widget.setProperty("AutoColor",                 QScriptValue(engine, Qt::AutoColor),              ro);
   widget.setProperty("ColorOnly",                 QScriptValue(engine, Qt::ColorOnly),              ro);
   widget.setProperty("MonoOnly",                  QScriptValue(engine, Qt::MonoOnly),               ro);
@@ -897,15 +1418,61 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("DiffuseAlphaDither",        QScriptValue(engine, Qt::DiffuseAlphaDither),     ro);
   widget.setProperty("PreferDither",              QScriptValue(engine, Qt::PreferDither),           ro);
   widget.setProperty("AvoidDither",               QScriptValue(engine, Qt::AvoidDither),            ro);
+  widget.setProperty("AutoDither",                QScriptValue(engine, Qt::AutoDither),             ro);
+  widget.setProperty("NoOpaqueDetection",         QScriptValue(engine, Qt::NoOpaqueDetection),      ro);
+  widget.setProperty("NoFormatConversion",        QScriptValue(engine, Qt::NoFormatConversion),     ro);
 
-  qScriptRegisterMetaType(engine, InputMethodQuerytoScriptValue, InputMethodQueryfromScriptValue);
-  widget.setProperty("ImMicroFocus",              QScriptValue(engine, Qt::ImMicroFocus),           ro);
-  widget.setProperty("ImFont",                    QScriptValue(engine, Qt::ImFont),                 ro);
-  widget.setProperty("ImCursorPosition",          QScriptValue(engine, Qt::ImCursorPosition),       ro);
-  widget.setProperty("ImSurroundingText",         QScriptValue(engine, Qt::ImSurroundingText),      ro);
-  widget.setProperty("ImCurrentSelection",        QScriptValue(engine, Qt::ImCurrentSelection),     ro);
+  qScriptRegisterMetaType(engine, InputMethodHintToScriptValue,  InputMethodHintFromScriptValue);
+  qScriptRegisterMetaType(engine, InputMethodHintsToScriptValue, InputMethodHintsFromScriptValue);
+  widget.setProperty("ImhNone",                   QScriptValue(engine, Qt::ImhNone),                   ro);
+  widget.setProperty("ImhHiddenText",             QScriptValue(engine, Qt::ImhHiddenText),             ro);
+  widget.setProperty("ImhSensitiveData",          QScriptValue(engine, Qt::ImhSensitiveData),          ro);
+  widget.setProperty("ImhNoAutoUppercase",        QScriptValue(engine, Qt::ImhNoAutoUppercase),        ro);
+  widget.setProperty("ImhPreferNumbers",          QScriptValue(engine, Qt::ImhPreferNumbers),          ro);
+  widget.setProperty("ImhPreferUppercase",        QScriptValue(engine, Qt::ImhPreferUppercase),        ro);
+  widget.setProperty("ImhPreferLowercase",        QScriptValue(engine, Qt::ImhPreferLowercase),        ro);
+  widget.setProperty("ImhNoPredictiveText",       QScriptValue(engine, Qt::ImhNoPredictiveText),       ro);
+  widget.setProperty("ImhDate",                   QScriptValue(engine, Qt::ImhDate),                   ro);
+  widget.setProperty("ImhTime",                   QScriptValue(engine, Qt::ImhTime),                   ro);
+  widget.setProperty("ImhPreferLatin",            QScriptValue(engine, Qt::ImhPreferLatin),            ro);
+  widget.setProperty("ImhMultiLine",              QScriptValue(engine, Qt::ImhMultiLine),              ro);
+  widget.setProperty("ImhDigitsOnly",             QScriptValue(engine, Qt::ImhDigitsOnly),             ro);
+  widget.setProperty("ImhFormattedNumbersOnly",   QScriptValue(engine, Qt::ImhFormattedNumbersOnly),   ro);
+  widget.setProperty("ImhUppercaseOnly",          QScriptValue(engine, Qt::ImhUppercaseOnly),          ro);
+  widget.setProperty("ImhLowercaseOnly",          QScriptValue(engine, Qt::ImhLowercaseOnly),          ro);
+  widget.setProperty("ImhDialableCharactersOnly", QScriptValue(engine, Qt::ImhDialableCharactersOnly), ro);
+  widget.setProperty("ImhEmailCharactersOnly",    QScriptValue(engine, Qt::ImhEmailCharactersOnly),    ro);
+  widget.setProperty("ImhUrlCharactersOnly",      QScriptValue(engine, Qt::ImhUrlCharactersOnly),      ro);
+  widget.setProperty("ImhLatinOnly",              QScriptValue(engine, Qt::ImhLatinOnly),              ro);
+  widget.setProperty("ImhExclusiveInputMask",     QScriptValue(engine, Qt::ImhExclusiveInputMask),     ro);
 
-  qScriptRegisterMetaType(engine, ItemDataRoletoScriptValue, ItemDataRolefromScriptValue);
+  qScriptRegisterMetaType(engine, InputMethodQueriesToScriptValue, InputMethodQueriesFromScriptValue);
+  qScriptRegisterMetaType(engine, InputMethodQueryToScriptValue,   InputMethodQueryFromScriptValue);
+  widget.setProperty("ImEnabled",                 QScriptValue(engine, Qt::ImEnabled),                 ro);
+  widget.setProperty("ImMicroFocus",              QScriptValue(engine, Qt::ImMicroFocus),              ro);
+  widget.setProperty("ImCursorRectangle",         QScriptValue(engine, Qt::ImCursorRectangle),         ro);
+  widget.setProperty("ImFont",                    QScriptValue(engine, Qt::ImFont),                    ro);
+  widget.setProperty("ImCursorPosition",          QScriptValue(engine, Qt::ImCursorPosition),          ro);
+  widget.setProperty("ImSurroundingText",         QScriptValue(engine, Qt::ImSurroundingText),         ro);
+  widget.setProperty("ImCurrentSelection",        QScriptValue(engine, Qt::ImCurrentSelection),        ro);
+
+  widget.setProperty("ImMaximumTextLength",       QScriptValue(engine, Qt::ImMaximumTextLength),       ro);
+  widget.setProperty("ImAnchorPosition",          QScriptValue(engine, Qt::ImAnchorPosition),          ro);
+  widget.setProperty("ImHints",                   QScriptValue(engine, Qt::ImHints),                   ro);
+  widget.setProperty("ImPreferredLanguage",       QScriptValue(engine, Qt::ImPreferredLanguage),       ro);
+  widget.setProperty("ImPlatformData",            QScriptValue(engine, Qt::ImPlatformData),            ro);
+  widget.setProperty("ImAbsolutePosition",        QScriptValue(engine, Qt::ImAbsolutePosition),        ro);
+  widget.setProperty("ImTextBeforeCursor",        QScriptValue(engine, Qt::ImTextBeforeCursor),        ro);
+  widget.setProperty("ImTextAfterCursor",         QScriptValue(engine, Qt::ImTextAfterCursor),         ro);
+#if QT_VERSION >= 0x050700
+  widget.setProperty("ImEnterKeyType",            QScriptValue(engine, Qt::ImEnterKeyType),            ro);
+  widget.setProperty("ImAnchorRectangle",         QScriptValue(engine, Qt::ImAnchorRectangle),         ro);
+  widget.setProperty("ImInputItemClipRectangle",  QScriptValue(engine, Qt::ImInputItemClipRectangle),  ro);
+#endif
+  widget.setProperty("ImQueryInput",              QScriptValue(engine, Qt::ImQueryInput),              ro);
+  widget.setProperty("ImQueryAll",                QScriptValue(engine, Qt::ImQueryAll),                ro);
+
+  qScriptRegisterMetaType(engine, ItemDataRoleToScriptValue, ItemDataRoleFromScriptValue);
   widget.setProperty("DisplayRole",               QScriptValue(engine, Qt::DisplayRole),            ro);
   widget.setProperty("DecorationRole",            QScriptValue(engine, Qt::DecorationRole),         ro);
   widget.setProperty("EditRole",                  QScriptValue(engine, Qt::EditRole),               ro);
@@ -920,11 +1487,13 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("ForegroundRole",            QScriptValue(engine, Qt::ForegroundRole),         ro);
   widget.setProperty("TextColorRole",             QScriptValue(engine, Qt::TextColorRole),          ro);
   widget.setProperty("CheckStateRole",            QScriptValue(engine, Qt::CheckStateRole),         ro);
+  widget.setProperty("InitialSortOrderRole",      QScriptValue(engine, Qt::InitialSortOrderRole),   ro);
   widget.setProperty("AccessibleTextRole",        QScriptValue(engine, Qt::AccessibleTextRole),     ro);
   widget.setProperty("AccessibleDescriptionRole", QScriptValue(engine, Qt::AccessibleDescriptionRole), ro);
   widget.setProperty("UserRole",                  QScriptValue(engine, Qt::UserRole),               ro);
 
-  qScriptRegisterMetaType(engine, ItemFlagtoScriptValue, ItemFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, ItemFlagToScriptValue,  ItemFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, ItemFlagsToScriptValue, ItemFlagsFromScriptValue);
   widget.setProperty("NoItemFlags",               QScriptValue(engine, Qt::NoItemFlags),            ro);
   widget.setProperty("ItemIsSelectable",          QScriptValue(engine, Qt::ItemIsSelectable),       ro);
   widget.setProperty("ItemIsEditable",            QScriptValue(engine, Qt::ItemIsEditable),         ro);
@@ -932,15 +1501,24 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("ItemIsDropEnabled",         QScriptValue(engine, Qt::ItemIsDropEnabled),      ro);
   widget.setProperty("ItemIsUserCheckable",       QScriptValue(engine, Qt::ItemIsUserCheckable),    ro);
   widget.setProperty("ItemIsEnabled",             QScriptValue(engine, Qt::ItemIsEnabled),          ro);
+#if QT_VERSION >= 0x050900
+  widget.setProperty("ItemIsAutoTristate",        QScriptValue(engine, Qt::ItemIsAutoTristate),     ro);
+#endif
   widget.setProperty("ItemIsTristate",            QScriptValue(engine, Qt::ItemIsTristate),         ro);
+  widget.setProperty("ItemNeverHasChildren",      QScriptValue(engine, Qt::ItemNeverHasChildren),   ro);
+  widget.setProperty("ItemIsUserTristate",        QScriptValue(engine, Qt::ItemIsUserTristate),     ro);
 
-  qScriptRegisterMetaType(engine, ItemSelectionModetoScriptValue, ItemSelectionModefromScriptValue);
+  qScriptRegisterMetaType(engine, ItemSelectionModeToScriptValue, ItemSelectionModeFromScriptValue);
   widget.setProperty("ContainsItemShape",          QScriptValue(engine, Qt::ContainsItemShape),          ro);
   widget.setProperty("IntersectsItemShape",        QScriptValue(engine, Qt::IntersectsItemShape),        ro);
   widget.setProperty("ContainsItemBoundingRect",   QScriptValue(engine, Qt::ContainsItemBoundingRect),   ro);
   widget.setProperty("IntersectsItemBoundingRect", QScriptValue(engine, Qt::IntersectsItemBoundingRect), ro);
 
-  qScriptRegisterMetaType(engine, KeytoScriptValue, KeyfromScriptValue);
+  qScriptRegisterMetaType(engine, ItemSelectionOperationToScriptValue, ItemSelectionOperationFromScriptValue);
+  widget.setProperty("ReplaceSelection", QScriptValue(engine, Qt::ReplaceSelection), ro);
+  widget.setProperty("AddToSelection",   QScriptValue(engine, Qt::AddToSelection),   ro);
+
+  qScriptRegisterMetaType(engine, KeyToScriptValue, KeyFromScriptValue);
   widget.setProperty("Key_Escape",                QScriptValue(engine, Qt::Key_Escape),             ro);
   widget.setProperty("Key_Tab",                   QScriptValue(engine, Qt::Key_Tab),                ro);
   widget.setProperty("Key_Backtab",               QScriptValue(engine, Qt::Key_Backtab),            ro);
@@ -1196,7 +1774,7 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("Key_Dead_Ogonek",           QScriptValue(engine, Qt::Key_Dead_Ogonek),        ro);
   widget.setProperty("Key_Dead_Iota",             QScriptValue(engine, Qt::Key_Dead_Iota),          ro);
   widget.setProperty("Key_Dead_Voiced_Sound",     QScriptValue(engine, Qt::Key_Dead_Voiced_Sound),  ro);
-  widget.setProperty("Key_Dead_Semivoiced_Sound", QScriptValue(engine, Qt::Key_Dead_Semivoiced_Sound),                                                ro);
+  widget.setProperty("Key_Dead_Semivoiced_Sound", QScriptValue(engine, Qt::Key_Dead_Semivoiced_Sound), ro);
   widget.setProperty("Key_Dead_Belowdot",         QScriptValue(engine, Qt::Key_Dead_Belowdot),      ro);
   widget.setProperty("Key_Dead_Hook",             QScriptValue(engine, Qt::Key_Dead_Hook),          ro);
   widget.setProperty("Key_Dead_Horn",             QScriptValue(engine, Qt::Key_Dead_Horn),          ro);
@@ -1217,6 +1795,8 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("Key_MediaPrevious",         QScriptValue(engine, Qt::Key_MediaPrevious),      ro);
   widget.setProperty("Key_MediaNext",             QScriptValue(engine, Qt::Key_MediaNext),          ro);
   widget.setProperty("Key_MediaRecord",           QScriptValue(engine, Qt::Key_MediaRecord),        ro);
+  widget.setProperty("Key_MediaPause",            QScriptValue(engine, Qt::Key_MediaPause),         ro);
+  widget.setProperty("Key_MediaTogglePlayPause",  QScriptValue(engine, Qt::Key_MediaTogglePlayPause), ro);
   widget.setProperty("Key_HomePage",              QScriptValue(engine, Qt::Key_HomePage),           ro);
   widget.setProperty("Key_Favorites",             QScriptValue(engine, Qt::Key_Favorites),          ro);
   widget.setProperty("Key_Search",                QScriptValue(engine, Qt::Key_Search),             ro);
@@ -1240,26 +1820,146 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("Key_LaunchD",               QScriptValue(engine, Qt::Key_LaunchD),            ro);
   widget.setProperty("Key_LaunchE",               QScriptValue(engine, Qt::Key_LaunchE),            ro);
   widget.setProperty("Key_LaunchF",               QScriptValue(engine, Qt::Key_LaunchF),            ro);
-  widget.setProperty("Key_MediaLast",             QScriptValue(engine, Qt::Key_MediaLast),          ro);
-  widget.setProperty("Key_unknown",               QScriptValue(engine, Qt::Key_unknown),            ro);
-  widget.setProperty("Key_Call",                  QScriptValue(engine, Qt::Key_Call),               ro);
-  widget.setProperty("Key_Context1",              QScriptValue(engine, Qt::Key_Context1),           ro);
-  widget.setProperty("Key_Context2",              QScriptValue(engine, Qt::Key_Context2),           ro);
-  widget.setProperty("Key_Context3",              QScriptValue(engine, Qt::Key_Context3),           ro);
-  widget.setProperty("Key_Context4",              QScriptValue(engine, Qt::Key_Context4),           ro);
-  widget.setProperty("Key_Flip",                  QScriptValue(engine, Qt::Key_Flip),               ro);
-  widget.setProperty("Key_Hangup",                QScriptValue(engine, Qt::Key_Hangup),             ro);
-  widget.setProperty("Key_No",                    QScriptValue(engine, Qt::Key_No),                 ro);
-  widget.setProperty("Key_Select",                QScriptValue(engine, Qt::Key_Select),             ro);
-  widget.setProperty("Key_Yes",                   QScriptValue(engine, Qt::Key_Yes),                ro);
-  widget.setProperty("Key_Execute",               QScriptValue(engine, Qt::Key_Execute),            ro);
-  widget.setProperty("Key_Printer",               QScriptValue(engine, Qt::Key_Printer),            ro);
-  widget.setProperty("Key_Play",                  QScriptValue(engine, Qt::Key_Play),               ro);
-  widget.setProperty("Key_Sleep",                 QScriptValue(engine, Qt::Key_Sleep),              ro);
-  widget.setProperty("Key_Zoom",                  QScriptValue(engine, Qt::Key_Zoom),               ro);
-  widget.setProperty("Key_Cancel",                QScriptValue(engine, Qt::Key_Cancel),             ro);
+  widget.setProperty("Key_LaunchG",               QScriptValue(engine, Qt::Key_LaunchG),            ro);
+  widget.setProperty("Key_LaunchH",               QScriptValue(engine, Qt::Key_LaunchH),            ro);
+  widget.setProperty("Key_MonBrightnessUp",        QScriptValue(engine, Qt::Key_MonBrightnessUp),        ro);
+  widget.setProperty("Key_MonBrightnessDown",      QScriptValue(engine, Qt::Key_MonBrightnessDown),      ro);
+  widget.setProperty("Key_KeyboardLightOnOff",     QScriptValue(engine, Qt::Key_KeyboardLightOnOff),     ro);
+  widget.setProperty("Key_KeyboardBrightnessUp",   QScriptValue(engine, Qt::Key_KeyboardBrightnessUp),   ro);
+  widget.setProperty("Key_KeyboardBrightnessDown", QScriptValue(engine, Qt::Key_KeyboardBrightnessDown), ro);
+  widget.setProperty("Key_PowerOff",               QScriptValue(engine, Qt::Key_PowerOff),               ro);
+  widget.setProperty("Key_WakeUp",                 QScriptValue(engine, Qt::Key_WakeUp),                 ro);
+  widget.setProperty("Key_Eject",                  QScriptValue(engine, Qt::Key_Eject),                  ro);
+  widget.setProperty("Key_ScreenSaver",            QScriptValue(engine, Qt::Key_ScreenSaver),            ro);
+  widget.setProperty("Key_WWW",                    QScriptValue(engine, Qt::Key_WWW),                    ro);
+  widget.setProperty("Key_Memo",                   QScriptValue(engine, Qt::Key_Memo),                   ro);
+  widget.setProperty("Key_LightBulb",              QScriptValue(engine, Qt::Key_LightBulb),              ro);
+  widget.setProperty("Key_Shop",                   QScriptValue(engine, Qt::Key_Shop),                   ro);
+  widget.setProperty("Key_History",                QScriptValue(engine, Qt::Key_History),                ro);
+  widget.setProperty("Key_AddFavorite",            QScriptValue(engine, Qt::Key_AddFavorite),            ro);
+  widget.setProperty("Key_HotLinks",               QScriptValue(engine, Qt::Key_HotLinks),               ro);
+  widget.setProperty("Key_BrightnessAdjust",       QScriptValue(engine, Qt::Key_BrightnessAdjust),       ro);
+  widget.setProperty("Key_Finance",                QScriptValue(engine, Qt::Key_Finance),                ro);
+  widget.setProperty("Key_Community",              QScriptValue(engine, Qt::Key_Community),              ro);
+  widget.setProperty("Key_AudioRewind",            QScriptValue(engine, Qt::Key_AudioRewind),            ro);
+  widget.setProperty("Key_BackForward",            QScriptValue(engine, Qt::Key_BackForward),            ro);
+  widget.setProperty("Key_ApplicationLeft",        QScriptValue(engine, Qt::Key_ApplicationLeft),        ro);
+  widget.setProperty("Key_ApplicationRight",       QScriptValue(engine, Qt::Key_ApplicationRight),       ro);
+  widget.setProperty("Key_Book",                   QScriptValue(engine, Qt::Key_Book),                   ro);
+  widget.setProperty("Key_CD",                     QScriptValue(engine, Qt::Key_CD),                     ro);
+  widget.setProperty("Key_Calculator",             QScriptValue(engine, Qt::Key_Calculator),             ro);
+  widget.setProperty("Key_ToDoList",               QScriptValue(engine, Qt::Key_ToDoList),               ro);
+  widget.setProperty("Key_ClearGrab",              QScriptValue(engine, Qt::Key_ClearGrab),              ro);
+  widget.setProperty("Key_Close",                  QScriptValue(engine, Qt::Key_Close),                  ro);
+  widget.setProperty("Key_Copy",                   QScriptValue(engine, Qt::Key_Copy),                   ro);
+  widget.setProperty("Key_Cut",                    QScriptValue(engine, Qt::Key_Cut),                    ro);
+  widget.setProperty("Key_Display",                QScriptValue(engine, Qt::Key_Display),                ro);
+  widget.setProperty("Key_DOS",                    QScriptValue(engine, Qt::Key_DOS),                    ro);
+  widget.setProperty("Key_Documents",              QScriptValue(engine, Qt::Key_Documents),              ro);
+  widget.setProperty("Key_Excel",                  QScriptValue(engine, Qt::Key_Excel),                  ro);
+  widget.setProperty("Key_Explorer",               QScriptValue(engine, Qt::Key_Explorer),               ro);
+  widget.setProperty("Key_Game",                   QScriptValue(engine, Qt::Key_Game),                   ro);
+  widget.setProperty("Key_Go",                     QScriptValue(engine, Qt::Key_Go),                     ro);
+  widget.setProperty("Key_iTouch",                 QScriptValue(engine, Qt::Key_iTouch),                 ro);
+  widget.setProperty("Key_LogOff",                 QScriptValue(engine, Qt::Key_LogOff),                 ro);
+  widget.setProperty("Key_Market",                 QScriptValue(engine, Qt::Key_Market),                 ro);
+  widget.setProperty("Key_Meeting",                QScriptValue(engine, Qt::Key_Meeting),                ro);
+  widget.setProperty("Key_MenuKB",                 QScriptValue(engine, Qt::Key_MenuKB),                 ro);
+  widget.setProperty("Key_MenuPB",                 QScriptValue(engine, Qt::Key_MenuPB),                 ro);
+  widget.setProperty("Key_MySites",                QScriptValue(engine, Qt::Key_MySites),                ro);
+  widget.setProperty("Key_News",                   QScriptValue(engine, Qt::Key_News),                   ro);
+  widget.setProperty("Key_OfficeHome",             QScriptValue(engine, Qt::Key_OfficeHome),             ro);
+  widget.setProperty("Key_Option",                 QScriptValue(engine, Qt::Key_Option),                 ro);
+  widget.setProperty("Key_Paste",                  QScriptValue(engine, Qt::Key_Paste),                  ro);
+  widget.setProperty("Key_Phone",                  QScriptValue(engine, Qt::Key_Phone),                  ro);
+  widget.setProperty("Key_Calendar",               QScriptValue(engine, Qt::Key_Calendar),               ro);
+  widget.setProperty("Key_Reply",                  QScriptValue(engine, Qt::Key_Reply),                  ro);
+  widget.setProperty("Key_Reload",                 QScriptValue(engine, Qt::Key_Reload),                 ro);
+  widget.setProperty("Key_RotateWindows",          QScriptValue(engine, Qt::Key_RotateWindows),          ro);
+  widget.setProperty("Key_RotationPB",             QScriptValue(engine, Qt::Key_RotationPB),             ro);
+  widget.setProperty("Key_RotationKB",             QScriptValue(engine, Qt::Key_RotationKB),             ro);
+  widget.setProperty("Key_Save",                   QScriptValue(engine, Qt::Key_Save),                   ro);
+  widget.setProperty("Key_Send",                   QScriptValue(engine, Qt::Key_Send),                   ro);
+  widget.setProperty("Key_Spell",                  QScriptValue(engine, Qt::Key_Spell),                  ro);
+  widget.setProperty("Key_SplitScreen",            QScriptValue(engine, Qt::Key_SplitScreen),            ro);
+  widget.setProperty("Key_Support",                QScriptValue(engine, Qt::Key_Support),                ro);
+  widget.setProperty("Key_TaskPane",               QScriptValue(engine, Qt::Key_TaskPane),               ro);
+  widget.setProperty("Key_Terminal",               QScriptValue(engine, Qt::Key_Terminal),               ro);
+  widget.setProperty("Key_Tools",                  QScriptValue(engine, Qt::Key_Tools),                  ro);
+  widget.setProperty("Key_Travel",                 QScriptValue(engine, Qt::Key_Travel),                 ro);
+  widget.setProperty("Key_Video",                  QScriptValue(engine, Qt::Key_Video),                  ro);
+  widget.setProperty("Key_Word",                   QScriptValue(engine, Qt::Key_Word),                   ro);
+  widget.setProperty("Key_Xfer",                   QScriptValue(engine, Qt::Key_Xfer),                   ro);
+  widget.setProperty("Key_ZoomIn",                 QScriptValue(engine, Qt::Key_ZoomIn),                 ro);
+  widget.setProperty("Key_ZoomOut",                QScriptValue(engine, Qt::Key_ZoomOut),                ro);
+  widget.setProperty("Key_Away",                   QScriptValue(engine, Qt::Key_Away),                   ro);
+  widget.setProperty("Key_Messenger",              QScriptValue(engine, Qt::Key_Messenger),              ro);
+  widget.setProperty("Key_WebCam",                 QScriptValue(engine, Qt::Key_WebCam),                 ro);
+  widget.setProperty("Key_MailForward",            QScriptValue(engine, Qt::Key_MailForward),            ro);
+  widget.setProperty("Key_Pictures",               QScriptValue(engine, Qt::Key_Pictures),               ro);
+  widget.setProperty("Key_Music",                  QScriptValue(engine, Qt::Key_Music),                  ro);
+  widget.setProperty("Key_Battery",                QScriptValue(engine, Qt::Key_Battery),                ro);
+  widget.setProperty("Key_Bluetooth",              QScriptValue(engine, Qt::Key_Bluetooth),              ro);
+  widget.setProperty("Key_WLAN",                   QScriptValue(engine, Qt::Key_WLAN),                   ro);
+  widget.setProperty("Key_UWB",                    QScriptValue(engine, Qt::Key_UWB),                    ro);
+  widget.setProperty("Key_AudioForward",           QScriptValue(engine, Qt::Key_AudioForward),           ro);
+  widget.setProperty("Key_AudioRepeat",            QScriptValue(engine, Qt::Key_AudioRepeat),            ro);
+  widget.setProperty("Key_AudioRandomPlay",        QScriptValue(engine, Qt::Key_AudioRandomPlay),        ro);
+  widget.setProperty("Key_Subtitle",               QScriptValue(engine, Qt::Key_Subtitle),               ro);
+  widget.setProperty("Key_AudioCycleTrack",        QScriptValue(engine, Qt::Key_AudioCycleTrack),        ro);
+  widget.setProperty("Key_Time",                   QScriptValue(engine, Qt::Key_Time),                   ro);
+  widget.setProperty("Key_Hibernate",              QScriptValue(engine, Qt::Key_Hibernate),              ro);
+  widget.setProperty("Key_View",                   QScriptValue(engine, Qt::Key_View),                   ro);
+  widget.setProperty("Key_TopMenu",                QScriptValue(engine, Qt::Key_TopMenu),                ro);
+  widget.setProperty("Key_PowerDown",              QScriptValue(engine, Qt::Key_PowerDown),              ro);
+  widget.setProperty("Key_Suspend",                QScriptValue(engine, Qt::Key_Suspend),                ro);
+  widget.setProperty("Key_ContrastAdjust",         QScriptValue(engine, Qt::Key_ContrastAdjust),         ro);
+  widget.setProperty("Key_TouchpadToggle",         QScriptValue(engine, Qt::Key_TouchpadToggle),         ro);
+  widget.setProperty("Key_TouchpadOn",             QScriptValue(engine, Qt::Key_TouchpadOn),             ro);
+  widget.setProperty("Key_TouchpadOff",            QScriptValue(engine, Qt::Key_TouchpadOff),            ro);
+  widget.setProperty("Key_MicMute",                QScriptValue(engine, Qt::Key_MicMute),                ro);
+  widget.setProperty("Key_Red",                    QScriptValue(engine, Qt::Key_Red),                    ro);
+  widget.setProperty("Key_Green",                  QScriptValue(engine, Qt::Key_Green),                  ro);
+  widget.setProperty("Key_Yellow",                 QScriptValue(engine, Qt::Key_Yellow),                 ro);
+  widget.setProperty("Key_Blue",                   QScriptValue(engine, Qt::Key_Blue),                   ro);
+  widget.setProperty("Key_ChannelUp",              QScriptValue(engine, Qt::Key_ChannelUp),              ro);
+  widget.setProperty("Key_ChannelDown",            QScriptValue(engine, Qt::Key_ChannelDown),            ro);
+  widget.setProperty("Key_Guide",                  QScriptValue(engine, Qt::Key_Guide),                  ro);
+  widget.setProperty("Key_Info",                   QScriptValue(engine, Qt::Key_Info),                   ro);
+  widget.setProperty("Key_Settings",               QScriptValue(engine, Qt::Key_Settings),               ro);
+  widget.setProperty("Key_MicVolumeUp",            QScriptValue(engine, Qt::Key_MicVolumeUp),            ro);
+  widget.setProperty("Key_MicVolumeDown",          QScriptValue(engine, Qt::Key_MicVolumeDown),          ro);
+  widget.setProperty("Key_New",                    QScriptValue(engine, Qt::Key_New),                    ro);
+  widget.setProperty("Key_Open",                   QScriptValue(engine, Qt::Key_Open),                   ro);
+  widget.setProperty("Key_Find",                   QScriptValue(engine, Qt::Key_Find),                   ro);
+  widget.setProperty("Key_Undo",                   QScriptValue(engine, Qt::Key_Undo),                   ro);
+  widget.setProperty("Key_Redo",                   QScriptValue(engine, Qt::Key_Redo),                   ro);
+  widget.setProperty("Key_MediaLast",              QScriptValue(engine, Qt::Key_MediaLast),              ro);
+  widget.setProperty("Key_unknown",                QScriptValue(engine, Qt::Key_unknown),                ro);
+  widget.setProperty("Key_Call",                   QScriptValue(engine, Qt::Key_Call),                   ro);
+  widget.setProperty("Key_Camera",                 QScriptValue(engine, Qt::Key_Camera),                 ro);
+  widget.setProperty("Key_CameraFocus",            QScriptValue(engine, Qt::Key_CameraFocus),            ro);
+  widget.setProperty("Key_Context1",               QScriptValue(engine, Qt::Key_Context1),               ro);
+  widget.setProperty("Key_Context2",               QScriptValue(engine, Qt::Key_Context2),               ro);
+  widget.setProperty("Key_Context3",               QScriptValue(engine, Qt::Key_Context3),               ro);
+  widget.setProperty("Key_Context4",               QScriptValue(engine, Qt::Key_Context4),               ro);
+  widget.setProperty("Key_Flip",                   QScriptValue(engine, Qt::Key_Flip),                   ro);
+  widget.setProperty("Key_Hangup",                 QScriptValue(engine, Qt::Key_Hangup),                 ro);
+  widget.setProperty("Key_No",                     QScriptValue(engine, Qt::Key_No),                     ro);
+  widget.setProperty("Key_Select",                 QScriptValue(engine, Qt::Key_Select),                 ro);
+  widget.setProperty("Key_Yes",                    QScriptValue(engine, Qt::Key_Yes),                    ro);
+  widget.setProperty("Key_ToggleCallHangup",       QScriptValue(engine, Qt::Key_ToggleCallHangup),       ro);
+  widget.setProperty("Key_VoiceDial",              QScriptValue(engine, Qt::Key_VoiceDial),              ro);
+  widget.setProperty("Key_LastNumberRedial",       QScriptValue(engine, Qt::Key_LastNumberRedial),       ro);
+  widget.setProperty("Key_Execute",                QScriptValue(engine, Qt::Key_Execute),                ro);
+  widget.setProperty("Key_Printer",                QScriptValue(engine, Qt::Key_Printer),                ro);
+  widget.setProperty("Key_Play",                   QScriptValue(engine, Qt::Key_Play),                   ro);
+  widget.setProperty("Key_Sleep",                  QScriptValue(engine, Qt::Key_Sleep),                  ro);
+  widget.setProperty("Key_Zoom",                   QScriptValue(engine, Qt::Key_Zoom),                   ro);
+  widget.setProperty("Key_Exit",                   QScriptValue(engine, Qt::Key_Exit),                   ro);
+  widget.setProperty("Key_Cancel",                 QScriptValue(engine, Qt::Key_Cancel),                 ro);
 
-  qScriptRegisterMetaType(engine, KeyboardModifiertoScriptValue, KeyboardModifierfromScriptValue);
+  qScriptRegisterMetaType(engine, KeyboardModifierToScriptValue, KeyboardModifierFromScriptValue);
   widget.setProperty("NoModifier",                QScriptValue(engine, Qt::NoModifier),             ro);
   widget.setProperty("ShiftModifier",             QScriptValue(engine, Qt::ShiftModifier),          ro);
   widget.setProperty("ControlModifier",           QScriptValue(engine, Qt::ControlModifier),        ro);
@@ -1268,16 +1968,17 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("KeypadModifier",            QScriptValue(engine, Qt::KeypadModifier),         ro);
   widget.setProperty("GroupSwitchModifier",       QScriptValue(engine, Qt::GroupSwitchModifier),    ro);
 
-  qScriptRegisterMetaType(engine, LayoutDirectiontoScriptValue, LayoutDirectionfromScriptValue);
+  qScriptRegisterMetaType(engine, LayoutDirectionToScriptValue, LayoutDirectionFromScriptValue);
   widget.setProperty("LeftToRight",               QScriptValue(engine, Qt::LeftToRight),            ro);
   widget.setProperty("RightToLeft",               QScriptValue(engine, Qt::RightToLeft),            ro);
+  widget.setProperty("LayoutDirectionAuto",       QScriptValue(engine, Qt::LayoutDirectionAuto),    ro);
 
-  qScriptRegisterMetaType(engine, MaskModetoScriptValue, MaskModefromScriptValue);
+  qScriptRegisterMetaType(engine, MaskModeToScriptValue, MaskModeFromScriptValue);
   widget.setProperty("MaskInColor",               QScriptValue(engine, Qt::MaskInColor),            ro);
   widget.setProperty("MaskOutColor",              QScriptValue(engine, Qt::MaskOutColor),           ro);
 
-  qScriptRegisterMetaType(engine, MatchFlagtoScriptValue,  MatchFlagfromScriptValue);
-  qScriptRegisterMetaType(engine, MatchFlagstoScriptValue, MatchFlagsfromScriptValue);
+  qScriptRegisterMetaType(engine, MatchFlagToScriptValue,  MatchFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, MatchFlagsToScriptValue, MatchFlagsFromScriptValue);
   widget.setProperty("MatchExactly",              QScriptValue(engine, Qt::MatchExactly),           ro);
   widget.setProperty("MatchFixedString",          QScriptValue(engine, Qt::MatchFixedString),       ro);
   widget.setProperty("MatchContains",             QScriptValue(engine, Qt::MatchContains),          ro);
@@ -1289,44 +1990,99 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("MatchWrap",                 QScriptValue(engine, Qt::MatchWrap),              ro);
   widget.setProperty("MatchRecursive",            QScriptValue(engine, Qt::MatchRecursive),         ro);
 
-  qScriptRegisterMetaType(engine, ModifiertoScriptValue, ModifierfromScriptValue);
+  qScriptRegisterMetaType(engine, ModifierToScriptValue, ModifierFromScriptValue);
   widget.setProperty("SHIFT",                     QScriptValue(engine, Qt::SHIFT),                  ro);
   widget.setProperty("META",                      QScriptValue(engine, Qt::META),                   ro);
   widget.setProperty("CTRL",                      QScriptValue(engine, Qt::CTRL),                   ro);
   widget.setProperty("ALT",                       QScriptValue(engine, Qt::ALT),                    ro);
   widget.setProperty("UNICODE_ACCEL",             QScriptValue(engine, Qt::UNICODE_ACCEL),          ro);
 
-  qScriptRegisterMetaType(engine, MouseButtontoScriptValue, MouseButtonfromScriptValue);
+  qScriptRegisterMetaType(engine, MouseButtonToScriptValue,  MouseButtonFromScriptValue);
+  qScriptRegisterMetaType(engine, MouseButtonsToScriptValue, MouseButtonsFromScriptValue);
   widget.setProperty("NoButton",                  QScriptValue(engine, Qt::NoButton),               ro);
+  widget.setProperty("AllButtons",                QScriptValue(engine, Qt::AllButtons),             ro);
   widget.setProperty("LeftButton",                QScriptValue(engine, Qt::LeftButton),             ro);
   widget.setProperty("RightButton",               QScriptValue(engine, Qt::RightButton),            ro);
   widget.setProperty("MidButton",                 QScriptValue(engine, Qt::MidButton),              ro);
+  widget.setProperty("MiddleButton",              QScriptValue(engine, Qt::MiddleButton),           ro);
+  widget.setProperty("BackButton",                QScriptValue(engine, Qt::BackButton),             ro);
   widget.setProperty("XButton1",                  QScriptValue(engine, Qt::XButton1),               ro);
+  widget.setProperty("ExtraButton1",              QScriptValue(engine, Qt::ExtraButton1),           ro);
+  widget.setProperty("ForwardButton",             QScriptValue(engine, Qt::ForwardButton),          ro);
   widget.setProperty("XButton2",                  QScriptValue(engine, Qt::XButton2),               ro);
+  widget.setProperty("ExtraButton2",              QScriptValue(engine, Qt::ExtraButton2),           ro);
+  widget.setProperty("TaskButton",                QScriptValue(engine, Qt::TaskButton),             ro);
+  widget.setProperty("ExtraButton3",              QScriptValue(engine, Qt::ExtraButton3),           ro);
+  widget.setProperty("ExtraButton4",              QScriptValue(engine, Qt::ExtraButton4),           ro);
+  widget.setProperty("ExtraButton5",              QScriptValue(engine, Qt::ExtraButton5),           ro);
+  widget.setProperty("ExtraButton6",              QScriptValue(engine, Qt::ExtraButton6),           ro);
+  widget.setProperty("ExtraButton7",              QScriptValue(engine, Qt::ExtraButton7),           ro);
+  widget.setProperty("ExtraButton8",              QScriptValue(engine, Qt::ExtraButton8),           ro);
+  widget.setProperty("ExtraButton9",              QScriptValue(engine, Qt::ExtraButton9),           ro);
+  widget.setProperty("ExtraButton10",             QScriptValue(engine, Qt::ExtraButton10),          ro);
+  widget.setProperty("ExtraButton11",             QScriptValue(engine, Qt::ExtraButton11),          ro);
+  widget.setProperty("ExtraButton12",             QScriptValue(engine, Qt::ExtraButton12),          ro);
+  widget.setProperty("ExtraButton13",             QScriptValue(engine, Qt::ExtraButton13),          ro);
+  widget.setProperty("ExtraButton14",             QScriptValue(engine, Qt::ExtraButton14),          ro);
+  widget.setProperty("ExtraButton15",             QScriptValue(engine, Qt::ExtraButton15),          ro);
+  widget.setProperty("ExtraButton16",             QScriptValue(engine, Qt::ExtraButton16),          ro);
+  widget.setProperty("ExtraButton17",             QScriptValue(engine, Qt::ExtraButton17),          ro);
+  widget.setProperty("ExtraButton18",             QScriptValue(engine, Qt::ExtraButton18),          ro);
+  widget.setProperty("ExtraButton19",             QScriptValue(engine, Qt::ExtraButton19),          ro);
+  widget.setProperty("ExtraButton20",             QScriptValue(engine, Qt::ExtraButton20),          ro);
+  widget.setProperty("ExtraButton21",             QScriptValue(engine, Qt::ExtraButton21),          ro);
+  widget.setProperty("ExtraButton22",             QScriptValue(engine, Qt::ExtraButton22),          ro);
+  widget.setProperty("ExtraButton23",             QScriptValue(engine, Qt::ExtraButton23),          ro);
+  widget.setProperty("ExtraButton24",             QScriptValue(engine, Qt::ExtraButton24),          ro);
+  widget.setProperty("ExtraButton20",             QScriptValue(engine, Qt::ExtraButton20),          ro);
 
-/* this line causes problems with the embedded designer.
-   the conversion appears to work correctly without it.
-  qScriptRegisterMetaType(engine, OrientationtoScriptValue,	OrientationfromScriptValue);
+  qScriptRegisterMetaType(engine, MouseEventFlagToScriptValue,  MouseEventFlagFromScriptValue);
+  qScriptRegisterMetaType(engine, MouseEventFlagsToScriptValue, MouseEventFlagsFromScriptValue);
+  widget.setProperty("MouseEventCreatedDoubleClick", QScriptValue(engine, Qt::MouseEventCreatedDoubleClick), ro);
+
+  qScriptRegisterMetaType(engine, MouseEventSourceToScriptValue,  MouseEventSourceFromScriptValue);
+  widget.setProperty("MouseEventNotSynthesized",           QScriptValue(engine, Qt::MouseEventNotSynthesized),           ro);
+  widget.setProperty("MouseEventSynthesizedBySystem",      QScriptValue(engine, Qt::MouseEventSynthesizedBySystem),      ro);
+  widget.setProperty("MouseEventSynthesizedByQt",          QScriptValue(engine, Qt::MouseEventSynthesizedByQt),          ro);
+#if QT_VERSION >= 0x050600
+  widget.setProperty("MouseEventSynthesizedByApplication", QScriptValue(engine, Qt::MouseEventSynthesizedByApplication), ro);
+#endif
+
+  qScriptRegisterMetaType(engine, NativeGestureTypeToScriptValue,  NativeGestureTypeFromScriptValue);
+  widget.setProperty("BeginNativeGesture",      QScriptValue(engine, Qt::BeginNativeGesture),     ro);
+  widget.setProperty("EndNativeGesture",        QScriptValue(engine, Qt::EndNativeGesture),       ro);
+  widget.setProperty("PanNativeGesture",        QScriptValue(engine, Qt::PanNativeGesture),       ro);
+  widget.setProperty("ZoomNativeGesture",       QScriptValue(engine, Qt::ZoomNativeGesture),      ro);
+  widget.setProperty("SmartZoomNativeGesture",  QScriptValue(engine, Qt::SmartZoomNativeGesture), ro);
+  widget.setProperty("RotateNativeGesture",     QScriptValue(engine, Qt::RotateNativeGesture),    ro);
+  widget.setProperty("SwipeNativeGesture",      QScriptValue(engine, Qt::SwipeNativeGesture),     ro);
+
+  qScriptRegisterMetaType(engine, NavigationModeToScriptValue,  NavigationModeFromScriptValue);
+  widget.setProperty("NavigationModeNone",                QScriptValue(engine, Qt::NavigationModeNone),               ro);
+  widget.setProperty("NavigationModeKeypadTabOrder",      QScriptValue(engine, Qt::NavigationModeKeypadTabOrder),     ro);
+  widget.setProperty("NavigationModeKeypadDirectional",   QScriptValue(engine, Qt::NavigationModeKeypadDirectional),  ro);
+  widget.setProperty("NavigationModeCursorAuto",          QScriptValue(engine, Qt::NavigationModeCursorAuto),         ro);
+  widget.setProperty("NavigationModeCursorForceVisible",  QScriptValue(engine, Qt::NavigationModeCursorForceVisible), ro);
+
+/* this causes problems with the embedded designer but conversion appears to work correctly without it.
+  qScriptRegisterMetaType(engine, OrientationToScriptValue,  OrientationFromScriptValue);
+  qScriptRegisterMetaType(engine, OrientationsToScriptValue, OrientationsFromScriptValue);
 */
   widget.setProperty("Horizontal",                QScriptValue(engine, Qt::Horizontal),             ro);
   widget.setProperty("Vertical",                  QScriptValue(engine, Qt::Vertical),               ro);
 
-  qScriptRegisterMetaType(engine, PenCapStyletoScriptValue, PenCapStylefromScriptValue);
-  widget.setProperty("SquareCap",                 QScriptValue(engine, Qt::SquareCap),              ro);
+  qScriptRegisterMetaType(engine, PenCapStyleToScriptValue, PenCapStyleFromScriptValue);
   widget.setProperty("FlatCap",                   QScriptValue(engine, Qt::FlatCap),                ro);
   widget.setProperty("SquareCap",                 QScriptValue(engine, Qt::SquareCap),              ro);
   widget.setProperty("RoundCap",                  QScriptValue(engine, Qt::RoundCap),               ro);
 
-  qScriptRegisterMetaType(engine, PenJoinStyletoScriptValue, PenJoinStylefromScriptValue);
-  widget.setProperty("BevelJoin",                 QScriptValue(engine, Qt::BevelJoin),              ro);
+  qScriptRegisterMetaType(engine, PenJoinStyleToScriptValue, PenJoinStyleFromScriptValue);
   widget.setProperty("MiterJoin",                 QScriptValue(engine, Qt::MiterJoin),              ro);
   widget.setProperty("BevelJoin",                 QScriptValue(engine, Qt::BevelJoin),              ro);
   widget.setProperty("RoundJoin",                 QScriptValue(engine, Qt::RoundJoin),              ro);
   widget.setProperty("SvgMiterJoin",              QScriptValue(engine, Qt::SvgMiterJoin),           ro);
 
-  qScriptRegisterMetaType(engine, PenStyletoScriptValue, PenStylefromScriptValue);
-  widget.setProperty("SolidLine",                 QScriptValue(engine, Qt::SolidLine),              ro);
-  widget.setProperty("DashDotLine",               QScriptValue(engine, Qt::DashDotLine),            ro);
+  qScriptRegisterMetaType(engine, PenStyleToScriptValue, PenStyleFromScriptValue);
   widget.setProperty("NoPen",                     QScriptValue(engine, Qt::NoPen),                  ro);
   widget.setProperty("SolidLine",                 QScriptValue(engine, Qt::SolidLine),              ro);
   widget.setProperty("DashLine",                  QScriptValue(engine, Qt::DashLine),               ro);
@@ -1335,39 +2091,60 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("DashDotDotLine",            QScriptValue(engine, Qt::DashDotDotLine),         ro);
   widget.setProperty("CustomDashLine",            QScriptValue(engine, Qt::CustomDashLine),         ro);
 
-  qScriptRegisterMetaType(engine, ScrollBarPolicytoScriptValue, ScrollBarPolicyfromScriptValue);
+  qScriptRegisterMetaType(engine, ScreenOrientationToScriptValue,  ScreenOrientationFromScriptValue);
+  qScriptRegisterMetaType(engine, ScreenOrientationsToScriptValue, ScreenOrientationsFromScriptValue);
+  widget.setProperty("PrimaryOrientation",           QScriptValue(engine, Qt::PrimaryOrientation),           ro);
+  widget.setProperty("LandscapeOrientation",         QScriptValue(engine, Qt::LandscapeOrientation),         ro);
+  widget.setProperty("PortraitOrientation",          QScriptValue(engine, Qt::PortraitOrientation),          ro);
+  widget.setProperty("InvertedLandscapeOrientation", QScriptValue(engine, Qt::InvertedLandscapeOrientation), ro);
+  widget.setProperty("InvertedPortraitOrientation",  QScriptValue(engine, Qt::InvertedPortraitOrientation),  ro);
+
+  qScriptRegisterMetaType(engine, ScrollBarPolicyToScriptValue, ScrollBarPolicyFromScriptValue);
   widget.setProperty("ScrollBarAsNeeded",         QScriptValue(engine, Qt::ScrollBarAsNeeded),      ro);
   widget.setProperty("ScrollBarAlwaysOff",        QScriptValue(engine, Qt::ScrollBarAlwaysOff),     ro);
   widget.setProperty("ScrollBarAlwaysOn",         QScriptValue(engine, Qt::ScrollBarAlwaysOn),      ro);
 
-  qScriptRegisterMetaType(engine, ShortcutContexttoScriptValue, ShortcutContextfromScriptValue);
-  widget.setProperty("WidgetShortcut",             QScriptValue(engine, Qt::WidgetShortcut),          ro);
-  widget.setProperty("WidgetWithChildrenShortcut", QScriptValue(engine, Qt::WidgetWithChildrenShortcut),                                                 ro);
-  widget.setProperty("WindowShortcut",             QScriptValue(engine, Qt::WindowShortcut),          ro);
-  widget.setProperty("ApplicationShortcut",        QScriptValue(engine, Qt::ApplicationShortcut),     ro);
+  qScriptRegisterMetaType(engine, ScrollPhaseToScriptValue, ScrollPhaseFromScriptValue);
+#if QT_VERSION >= 0x050700
+  widget.setProperty("NoScrollPhase",           QScriptValue(engine, Qt::NoScrollPhase),  ro);
+#endif
+  widget.setProperty("ScrollBegin",             QScriptValue(engine, Qt::ScrollBegin),    ro);
+  widget.setProperty("ScrollUpdate",            QScriptValue(engine, Qt::ScrollUpdate),   ro);
+  widget.setProperty("ScrollEnd",               QScriptValue(engine, Qt::ScrollEnd),      ro);
 
-  qScriptRegisterMetaType(engine, SizeHinttoScriptValue, SizeHintfromScriptValue);
-  widget.setProperty("MinimumSize",                QScriptValue(engine, Qt::MinimumSize),             ro);
-  widget.setProperty("PreferredSize",              QScriptValue(engine, Qt::PreferredSize),           ro);
-  widget.setProperty("MaximumSize",                QScriptValue(engine, Qt::MaximumSize),             ro);
-  widget.setProperty("MinimumDescent",             QScriptValue(engine, Qt::MinimumDescent),          ro);
+  qScriptRegisterMetaType(engine, ShortcutContextToScriptValue, ShortcutContextFromScriptValue);
+  widget.setProperty("WidgetShortcut",             QScriptValue(engine, Qt::WidgetShortcut),             ro);
+  widget.setProperty("WidgetWithChildrenShortcut", QScriptValue(engine, Qt::WidgetWithChildrenShortcut), ro);
+  widget.setProperty("WindowShortcut",             QScriptValue(engine, Qt::WindowShortcut),             ro);
+  widget.setProperty("ApplicationShortcut",        QScriptValue(engine, Qt::ApplicationShortcut),        ro);
 
-  qScriptRegisterMetaType(engine, SizeModetoScriptValue, SizeModefromScriptValue);
-  widget.setProperty("AbsoluteSize",               QScriptValue(engine, Qt::AbsoluteSize),            ro);
-  widget.setProperty("RelativeSize",               QScriptValue(engine, Qt::RelativeSize),            ro);
+  qScriptRegisterMetaType(engine, SizeHintToScriptValue, SizeHintFromScriptValue);
+  widget.setProperty("MinimumSize",             QScriptValue(engine, Qt::MinimumSize),          ro);
+  widget.setProperty("PreferredSize",           QScriptValue(engine, Qt::PreferredSize),        ro);
+  widget.setProperty("MaximumSize",             QScriptValue(engine, Qt::MaximumSize),          ro);
+  widget.setProperty("MinimumDescent",          QScriptValue(engine, Qt::MinimumDescent),       ro);
 
-  qScriptRegisterMetaType(engine, SortOrdertoScriptValue, SortOrderfromScriptValue);
-  widget.setProperty("AscendingOrder",             QScriptValue(engine, Qt::AscendingOrder),          ro);
-  widget.setProperty("DescendingOrder",            QScriptValue(engine, Qt::DescendingOrder),         ro);
+  qScriptRegisterMetaType(engine, SizeModeToScriptValue, SizeModeFromScriptValue);
+  widget.setProperty("AbsoluteSize",            QScriptValue(engine, Qt::AbsoluteSize),         ro);
+  widget.setProperty("RelativeSize",            QScriptValue(engine, Qt::RelativeSize),         ro);
 
-  qScriptRegisterMetaType(engine, TextElideModetoScriptValue, TextElideModefromScriptValue);
+  qScriptRegisterMetaType(engine, SortOrderToScriptValue, SortOrderFromScriptValue);
+  widget.setProperty("AscendingOrder",          QScriptValue(engine, Qt::AscendingOrder),       ro);
+  widget.setProperty("DescendingOrder",         QScriptValue(engine, Qt::DescendingOrder),      ro);
+
+  qScriptRegisterMetaType(engine, TabFocusBehaviorToScriptValue, TabFocusBehaviorFromScriptValue);
+  widget.setProperty("NoTabFocus",              QScriptValue(engine, Qt::NoTabFocus),           ro);
+  widget.setProperty("TabFocusTextControls",    QScriptValue(engine, Qt::TabFocusTextControls), ro);
+  widget.setProperty("TabFocusListControls",    QScriptValue(engine, Qt::TabFocusListControls), ro);
+  widget.setProperty("TabFocusAllControls",     QScriptValue(engine, Qt::TabFocusAllControls),  ro);
+
+  qScriptRegisterMetaType(engine, TextElideModeToScriptValue, TextElideModeFromScriptValue);
   widget.setProperty("ElideLeft",                  QScriptValue(engine, Qt::ElideLeft),               ro);
   widget.setProperty("ElideRight",                 QScriptValue(engine, Qt::ElideRight),              ro);
   widget.setProperty("ElideMiddle",                QScriptValue(engine, Qt::ElideMiddle),             ro);
   widget.setProperty("ElideNone",                  QScriptValue(engine, Qt::ElideNone),               ro);
-  widget.setProperty("ElideMiddle",                QScriptValue(engine, Qt::ElideMiddle),             ro);
 
-  qScriptRegisterMetaType(engine, TextFlagtoScriptValue, TextFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, TextFlagToScriptValue, TextFlagFromScriptValue);
   widget.setProperty("TextSingleLine",             QScriptValue(engine, Qt::TextSingleLine),          ro);
   widget.setProperty("TextDontClip",               QScriptValue(engine, Qt::TextDontClip),            ro);
   widget.setProperty("TextExpandTabs",             QScriptValue(engine, Qt::TextExpandTabs),          ro);
@@ -1376,37 +2153,47 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("TextWrapAnywhere",           QScriptValue(engine, Qt::TextWrapAnywhere),        ro);
   widget.setProperty("TextHideMnemonic",           QScriptValue(engine, Qt::TextHideMnemonic),        ro);
   widget.setProperty("TextDontPrint",              QScriptValue(engine, Qt::TextDontPrint),           ro);
-  widget.setProperty("TextIncludeTrailingSpaces",  QScriptValue(engine, Qt::TextIncludeTrailingSpaces),                                                  ro);
-  widget.setProperty("TextJustificationForced",    QScriptValue(engine, Qt::TextJustificationForced), ro);
+  widget.setProperty("TextIncludeTrailingSpaces",  QScriptValue(engine, Qt::TextIncludeTrailingSpaces), ro);
+  widget.setProperty("TextJustificationForced",    QScriptValue(engine, Qt::TextJustificationForced),   ro);
 
-  qScriptRegisterMetaType(engine, TextFormattoScriptValue, TextFormatfromScriptValue);
+  qScriptRegisterMetaType(engine, TextFormatToScriptValue, TextFormatFromScriptValue);
   widget.setProperty("PlainText",                  QScriptValue(engine, Qt::PlainText),               ro);
   widget.setProperty("RichText",                   QScriptValue(engine, Qt::RichText),                ro);
   widget.setProperty("AutoText",                   QScriptValue(engine, Qt::AutoText),                ro);
 
-  qScriptRegisterMetaType(engine, TextInteractionFlagtoScriptValue, TextInteractionFlagfromScriptValue);
-  widget.setProperty("NoTextInteraction",          QScriptValue(engine, Qt::NoTextInteraction),       ro);
-  widget.setProperty("TextSelectableByMouse",      QScriptValue(engine, Qt::TextSelectableByMouse),   ro);
-  widget.setProperty("TextSelectableByKeyboard",   QScriptValue(engine, Qt::TextSelectableByKeyboard),                                                   ro);
-  widget.setProperty("LinksAccessibleByMouse",     QScriptValue(engine, Qt::LinksAccessibleByMouse),  ro);
-  widget.setProperty("LinksAccessibleByKeyboard",  QScriptValue(engine, Qt::LinksAccessibleByKeyboard),                                                  ro);
-  widget.setProperty("TextEditable",               QScriptValue(engine, Qt::TextEditable),            ro);
-  widget.setProperty("TextEditorInteraction",      QScriptValue(engine, Qt::TextEditorInteraction),   ro);
-  widget.setProperty("TextBrowserInteraction",     QScriptValue(engine, Qt::TextBrowserInteraction),  ro);
+  qScriptRegisterMetaType(engine, TextInteractionFlagToScriptValue, TextInteractionFlagFromScriptValue);
+  widget.setProperty("NoTextInteraction",          QScriptValue(engine, Qt::NoTextInteraction),         ro);
+  widget.setProperty("TextSelectableByMouse",      QScriptValue(engine, Qt::TextSelectableByMouse),     ro);
+  widget.setProperty("TextSelectableByKeyboard",   QScriptValue(engine, Qt::TextSelectableByKeyboard),  ro);
+  widget.setProperty("LinksAccessibleByMouse",     QScriptValue(engine, Qt::LinksAccessibleByMouse),    ro);
+  widget.setProperty("LinksAccessibleByKeyboard",  QScriptValue(engine, Qt::LinksAccessibleByKeyboard), ro);
+  widget.setProperty("TextEditable",               QScriptValue(engine, Qt::TextEditable),              ro);
+  widget.setProperty("TextEditorInteraction",      QScriptValue(engine, Qt::TextEditorInteraction),     ro);
+  widget.setProperty("TextBrowserInteraction",     QScriptValue(engine, Qt::TextBrowserInteraction),    ro);
 
-#if QT_VERSION >= 0x050000
-  qScriptRegisterMetaType(engine, TimerTypetoScriptValue, TimerTypefromScriptValue);
+  qScriptRegisterMetaType(engine, TileRuleToScriptValue, TileRuleFromScriptValue);
+  widget.setProperty("StretchTile",             QScriptValue(engine, Qt::StretchTile),   ro);
+  widget.setProperty("RepeatTile",              QScriptValue(engine, Qt::RepeatTile),    ro);
+  widget.setProperty("RoundTile",               QScriptValue(engine, Qt::RoundTile),     ro);
+
+  qScriptRegisterMetaType(engine, TimeSpecToScriptValue, TimeSpecFromScriptValue);
+  widget.setProperty("LocalTime",               QScriptValue(engine, Qt::LocalTime),     ro);
+  widget.setProperty("UTC",                     QScriptValue(engine, Qt::UTC),           ro);
+  widget.setProperty("OffsetFromUTC",           QScriptValue(engine, Qt::OffsetFromUTC), ro);
+  widget.setProperty("TimeZone",                QScriptValue(engine, Qt::TimeZone),      ro);
+
+  qScriptRegisterMetaType(engine, TimerTypeToScriptValue, TimerTypeFromScriptValue);
   widget.setProperty("PreciseTimer",               QScriptValue(engine, Qt::PreciseTimer),            ro);
   widget.setProperty("CoarseTimer",                QScriptValue(engine, Qt::CoarseTimer),             ro);
   widget.setProperty("VeryCoarseTimer",            QScriptValue(engine, Qt::VeryCoarseTimer),         ro);
-#endif
 
-  qScriptRegisterMetaType(engine, TimeSpectoScriptValue, TimeSpecfromScriptValue);
+  qScriptRegisterMetaType(engine, TimeSpecToScriptValue, TimeSpecFromScriptValue);
   widget.setProperty("LocalTime",                  QScriptValue(engine, Qt::LocalTime),               ro);
   widget.setProperty("UTC",                        QScriptValue(engine, Qt::UTC),                     ro);
   widget.setProperty("OffsetFromUTC",              QScriptValue(engine, Qt::OffsetFromUTC),           ro);
 
-  qScriptRegisterMetaType(engine, ToolBarAreatoScriptValue, ToolBarAreafromScriptValue);
+  qScriptRegisterMetaType(engine, ToolBarAreaToScriptValue,  ToolBarAreaFromScriptValue);
+  qScriptRegisterMetaType(engine, ToolBarAreasToScriptValue, ToolBarAreasFromScriptValue);
   widget.setProperty("LeftToolBarArea",            QScriptValue(engine, Qt::LeftToolBarArea),         ro);
   widget.setProperty("RightToolBarArea",           QScriptValue(engine, Qt::RightToolBarArea),        ro);
   widget.setProperty("TopToolBarArea",             QScriptValue(engine, Qt::TopToolBarArea),          ro);
@@ -1414,17 +2201,25 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("AllToolBarAreas",            QScriptValue(engine, Qt::AllToolBarAreas),         ro);
   widget.setProperty("NoToolBarArea",              QScriptValue(engine, Qt::NoToolBarArea),           ro);
 
-  qScriptRegisterMetaType(engine, ToolButtonStyletoScriptValue, ToolButtonStylefromScriptValue);
-  widget.setProperty("ToolButtonIconOnly",         QScriptValue(engine, Qt::ToolButtonIconOnly),      ro);
-  widget.setProperty("ToolButtonTextOnly",         QScriptValue(engine, Qt::ToolButtonTextOnly),      ro);
-  widget.setProperty("ToolButtonTextBesideIcon",   QScriptValue(engine, Qt::ToolButtonTextBesideIcon),ro);
-  widget.setProperty("ToolButtonTextUnderIcon",    QScriptValue(engine, Qt::ToolButtonTextUnderIcon), ro);
+  qScriptRegisterMetaType(engine, ToolButtonStyleToScriptValue, ToolButtonStyleFromScriptValue);
+  widget.setProperty("ToolButtonIconOnly",         QScriptValue(engine, Qt::ToolButtonIconOnly),       ro);
+  widget.setProperty("ToolButtonTextOnly",         QScriptValue(engine, Qt::ToolButtonTextOnly),       ro);
+  widget.setProperty("ToolButtonTextBesideIcon",   QScriptValue(engine, Qt::ToolButtonTextBesideIcon), ro);
+  widget.setProperty("ToolButtonTextUnderIcon",    QScriptValue(engine, Qt::ToolButtonTextUnderIcon),  ro);
+  widget.setProperty("ToolButtonFollowStyle",      QScriptValue(engine, Qt::ToolButtonFollowStyle),    ro);
 
-  qScriptRegisterMetaType(engine, TransformationModetoScriptValue, TransformationModefromScriptValue);
+  qScriptRegisterMetaType(engine, TouchPointStateToScriptValue,  TouchPointStateFromScriptValue);
+  qScriptRegisterMetaType(engine, TouchPointStatesToScriptValue, TouchPointStatesFromScriptValue);
+  widget.setProperty("TouchPointPressed",          QScriptValue(engine, Qt::TouchPointPressed),       ro);
+  widget.setProperty("TouchPointMoved",            QScriptValue(engine, Qt::TouchPointMoved),         ro);
+  widget.setProperty("TouchPointStationary",       QScriptValue(engine, Qt::TouchPointStationary),    ro);
+  widget.setProperty("TouchPointReleased",         QScriptValue(engine, Qt::TouchPointReleased),      ro);
+
+  qScriptRegisterMetaType(engine, TransformationModeToScriptValue, TransformationModeFromScriptValue);
   widget.setProperty("FastTransformation",         QScriptValue(engine, Qt::FastTransformation),      ro);
   widget.setProperty("SmoothTransformation",       QScriptValue(engine, Qt::SmoothTransformation),    ro);
 
-  qScriptRegisterMetaType(engine, UIEffecttoScriptValue, UIEffectfromScriptValue);
+  qScriptRegisterMetaType(engine, UIEffectToScriptValue, UIEffectFromScriptValue);
   widget.setProperty("UI_AnimateMenu",             QScriptValue(engine, Qt::UI_AnimateMenu),          ro);
   widget.setProperty("UI_FadeMenu",                QScriptValue(engine, Qt::UI_FadeMenu),             ro);
   widget.setProperty("UI_AnimateCombo",            QScriptValue(engine, Qt::UI_AnimateCombo),         ro);
@@ -1432,18 +2227,19 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("UI_FadeTooltip",             QScriptValue(engine, Qt::UI_FadeTooltip),          ro);
   widget.setProperty("UI_AnimateToolBox",          QScriptValue(engine, Qt::UI_AnimateToolBox),       ro);
 
-  qScriptRegisterMetaType(engine, WhiteSpaceModetoScriptValue, WhiteSpaceModefromScriptValue);
+  qScriptRegisterMetaType(engine, WhiteSpaceModeToScriptValue, WhiteSpaceModeFromScriptValue);
   widget.setProperty("WhiteSpaceNormal",           QScriptValue(engine, Qt::WhiteSpaceNormal),        ro);
   widget.setProperty("WhiteSpacePre",              QScriptValue(engine, Qt::WhiteSpacePre),           ro);
   widget.setProperty("WhiteSpaceNoWrap",           QScriptValue(engine, Qt::WhiteSpaceNoWrap),        ro);
 
-  qScriptRegisterMetaType(engine, WidgetAttributetoScriptValue, WidgetAttributefromScriptValue);
+  qScriptRegisterMetaType(engine, WidgetAttributeToScriptValue, WidgetAttributeFromScriptValue);
   widget.setProperty("WA_AcceptDrops",                    QScriptValue(engine, Qt::WA_AcceptDrops),                 ro);
   widget.setProperty("WA_AlwaysShowToolTips",             QScriptValue(engine, Qt::WA_AlwaysShowToolTips),          ro);
   widget.setProperty("WA_ContentsPropagated",             QScriptValue(engine, Qt::WA_ContentsPropagated),          ro);
   widget.setProperty("WA_CustomWhatsThis",                QScriptValue(engine, Qt::WA_CustomWhatsThis),             ro);
   widget.setProperty("WA_DeleteOnClose",                  QScriptValue(engine, Qt::WA_DeleteOnClose),               ro);
   widget.setProperty("WA_Disabled",                       QScriptValue(engine, Qt::WA_Disabled),                    ro);
+  widget.setProperty("WA_DontShowOnScreen",               QScriptValue(engine, Qt::WA_DontShowOnScreen),            ro);
   widget.setProperty("WA_ForceDisabled",                  QScriptValue(engine, Qt::WA_ForceDisabled),               ro);
   widget.setProperty("WA_ForceUpdatesDisabled",           QScriptValue(engine, Qt::WA_ForceUpdatesDisabled),        ro);
   widget.setProperty("WA_GroupLeader",                    QScriptValue(engine, Qt::WA_GroupLeader),                 ro);
@@ -1489,6 +2285,9 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("WA_ShowModal",                      QScriptValue(engine, Qt::WA_ShowModal),                   ro);
   widget.setProperty("WA_StaticContents",                 QScriptValue(engine, Qt::WA_StaticContents),              ro);
   widget.setProperty("WA_StyleSheet",                     QScriptValue(engine, Qt::WA_StyleSheet),                  ro);
+#if QT_VERSION >= 0x050900
+  widget.setProperty("WA_TabletTracking",                 QScriptValue(engine, Qt::WA_TabletTracking),              ro);
+#endif
   widget.setProperty("WA_TranslucentBackground",          QScriptValue(engine, Qt::WA_TranslucentBackground),       ro);
   widget.setProperty("WA_UnderMouse",                     QScriptValue(engine, Qt::WA_UnderMouse),                  ro);
   widget.setProperty("WA_UpdatesDisabled",                QScriptValue(engine, Qt::WA_UpdatesDisabled),             ro);
@@ -1514,8 +2313,13 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("WA_X11NetWmWindowTypeCombo",        QScriptValue(engine, Qt::WA_X11NetWmWindowTypeCombo),     ro);
   widget.setProperty("WA_X11NetWmWindowTypeDND",          QScriptValue(engine, Qt::WA_X11NetWmWindowTypeDND),       ro);
   widget.setProperty("WA_MacFrameworkScaled",             QScriptValue(engine, Qt::WA_MacFrameworkScaled),          ro);
+  widget.setProperty("WA_AcceptTouchEvents",               QScriptValue(engine, Qt::WA_AcceptTouchEvents),               ro);
+  widget.setProperty("WA_TouchPadAcceptSingleTouchEvents", QScriptValue(engine, Qt::WA_TouchPadAcceptSingleTouchEvents), ro);
+  widget.setProperty("WA_X11DoNotAcceptFocus",             QScriptValue(engine, Qt::WA_X11DoNotAcceptFocus),             ro);
+  widget.setProperty("WA_AlwaysStackOnTop",                QScriptValue(engine, Qt::WA_AlwaysStackOnTop),                ro);
 
-  qScriptRegisterMetaType(engine, WindowFrameSectiontoScriptValue, WindowFrameSectionfromScriptValue);
+
+  qScriptRegisterMetaType(engine, WindowFrameSectionToScriptValue, WindowFrameSectionFromScriptValue);
   widget.setProperty("NoSection",                 QScriptValue(engine, Qt::NoSection),              ro);
   widget.setProperty("LeftSection",               QScriptValue(engine, Qt::LeftSection),            ro);
   widget.setProperty("TopLeftSection",            QScriptValue(engine, Qt::TopLeftSection),         ro);
@@ -1527,19 +2331,20 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("BottomLeftSection",         QScriptValue(engine, Qt::BottomLeftSection),      ro);
   widget.setProperty("TitleBarArea",              QScriptValue(engine, Qt::TitleBarArea),           ro);
 
-  qScriptRegisterMetaType(engine, WindowModalitytoScriptValue, WindowModalityfromScriptValue);
+  qScriptRegisterMetaType(engine, WindowModalityToScriptValue, WindowModalityFromScriptValue);
   widget.setProperty("NonModal",                  QScriptValue(engine, Qt::NonModal),               ro);
   widget.setProperty("WindowModal",               QScriptValue(engine, Qt::WindowModal),            ro);
   widget.setProperty("ApplicationModal",          QScriptValue(engine, Qt::ApplicationModal),       ro);
 
-  qScriptRegisterMetaType(engine, WindowStatetoScriptValue, WindowStatefromScriptValue);
+  qScriptRegisterMetaType(engine, WindowStateToScriptValue, WindowStateFromScriptValue);
   widget.setProperty("WindowNoState",             QScriptValue(engine, Qt::WindowNoState),          ro);
   widget.setProperty("WindowMinimized",           QScriptValue(engine, Qt::WindowMinimized),        ro);
   widget.setProperty("WindowMaximized",           QScriptValue(engine, Qt::WindowMaximized),        ro);
   widget.setProperty("WindowFullScreen",          QScriptValue(engine, Qt::WindowFullScreen),       ro);
   widget.setProperty("WindowActive",              QScriptValue(engine, Qt::WindowActive),           ro);
 
-  qScriptRegisterMetaType(engine, WindowTypetoScriptValue, WindowTypefromScriptValue);
+  qScriptRegisterMetaType(engine, WindowTypeToScriptValue,  WindowTypeFromScriptValue);
+  qScriptRegisterMetaType(engine, WindowFlagsToScriptValue, WindowFlagsFromScriptValue);
   widget.setProperty("Widget",                         QScriptValue(engine, Qt::Widget),                       ro);
   widget.setProperty("Window",                         QScriptValue(engine, Qt::Window),                       ro);
   widget.setProperty("Dialog",                         QScriptValue(engine, Qt::Dialog),                       ro);
@@ -1551,10 +2356,14 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("SplashScreen",                   QScriptValue(engine, Qt::SplashScreen),                 ro);
   widget.setProperty("Desktop",                        QScriptValue(engine, Qt::Desktop),                      ro);
   widget.setProperty("SubWindow",                      QScriptValue(engine, Qt::SubWindow),                    ro);
+  widget.setProperty("ForeignWindow",                  QScriptValue(engine, Qt::ForeignWindow),                ro);
+  widget.setProperty("CoverWindow",                    QScriptValue(engine, Qt::CoverWindow),                  ro);
   widget.setProperty("MSWindowsFixedSizeDialogHint",   QScriptValue(engine, Qt::MSWindowsFixedSizeDialogHint), ro);
   widget.setProperty("MSWindowsOwnDC",                 QScriptValue(engine, Qt::MSWindowsOwnDC),               ro);
+  widget.setProperty("BypassWindowManagerHint",        QScriptValue(engine, Qt::BypassWindowManagerHint),      ro);
   widget.setProperty("X11BypassWindowManagerHint",     QScriptValue(engine, Qt::X11BypassWindowManagerHint),   ro);
   widget.setProperty("FramelessWindowHint",            QScriptValue(engine, Qt::FramelessWindowHint),          ro);
+  widget.setProperty("NoDropShadowWindowHint",         QScriptValue(engine, Qt::NoDropShadowWindowHint),       ro);
   widget.setProperty("CustomizeWindowHint",            QScriptValue(engine, Qt::CustomizeWindowHint),          ro);
   widget.setProperty("WindowTitleHint",                QScriptValue(engine, Qt::WindowTitleHint),              ro);
   widget.setProperty("WindowSystemMenuHint",           QScriptValue(engine, Qt::WindowSystemMenuHint),         ro);
@@ -1564,10 +2373,17 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("WindowCloseButtonHint",          QScriptValue(engine, Qt::WindowCloseButtonHint),        ro);
   widget.setProperty("WindowContextHelpButtonHint",    QScriptValue(engine, Qt::WindowContextHelpButtonHint),  ro);
   widget.setProperty("MacWindowToolBarButtonHint",     QScriptValue(engine, Qt::MacWindowToolBarButtonHint),   ro);
+  widget.setProperty("WindowFullscreenButtonHint",     QScriptValue(engine, Qt::WindowFullscreenButtonHint),   ro);
   widget.setProperty("BypassGraphicsProxyWidget",      QScriptValue(engine, Qt::BypassGraphicsProxyWidget),    ro);
   widget.setProperty("WindowShadeButtonHint",          QScriptValue(engine, Qt::WindowShadeButtonHint),        ro);
   widget.setProperty("WindowStaysOnTopHint",           QScriptValue(engine, Qt::WindowStaysOnTopHint),         ro);
   widget.setProperty("WindowStaysOnBottomHint",        QScriptValue(engine, Qt::WindowStaysOnBottomHint),      ro);
+
+  widget.setProperty("WindowTransparentForInput",        QScriptValue(engine, Qt::WindowTransparentForInput),      ro);
+  widget.setProperty("WindowOverridesSystemGestures",        QScriptValue(engine, Qt::WindowOverridesSystemGestures),      ro);
+  widget.setProperty("WindowDoesNotAcceptFocus",        QScriptValue(engine, Qt::WindowDoesNotAcceptFocus),      ro);
+  widget.setProperty("MaximizeUsingFullscreenGeometryHint",        QScriptValue(engine, Qt::MaximizeUsingFullscreenGeometryHint),      ro);
+
 #if QT_VERSION < 0x050800
   widget.setProperty("WindowOkButtonHint",             QScriptValue(engine, Qt::WindowOkButtonHint),           ro);
   widget.setProperty("WindowCancelButtonHint",         QScriptValue(engine, Qt::WindowCancelButtonHint),       ro);

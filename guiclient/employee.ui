@@ -179,77 +179,11 @@ to be bound by its terms.</comment>
       <layout class="QGridLayout" name="contactTabLayout">
        <item row="0" column="0">
         <widget class="ContactWidget" name="_contact">
-         <property name="accountVisible">
-          <bool>false</bool>
-         </property>
          <property name="activeVisible">
           <bool>false</bool>
          </property>
          <property name="initialsVisible">
           <bool>false</bool>
-         </property>
-         <property name="fieldNameChange">
-          <string notr="true">contact_change</string>
-         </property>
-         <property name="fieldNameNumber">
-          <string notr="true">contact_number</string>
-         </property>
-         <property name="fieldNameActive">
-          <string/>
-         </property>
-         <property name="fieldNameHonorific">
-          <string notr="true">honorific</string>
-         </property>
-         <property name="fieldNameFirst">
-          <string notr="true">first</string>
-         </property>
-         <property name="fieldNameLast">
-          <string notr="true">last</string>
-         </property>
-         <property name="fieldNameTitle">
-          <string notr="true">job_title</string>
-         </property>
-         <property name="fieldNamePhone">
-          <string notr="true">voice</string>
-         </property>
-         <property name="fieldNamePhone2">
-          <string notr="true">alternate</string>
-         </property>
-         <property name="fieldNameFax">
-          <string notr="true">fax</string>
-         </property>
-         <property name="fieldNameEmailAddress">
-          <string notr="true">email</string>
-         </property>
-         <property name="fieldNameWebAddress">
-          <string notr="true">web</string>
-         </property>
-         <property name="fieldNameAddressChange" stdset="0">
-          <string notr="true">address_change</string>
-         </property>
-         <property name="fieldNameAddressNumber" stdset="0">
-          <string notr="true">address_number</string>
-         </property>
-         <property name="fieldNameLine1">
-          <string notr="true">address1</string>
-         </property>
-         <property name="fieldNameLine2">
-          <string notr="true">address2</string>
-         </property>
-         <property name="fieldNameLine3">
-          <string notr="true">address3</string>
-         </property>
-         <property name="fieldNameCity">
-          <string notr="true">city</string>
-         </property>
-         <property name="fieldNameState">
-          <string notr="true">state</string>
-         </property>
-         <property name="fieldNamePostalCode">
-          <string notr="true">postalcode</string>
-         </property>
-         <property name="fieldNameCountry">
-          <string notr="true">country</string>
          </property>
         </widget>
        </item>

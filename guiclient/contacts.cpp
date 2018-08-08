@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -11,6 +11,7 @@
 #include "contacts.h"
 
 #include <QAction>
+#include <QInputDialog>
 #include <QMenu>
 #include <QToolBar>
 #include <QToolButton>
@@ -50,6 +51,7 @@ contacts::contacts(QWidget* parent, const char*, Qt::WindowFlags fl)
     parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
     parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
   }
+  parameterWidget()->appendComboBox(tr("Contact Group"), "cntctgrp", XComboBox::ContactGroups);
   parameterWidget()->append(tr("Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);
@@ -67,13 +69,13 @@ contacts::contacts(QWidget* parent, const char*, Qt::WindowFlags fl)
 
   list()->addColumn(tr("First Name"),          80, Qt::AlignLeft,  true, "cntct_first_name");
   list()->addColumn(tr("Last Name"),          100, Qt::AlignLeft,  true, "cntct_last_name");
+  list()->addColumn(tr("Active"),              50, Qt::AlignLeft,  true, "cntct_active");
   list()->addColumn(tr("Owner"),      _userColumn, Qt::AlignLeft, false, "cntct_owner_username");
-  list()->addColumn(tr("Account #"),           80, Qt::AlignLeft,  true, "crmacct_number");
-  list()->addColumn(tr("Account Name"),        -1, Qt::AlignLeft,  true, "crmacct_name");
+  list()->addColumn(tr("CRM Accounts"),        -1, Qt::AlignLeft,  true, "crmacct");
   list()->addColumn(tr("Title"),               -1, Qt::AlignLeft,  true, "cntct_title");
-  list()->addColumn(tr("Phone"),	      100, Qt::AlignLeft,  true, "cntct_phone");
-  list()->addColumn(tr("Alternate"),          100, Qt::AlignLeft,  true, "cntct_phone2");
-  list()->addColumn(tr("Fax"),                100, Qt::AlignLeft, false, "cntct_fax");
+  list()->addColumn(tr("Office #"),	      100, Qt::AlignLeft,  true, "contact_phone");
+  list()->addColumn(tr("Mobile #"),           100, Qt::AlignLeft,  true, "contact_phone2");
+  list()->addColumn(tr("Fax #"),              100, Qt::AlignLeft, false, "contact_phone3");
   list()->addColumn(tr("E-Mail"),             100, Qt::AlignLeft,  true, "cntct_email");
   list()->addColumn(tr("Web Address"),        100, Qt::AlignLeft, false, "cntct_webaddr");
   list()->addColumn(tr("Address"),             -1, Qt::AlignLeft, false, "addr_line1");
@@ -130,9 +132,18 @@ enum SetResponse contacts::set(const ParameterList& pParams)
   {
     if (param.toString() == "view")
     {
+      _mode = cView;
       _attachAct->setEnabled(false);
       disconnect(list(), SIGNAL(valid(bool)), _detachAct, SLOT(setEnabled(bool)));
     }
+  }
+
+  param = pParams.value("showRole", &valid);
+  if (valid)
+  {
+    list()->addColumn(tr("Role"), 80, Qt::AlignLeft, true, "crmrole");
+    list()->moveColumn(list()->column("crmrole"), 0);
+    _captive = true;
   }
 
   param = pParams.value("run", &valid);
@@ -147,12 +158,12 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   QAction *menuItem;
 
   bool editPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalContacts")) ||
-      (_privileges->check("MaintainAllContacts"));
+      ((omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalContacts")) ||
+      _privileges->check("MaintainAllContacts")) && _mode != cView;
 
   bool viewPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalContacts")) ||
-      (_privileges->check("ViewAllContacts"));
+      _privileges->check("ViewAllContacts");
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   menuItem->setEnabled(editPriv);
@@ -200,38 +211,52 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   bool foundNewable = false;
   bool foundEditable = false;
 
+  if (!_captive) {
   foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    if (item->rawValue("cust").isNull()) // Can't be a Customer and Prospect
+    XSqlQuery sql;
+    sql.prepare("WITH crmaccts AS ( "
+                "SELECT crmaccttypes(crmacctcntctass_crmacct_id)#>>'{prospect}' AS prospectid"
+                "  FROM cntct"
+                "  JOIN crmacctcntctass ON cntct_id=crmacctcntctass_cntct_id"
+                " WHERE cntct_id::TEXT IN (SELECT regexp_split_to_table(:cntct_id, ','))"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{customer}' IS NULL) "
+                "SELECT EXISTS(SELECT 1"
+                "                FROM crmaccts"
+                "               WHERE prospectid IS NOT NULL) AS edit,"
+                "       EXISTS(SELECT 1"
+                "                FROM crmaccts"
+                "               WHERE prospectid IS NULL) AS new;");
+    QStringList ids;
+    foreach (XTreeWidgetItem *item, list()->selectedItems())
+      ids << QString::number(item->id());
+    sql.bindValue(":cntct_id", ids.join(","));
+    sql.exec();
+  
+    if (sql.first())
     {
-      if (item->rawValue("prospect").toInt() > 0)
-        foundEditable = true;
-      else
-        foundNewable = true;
+      bool editProspectPriv = _privileges->check("MaintainProspectMasters");
+      bool viewProspectPriv = _privileges->check("MaintainProspectMasters ViewProspectMasters");
+      
+      if (sql.value("edit").toBool())
+      {
+        pMenu->addSeparator();
+        menuItem = pMenu->addAction(tr("Edit Prospect"), this, SLOT(sEditProspect()));
+        menuItem->setEnabled(editProspectPriv);
+        menuItem = pMenu->addAction(tr("View Prospect"), this, SLOT(sViewProspect()));
+        menuItem->setEnabled(viewProspectPriv);
+      }
+      if (sql.value("new").toBool())
+      {
+        pMenu->addSeparator();
+        menuItem = pMenu->addAction(tr("Create Prospect..."), this, SLOT(sNewProspect()));
+        menuItem->setEnabled(editProspectPriv);
+      }
     }
-
-    editProspectPriv = editProspectPriv ||
-        (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
-        (_privileges->check("MaintainAllCRMAccounts")); // TODO - replace if a new "ViewProspect" priv created
-
-    viewProspectPriv = viewProspectPriv ||
-        (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
-        (_privileges->check("ViewAllCRMAccounts")); // TODO - replace if a new "ViewProspect" priv created
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking CRM Accounts"),
+                                  sql, __FILE__, __LINE__))
+      return;
   }
-
-  if (foundEditable)
-  {
-    pMenu->addSeparator();
-    menuItem = pMenu->addAction(tr("Edit Prospect"), this, SLOT(sEditProspect()));
-    menuItem->setEnabled(editProspectPriv);
-    menuItem = pMenu->addAction(tr("View Prospect"), this, SLOT(sViewProspect()));
-    menuItem->setEnabled(viewProspectPriv);
-  }
-  if (foundNewable)
-  {
-    pMenu->addSeparator();
-    menuItem = pMenu->addAction(tr("Create Prospect..."), this, SLOT(sNewProspect()));
-    menuItem->setEnabled(editProspectPriv);
   }
 }
 
@@ -621,10 +646,10 @@ void contacts::sAttach()
     int answer = QMessageBox::Yes;
 
     if (attached.crmAcctId() > 0 && attached.crmAcctId() != _crmacctid)
-      answer = QMessageBox::question(this, tr("Detach Contact?"),
+      answer = QMessageBox::question(this, tr("Attach Contact?"),
 			    tr("<p>This Contact is currently attached to a "
 			       "different Account. Are you sure you want "
-			       "to change the Account for this person?"),
+			       "to also attach this Account for this person?"),
 			    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
     if (answer == QMessageBox::Yes)
     {
@@ -654,6 +679,7 @@ void contacts::sAttach()
 
 void contacts::sDetach()
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)list()->currentItem();
   int answer = QMessageBox::question(this, tr("Detach Contact?"),
 			tr("<p>Are you sure you want to detach this Contact "
 			   "from this Account?"),
@@ -661,10 +687,13 @@ void contacts::sDetach()
   if (answer == QMessageBox::Yes)
   {
     int cntctId = list()->id();
+    QString role = item->rawValue("crmrole").toString();
     XSqlQuery detq;
-    detq.prepare("SELECT detachContact(:cntct_id, :crmacct_id) AS returnVal;");
+    detq.prepare("SELECT detachContact(:cntct_id, :crmacct_id, :role) AS returnVal;");
     detq.bindValue(":cntct_id", cntctId);
     detq.bindValue(":crmacct_id", _crmacctid);
+    if(role.length() > 0)
+      detq.bindValue(":role", role);
     detq.exec();
     if (detq.first())
     {
@@ -697,7 +726,7 @@ void contacts::setCrmacctid(int crmacctId)
   else
   {
     parameterWidget()->setDefault(tr("Account"), _crmacctid, true);
-    _attachAct->setVisible(true);
+    setNewVisible(false);
     _detachAct->setVisible(true);
   }
 }
@@ -748,31 +777,66 @@ void contacts::sOpen()
 
 void contacts::sNewProspect()
 {
+  XSqlQuery sql;
+  XSqlQuery crmsql;
+  ParameterList params;
+
+  sql.prepare("SELECT DISTINCT crmacct_number"
+              "  FROM cntct"
+              "  JOIN crmacctcntctass ON cntct_id=crmacctcntctass_cntct_id"
+              "  JOIN crmacct ON crmacct_id=crmacctcntctass_crmacct_id"
+              " WHERE cntct_id=:cntct_id"
+              "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{customer}' IS NULL"
+              "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{prospect}' IS NULL"
+              " ORDER BY crmacct_number;");
+  crmsql.prepare("SELECT crmacct_id"
+              "  FROM crmacct"
+                " WHERE crmacct_number=:crmacct_number;");
+
+  params.append("mode", "new");
+
   foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    if (item->rawValue("cust").isNull() && item->rawValue("prospect").toInt() <= 0 &&
-        ((omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
-         (_privileges->check("MaintainAllCRMAccounts"))))
+    QStringList crmaccts;
+
+    sql.bindValue(":cntct_id", item->id());
+    sql.exec();
+    while (sql.next())
+      crmaccts << sql.value("crmacct_number").toString();
+
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching CRM Accounts"),
+                             sql, __FILE__, __LINE__))
+      return;
+
+    if (crmaccts.size() == 0)
+      continue;
+
+    QString crmacctsel;
+    if (crmaccts.size() == 1)
+      crmacctsel = crmaccts[0];
+    else
     {
-      ParameterList params;
-      params.append("mode", "new");
-
-      XSqlQuery sql;
-      sql.prepare("SELECT cntct_crmacct_id"
-                  "  FROM cntct"
-                  " WHERE cntct_id=:cntct_id");
-      sql.bindValue(":cntct_id", item->id());
-      sql.exec();
-      if (sql.first())
-        params.append("crmacct_id", sql.value("cntct_crmacct_id").toInt());
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching CRM Account"),
-                                    sql, __FILE__, __LINE__))
-        return;
-
-      prospect *newdlg = new prospect();
-      newdlg->set(params);
-      omfgThis->handleNewWindow(newdlg);
+      bool ok;
+      crmacctsel = QInputDialog::getItem(this, tr("Multiple CRM Accounts"),
+                                         tr("There are Multiple CRM Accounts with the selected Contact. Please select a CRM Account "
+                                            "to use for the new Prospect:")
+                                         , crmaccts, 0, false, &ok);
+      if (!ok)
+        continue;
     }
+
+
+    crmsql.bindValue(":crmacct_number", crmacctsel);
+    crmsql.exec();
+    if (crmsql.first())
+      params.append("crmacct_id", crmsql.value("crmacct_id").toInt());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching CRM Accounts"),
+                                  crmsql, __FILE__, __LINE__))
+      return;
+
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 
@@ -790,17 +854,59 @@ void contacts::sOpenProspect(QString mode)
 {
   foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    if (item->rawValue("cust").isNull() && item->rawValue("prospect").toInt() > 0 &&
-        ((omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
-         (_privileges->check("ViewAllCRMAccounts"))))
-    {
-      ParameterList params;
-      params.append("mode", mode);
-      params.append("prospect_id", item->rawValue("prospect"));
+    ParameterList params;
+    params.append("mode", mode);
 
-      prospect *newdlg = new prospect();
-      newdlg->set(params);
-      omfgThis->handleNewWindow(newdlg);
+    QStringList prospects;
+
+    XSqlQuery sql;
+    sql.prepare("SELECT DISTINCT prospect_number"
+                "  FROM cntct"
+                "  JOIN crmacctcntctass ON cntct_id=crmacctcntctass_cntct_id"
+                "  JOIN prospect ON crmacctcntctass_crmacct_id=prospect_crmacct_id"
+                " WHERE cntct_id=:cntct_id"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{customer}' IS NULL"
+                "   AND crmaccttypes(crmacctcntctass_crmacct_id)#>>'{prospect}' IS NOT NULL"
+                " ORDER BY prospect_number;");
+    sql.bindValue(":cntct_id", item->id());
+    sql.exec();
+    while (sql.next())
+      prospects << sql.value("prospect_number").toString();
+
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching Prospects"),
+                             sql, __FILE__, __LINE__))
+      return;
+
+    if (prospects.size() == 0)
+      continue;
+
+    QString prospectsel;
+    if (prospects.size() == 1)
+      prospectsel = prospects[0];
+    else
+    {
+      bool ok;
+      prospectsel = QInputDialog::getItem(this, tr("Multiple Prospects"),
+                                      tr("There are multiple Prospects with the selected Contact. "
+                                         "Please select a Prospect to edit:")
+                                      , prospects, 0, false, &ok);
+      if (!ok)
+        continue;
     }
+
+    sql.prepare("SELECT prospect_id"
+                "  FROM prospect"
+                " WHERE prospect_number=:prospect_number;");
+    sql.bindValue(":prospect_number", prospectsel);
+    sql.exec();
+    if (sql.first())
+      params.append("prospect_id", sql.value("prospect_id").toInt());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching Prospects"),
+                                  sql, __FILE__, __LINE__))
+      return;
+
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
   }
 }

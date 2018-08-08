@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018  by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -25,6 +25,8 @@ projectType::projectType(QWidget* parent, const char* name, bool modal, Qt::Wind
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+
+  _template->populate("SELECT tasktmpl_id, tasktmpl_name FROM tasktmpl ORDER BY tasktmpl_name;");
 
 }
 
@@ -55,23 +57,16 @@ enum SetResponse projectType::set(const ParameterList &pParams)
   if (valid)
   {
     if (param.toString() == "new")
-    {
       _mode = cNew;
 
-      prType.exec("SELECT NEXTVAL('prjtype_prjtype_id_seq') AS prjtype_id;");
-      if (prType.first())
-        _prjtypeid = prType.value("prjtype_id").toInt();
-    }
     else if (param.toString() == "edit")
-    {
       _mode = cEdit;
-
-    }
     else if (param.toString() == "view")
     {
       _mode = cView;
       _typeCode->setEnabled(false);
       _typeDescr->setEnabled(false);
+      _template->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
     }
@@ -100,28 +95,31 @@ void projectType::sClose()
 void projectType::sSave()
 {
   XSqlQuery typeSave;
-  if (_typeCode->text().trimmed().length() == 0)
-  {
-    QMessageBox::warning( this, tr("Cannot Save Project Type"),
-                          tr("You must enter a Code for this Project Type before you may save it.") );
-    _typeCode->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_typeCode->text().trimmed().length() == 0, _typeCode, 
+                          tr("You must enter a valid Code for this Project Type."))
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Project Type"), errors))
+      return;
 
   if (_mode == cNew)
     typeSave.prepare( "INSERT INTO prjtype "
-               "(prjtype_id, prjtype_code, prjtype_descr, prjtype_active) "
+               "(prjtype_code, prjtype_descr, prjtype_active, prjtype_tasktmpl_id) "
                "VALUES "
-               "(:prjtype_id, :prjtype_typeCode, :prjtype_typeDescr, :prjtype_active);" );
+               "(:prjtype_typeCode, :prjtype_typeDescr, :prjtype_active, :template);" );
   else
     typeSave.prepare( "UPDATE prjtype "
-               "SET prjtype_code=:prjtype_typeCode, prjtype_descr=:prjtype_typeDescr, prjtype_active=:prjtype_active "
+               "SET prjtype_code=:prjtype_typeCode, prjtype_descr=:prjtype_typeDescr, "
+               "    prjtype_active=:prjtype_active, prjtype_tasktmpl_id=:template "
                "WHERE (prjtype_id=:prjtype_id);" );
 
   typeSave.bindValue(":prjtype_id", _prjtypeid);
   typeSave.bindValue(":prjtype_typeCode", _typeCode->text());
   typeSave.bindValue(":prjtype_typeDescr", _typeDescr->text());
   typeSave.bindValue(":prjtype_active", QVariant(_active->isChecked()));
+  if (_template->isValid())
+    typeSave.bindValue(":template", _template->id());
   typeSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Project Type"),
                                 typeSave, __FILE__, __LINE__))
@@ -146,5 +144,6 @@ void projectType::populate()
     _typeCode->setText(typepopulate.value("prjtype_code").toString());
     _typeDescr->setText(typepopulate.value("prjtype_descr").toString());
     _active->setChecked(typepopulate.value("prjtype_active").toBool());
+    _template->setId(typepopulate.value("prjtype_tasktmpl_id").toInt());
   }
 }

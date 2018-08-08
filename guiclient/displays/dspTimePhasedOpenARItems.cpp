@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -218,13 +218,13 @@ void dspTimePhasedOpenARItems::sFillCustom()
          " 'curr' AS linetotal_xtnumericrole,"
          " 0 AS linetotal_xttotalrole,"
          " (" + linetotal.join("+") + ") = 0.0 AS xthiddenrole "
-         "FROM custinfo LEFT OUTER JOIN custgrpitem ON (cust_id = custgrpitem_cust_id) "
+         "FROM custinfo LEFT OUTER JOIN custgrpitem ON (cust_id = groupsitem_reference_id) "
          "<? if exists('cust_id') ?>"
          "WHERE (cust_id=<? value('cust_id') ?>)"
          "<? elseif exists('custtype_id') ?>"
          "WHERE (cust_custtype_id=<? value('custtype_id') ?>)"
          "<? elseif exists('custgrp_id') ?>"
-		 "WHERE (custgrpitem_custgrp_id=<? value('custgrp_id') ?>)"
+		 "WHERE (groupsitem_groups_id=<? value('custgrp_id') ?>)"
          "<? elseif exists('custtype_pattern') ?>"
          "WHERE (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ <? value('custtype_pattern') ?>))) "
          "<? endif ?>"

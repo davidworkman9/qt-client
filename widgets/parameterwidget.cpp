@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -22,6 +22,7 @@
 #include <QFont>
 #endif
 
+#include "format.h"
 #include "parameterwidget.h"
 #include "widgets.h"
 #include "xcombobox.h"
@@ -37,10 +38,13 @@
 #include "warehouseCluster.h"
 #include "vendorcluster.h"
 #include "itemcluster.h"
+#include "incidentcluster.h"
 #include "empcluster.h"
 #include "shiptocluster.h"
 #include "ordercluster.h"
+#include "opportunitycluster.h"
 #include "wocluster.h"
+#include "xdoublevalidator.h"
 
 #define DEBUG false
 
@@ -111,7 +115,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   connect(_filterButton,          SIGNAL(toggled(bool)), this, SLOT(setFiltersVisible(bool)));
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT(applySaved(int)));
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT(setFiltersDefault()));
-  connect(_filterSignalMapper,      SIGNAL(mapped(int)), this, SLOT(removeParam(int)));
+  connect(_filterSignalMapper,      SIGNAL(mapped(int)), this, SLOT(removeFilter(int)));
   connect(_manageButton,              SIGNAL(clicked()), this, SLOT(sManageFilters()));
   connect(_saveButton,                SIGNAL(clicked()), this, SLOT(save()));
   connect(this,                       SIGNAL(updated()), this, SLOT(toggleSave()));
@@ -226,7 +230,7 @@ void ParameterWidget::addParam()
 {
   XComboBox   *xcomboBox     = new XComboBox(_filterGroup);
   QToolButton *toolButton    = new QToolButton(_filterGroup);
-  QLineEdit   *lineEdit      = new QLineEdit(_filterGroup);
+  QLineEdit   *lineEdit      = new XLineEdit(_filterGroup);
   QGridLayout *gridLayout    = new QGridLayout();
   QVBoxLayout *xcomboLayout  = new QVBoxLayout();
   QHBoxLayout *widgetLayout1 = new QHBoxLayout();
@@ -414,12 +418,24 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, QString pQue
   }
 }
 
+/** @brief Remove a filter from the set of available filters.
+  @param pName      The user-visible name for this filter to distinguish
+                    it from other filters in the same set
+*/
+void ParameterWidget::removeParam(QString pName)
+{
+  int pidx = paramIndex(pName);
+  _params.remove(pidx);
+  repopulateComboboxes();
+}
+
 void ParameterWidget::applySaved(int pId, int filter_id)
 {
   QWidget *found = 0;
   XSqlQuery qry;
   QString query;
   QString filterValue;
+  QString filterColumns;
   QDate today = QDate::currentDate();
   int xid;
 
@@ -441,7 +457,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   if (classname.isEmpty())
     classname = parent()->metaObject()->className();
 
-  query = " SELECT filter_value, "
+  query = " SELECT filter_value, filter_columns, "
           "  CASE WHEN (filter_username IS NULL) THEN true "
           "  ELSE false END AS shared "
           " FROM filter "
@@ -455,6 +471,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   if (qry.first())
   {
     filterValue = qry.value("filter_value").toString();
+    filterColumns = qry.value("filter_columns").toString();
     _shared = qry.value("shared").toBool();
   }
 
@@ -544,6 +561,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             custCluster->setId(tempFilterList[1].toInt());
           }
           break;
+        case Prospect:
+          {
+          CustCluster *prospectCluster = qobject_cast<CustCluster*>(found);
+          if (prospectCluster != 0)
+            prospectCluster->setId(tempFilterList[1].toInt());
+          }
+          break;
         case Shipto:
           {
           ShiptoCluster *shiptoCluster = qobject_cast<ShiptoCluster*>(found);
@@ -579,6 +603,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             projectCluster->setId(tempFilterList[1].toInt());
           }
           break;
+        case Incident:
+          {
+          IncidentCluster *incidentCluster = qobject_cast<IncidentCluster*>(found);
+          if (incidentCluster != 0)
+            incidentCluster->setId(tempFilterList[1].toInt());
+          }
+          break;
         case Item:
           {
           ItemCluster *itemCluster = qobject_cast<ItemCluster*>(found);
@@ -598,6 +629,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           OrderCluster *soCluster = qobject_cast<OrderCluster*>(found);
           if (soCluster != 0)
             soCluster->setId(tempFilterList[1].toInt());
+          }
+          break;
+        case Opportunity:
+          {
+          OpportunityCluster *opportunityCluster = qobject_cast<OpportunityCluster*>(found);
+          if (opportunityCluster != 0)
+            opportunityCluster->setId(tempFilterList[1].toInt());
           }
           break;
         case PurchaseOrder:
@@ -750,6 +788,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           custCluster->setId(pp->defaultValue.toInt());
         }
         break;
+      case Prospect:
+        {
+        CustCluster *prospectCluster = qobject_cast<CustCluster*>(found);
+        if (prospectCluster != 0)
+          prospectCluster->setId(pp->defaultValue.toInt());
+        }
+        break;
       case Shipto:
         {
         ShiptoCluster *shiptoCluster = qobject_cast<ShiptoCluster*>(found);
@@ -792,6 +837,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           itemCluster->setId(pp->defaultValue.toInt());
         }
         break;
+      case Incident:
+        {
+        IncidentCluster *incidentCluster = qobject_cast<IncidentCluster*>(found);
+        if (incidentCluster != 0)
+          incidentCluster->setId(pp->defaultValue.toInt());
+        }
+        break;
       case Employee:
         {
         EmpCluster *employeeCluster = qobject_cast<EmpCluster*>(found);
@@ -811,6 +863,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         OrderCluster *toCluster = qobject_cast<OrderCluster*>(found);
         if (toCluster != 0)
           toCluster->setId(pp->defaultValue.toInt());
+        }
+        break;
+      case Opportunity:
+        {
+        OpportunityCluster *opportunityCluster = qobject_cast<OpportunityCluster*>(found);
+        if (opportunityCluster != 0)
+          opportunityCluster->setId(pp->defaultValue.toInt());
         }
         break;
       case PurchaseOrder:
@@ -880,12 +939,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           break;
       default:
         {
-        QLineEdit *lineEdit = qobject_cast<QLineEdit*>(found);
-        if (lineEdit != 0)
-        {
-          lineEdit->setText(pp->defaultValue.toString());
-          storeFilterValue(-1, lineEdit);
-        }
+          QLineEdit *lineEdit = qobject_cast<QLineEdit*>(found);
+          if (lineEdit != 0)
+          {
+            lineEdit->setText(pp->defaultValue.toString());
+            storeFilterValue(-1, lineEdit);
+          }
         }
         break;
       }
@@ -894,6 +953,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     }//end of while _defaultTypes
   }
 
+  emit filterApplySaved(filter_id, filterColumns);
   emit updated();
 }
 
@@ -997,6 +1057,18 @@ void ParameterWidget::changeFilterObject(int index)
       connect(custCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
+  case Prospect:
+    {
+      CustCluster *prospectCluster = new CustCluster(_filterGroup);
+      newWidget = prospectCluster;
+      prospectCluster->setOrientation(Qt::Horizontal);
+      prospectCluster->setLabel("");
+      prospectCluster->setDescriptionVisible(false);
+      prospectCluster->setType(CLineEdit::AllProspects);
+
+      connect(prospectCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
   case Shipto:
     {
       CustCluster *custCluster = new CustCluster(_filterGroup);
@@ -1075,6 +1147,17 @@ void ParameterWidget::changeFilterObject(int index)
       connect(itemCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
+  case Incident:
+    {
+      IncidentCluster *incidentCluster = new IncidentCluster(_filterGroup);
+      newWidget = incidentCluster;
+      incidentCluster->setOrientation(Qt::Horizontal);
+      incidentCluster->setLabel("");
+      incidentCluster->setNameVisible(false);
+
+      connect(incidentCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
   case Employee:
     {
       EmpCluster *employeeCluster = new EmpCluster(_filterGroup);
@@ -1109,6 +1192,17 @@ void ParameterWidget::changeFilterObject(int index)
       toCluster->setLabel("");
 
       connect(toCluster, SIGNAL(newId(int,QString)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Opportunity:
+    {
+      OpportunityCluster *opportunityCluster = new OpportunityCluster(_filterGroup);
+      newWidget = opportunityCluster;
+      opportunityCluster->setOrientation(Qt::Horizontal);
+      opportunityCluster->setLabel("");
+      opportunityCluster->setNameVisible(false);
+
+      connect(opportunityCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case PurchaseOrder:
@@ -1217,6 +1311,15 @@ void ParameterWidget::changeFilterObject(int index)
       newWidget = checkBox;
 
       connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Numeric:
+    {
+      QLineEdit *lineEdit = new QLineEdit(_filterGroup);
+      newWidget = lineEdit;
+      lineEdit->setValidator(new XDoubleValidator(0, 99999999,  decimalPlaces("salesprice"), this));
+
+      connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
     }
     break;
   default:
@@ -1348,7 +1451,7 @@ void ParameterWidget::addUsedType()
   _usedTypes[row] = mybox->currentText();
 }
 
-void ParameterWidget::removeParam(int pRow)
+void ParameterWidget::removeFilter(int pRow)
 {
   QLayoutItem *test;
   QLayoutItem *test2;
@@ -1379,6 +1482,7 @@ void ParameterWidget::removeParam(int pRow)
 void ParameterWidget::save()
 {
   QString filter = "";
+  QString columns = "";
   QString variantString;
   QVariant tempVar;
   QDate today = QDate::currentDate();
@@ -1416,6 +1520,11 @@ void ParameterWidget::save()
       + ":" + split[1] + "`";
   }
 
+  // If the parent of the parameter is a display we may also want to save the column visibility
+  if (parent()->inherits("display"))
+    QMetaObject::invokeMethod(parent(), "listColumnVisibility", Qt::DirectConnection,
+                              Q_RETURN_ARG(QString, columns));
+
   QString classname(parent()->objectName());
   if (classname.isEmpty())
     classname = parent()->metaObject()->className();
@@ -1429,6 +1538,8 @@ void ParameterWidget::save()
     params.append("shared", true);
   if (!_x_privileges->check("AllowSharedFilterEdit"))
     params.append("disableshare", true);
+  if (columns.size())
+    params.append("columns", columns);
   filterSave newdlg(this);
   newdlg.set(params);
   filter_id = newdlg.exec();

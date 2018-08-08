@@ -67,4 +67,6 @@ class QMainWindowProto : public QWidgetProto
     Q_INVOKABLE bool	toolBarBreak ( QToolBar * toolbar ) const;
 };
 
+Q_DECLARE_METATYPE(enum QMainWindow::DockOption)
+Q_DECLARE_METATYPE(QMainWindow::DockOptions)
 #endif

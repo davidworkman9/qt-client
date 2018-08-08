@@ -1,7 +1,7 @@
 /*
  *This file is part of the xTuple ERP: PostBooks Edition, a free and
  *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ *Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  *It is licensed to you under the Common Public Attribution License
  *version 1.0, the full text of which(including xTuple-specific Exhibits)
  *is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,6 +16,12 @@
 #include <QtScript>
 
 Q_DECLARE_METATYPE(QProcess*)
+Q_DECLARE_METATYPE(enum QProcess::ExitStatus)
+Q_DECLARE_METATYPE(enum QProcess::InputChannelMode)
+Q_DECLARE_METATYPE(enum QProcess::ProcessChannel)
+Q_DECLARE_METATYPE(enum QProcess::ProcessChannelMode)
+Q_DECLARE_METATYPE(enum QProcess::ProcessError)
+Q_DECLARE_METATYPE(enum QProcess::ProcessState)
 
 void setupQProcessProto(QScriptEngine *engine);
 QScriptValue constructQProcess(QScriptContext *context, QScriptEngine *engine);

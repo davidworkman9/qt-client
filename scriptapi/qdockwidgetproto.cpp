@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qdockwidgetproto.h"
 
 #include <QAction>
@@ -33,6 +34,13 @@ void setupQDockWidgetProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQDockWidget,
                                                  proto);
   engine->globalObject().setProperty("QDockWidget",  constructor);
+
+  constructor.setProperty("DockWidgetClosable", QScriptValue(engine, QDockWidget::DockWidgetClosable), ENUMPROPFLAGS);
+  constructor.setProperty("DockWidgetMovable", QScriptValue(engine, QDockWidget::DockWidgetMovable), ENUMPROPFLAGS);
+  constructor.setProperty("DockWidgetFloatable", QScriptValue(engine, QDockWidget::DockWidgetFloatable), ENUMPROPFLAGS);
+  constructor.setProperty("DockWidgetVerticalTitleBar", QScriptValue(engine, QDockWidget::DockWidgetVerticalTitleBar), ENUMPROPFLAGS);
+  constructor.setProperty("AllDockWidgetFeatures", QScriptValue(engine, QDockWidget::AllDockWidgetFeatures), ENUMPROPFLAGS);
+  constructor.setProperty("NoDockWidgetFeatures", QScriptValue(engine, QDockWidget::NoDockWidgetFeatures), ENUMPROPFLAGS);
 }
 
 QScriptValue constructQDockWidget(QScriptContext * context,

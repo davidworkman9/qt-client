@@ -25,6 +25,7 @@
 
 #include "bomItem.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 BOM::BOM(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -203,22 +204,17 @@ bool BOM::sSave()
 bool BOM::save(bool partial)
 {
   XSqlQuery BSave;
-  if(_item->id() == -1)
-  {
-    QMessageBox::warning( this, tr("Item Number Required"),
-      tr("You must specify a valid item number to continue."));
-    return false;
-  }
-  
-  if(_batchSize->text().length() == 0)
+  QList<GuiErrorCheck> errors;
+
+  if (_batchSize->text().length() == 0)
     _batchSize->setDouble(1.0);
-  else if(_batchSize->toDouble() == 0.0)
-  {
-    QMessageBox::warning( this, tr("Batch Size Error"),
-                         tr("<p>The Batch Size quantity must be greater than zero.") );
-    return false;
-  }
+
+  errors << GuiErrorCheck(_item->id() == -1, _item, tr("You must specify a valid item number to continue."))
+         << GuiErrorCheck(_batchSize->toDouble() == 0.0, _batchSize, tr("The Batch Size quantity must be greater than zero."));
   
+  if (GuiErrorCheck::reportErrors(this, tr("BOM saving error."), errors))
+    return false;
+
   if (!partial)
   {
     if(!sCheckRequiredQtyPer())

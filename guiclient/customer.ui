@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1789,7 +1789,7 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="_todoListButton">
+          <widget class="QRadioButton" name="_taskListButton">
            <property name="text">
             <string>Activities</string>
            </property>
@@ -1821,7 +1821,7 @@ to be bound by its terms.</comment>
          <widget class="QWidget" name="_contactsPage">
           <layout class="QGridLayout" name="gridLayout_10"/>
          </widget>
-         <widget class="QWidget" name="_todoListPage">
+         <widget class="QWidget" name="_taskListPage">
           <layout class="QGridLayout" name="gridLayout_9"/>
          </widget>
         </widget>
@@ -2407,7 +2407,7 @@ to be bound by its terms.</comment>
   <tabstop>_notes</tabstop>
   <tabstop>_commentsButton</tabstop>
   <tabstop>_contactsButton</tabstop>
-  <tabstop>_todoListButton</tabstop>
+  <tabstop>_taskListButton</tabstop>
   <tabstop>_summaryButton</tabstop>
   <tabstop>_quotesButton</tabstop>
   <tabstop>_ordersButton</tabstop>

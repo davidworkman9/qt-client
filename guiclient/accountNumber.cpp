@@ -122,6 +122,8 @@ enum SetResponse accountNumber::set(const ParameterList &pParams)
 
 void accountNumber::sSave()
 {
+  QList<GuiErrorCheck> errors;
+
   XSqlQuery accountSave;
   if (_mode == cEdit && _wasActive && !_active->isChecked())
   {
@@ -136,15 +138,17 @@ void accountNumber::sSave()
     pl.append("accnt_id", _accntid);
     MetaSQLQuery mm(glsum);
     accountSave = mm.toQuery(pl);
+
     if(accountSave.first() && accountSave.value("bal").toInt() != 0)
     {
       if(QMessageBox::warning(this, tr("Account has Balance"),
                             tr("<p>This Account has a balance. "
-			       "Are you sure you want to mark it inactive?"),
+                   "Are you sure you want to mark it inactive?"),
                             QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
         return;
       }
+
     }
   }
 
@@ -182,28 +186,24 @@ void accountNumber::sSave()
 
   MetaSQLQuery mql(sql);
   accountSave = mql.toQuery(params);
-  if (accountSave.first())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Account"),
-                          tr("<p>This Account cannot be saved as an Account "
-			     "with the same number already exists.") );
-    return;
-  }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Account"),
+
+  errors << GuiErrorCheck(accountSave.first(), _number, tr("This account number already exists"));
+
+ if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Account"),
                                 accountSave, __FILE__, __LINE__))
   {
       return;
   }
 
-  if (_mode == cNew)
-  {
-    QList<GuiErrorCheck> errors;
-    errors<< GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
-                           tr("You must specify an account number before you may save this record."))
-    ;
-    if (GuiErrorCheck::reportErrors(this, tr("No Account Number"), errors))
+
+  errors << GuiErrorCheck(_description->text().trimmed().isEmpty(), _description, tr("No description provided."));
+  errors << GuiErrorCheck(_number->text().trimmed().isEmpty(), _number, tr("You must specify an account number before you may save this record."));
+
+  if (GuiErrorCheck::reportErrors(this, tr("No Account Number"), errors))
       return;
 
+  if (_mode == cNew)
+  {
     accountSave.exec("SELECT NEXTVAL('accnt_accnt_id_seq') AS _accnt_id;");
     if (accountSave.first())
       _accntid = accountSave.value("_accnt_id").toInt();

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -75,7 +75,8 @@ void copySalesOrder::sPopulateSoInfo(int)
   {
     copyPopulateSoInfo.prepare( "SELECT cohead_number,"
               "        cohead_orderdate,"
-              "        cohead_custponumber, cust_name, cntct_phone "
+              "        cohead_custponumber, cust_name, "
+              "        getcontactphone(cntct_id, 'Office') AS contact_phone "
               " FROM cohead "
               " JOIN custinfo ON (cohead_cust_id=cust_id)"
               " LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
@@ -87,7 +88,7 @@ void copySalesOrder::sPopulateSoInfo(int)
       _orderDate->setDate(copyPopulateSoInfo.value("cohead_orderdate").toDate());
       _poNumber->setText(copyPopulateSoInfo.value("cohead_custponumber").toString());
       _custName->setText(copyPopulateSoInfo.value("cust_name").toString());
-      _custPhone->setText(copyPopulateSoInfo.value("cntct_phone").toString());
+      _custPhone->setText(copyPopulateSoInfo.value("contact_phone").toString());
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Sales Order"),
                                   copyPopulateSoInfo, __FILE__, __LINE__))

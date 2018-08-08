@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -12,12 +12,14 @@
 #define CRMACCOUNT_H
 
 #include "applock.h"
+#include "addresses.h"
 #include "contacts.h"
 #include "guiclient.h"
-#include "todoList.h"
+#include "taskList.h"
 #include "xwidget.h"
 
 #include <QSqlError>
+#include <QMap>
 #include "ui_crmaccount.h"
 
 class crmaccount : public XWidget, public Ui::crmaccount
@@ -28,6 +30,7 @@ public:
     crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~crmaccount();
     static      void doDialog(QWidget *, const ParameterList &);
+    static bool userHasPriv(const int = cView, const int = 0);
     Q_INVOKABLE int  id();
 
 public slots:
@@ -42,14 +45,14 @@ signals:
 protected slots:
     virtual void languageChange();
 
+    virtual void sAddAddress();
+    virtual void sAddContact();
     virtual void sClose();
-    virtual void sCompetitor();
     virtual void sCustomer();
     virtual void sDeleteReg();
     virtual void sEditReg();
     virtual void sEmployee();
     virtual void sNewReg();
-    virtual void sPartner();
     virtual void sProspect();
     virtual void sSave();
     virtual void sSalesRep();
@@ -64,14 +67,15 @@ protected slots:
     virtual void sCheckNumber();
     virtual void sHandleButtons();
     virtual void sHandleChildButtons();
-    virtual void sHandleCntctDetach(int cntctId);
     virtual void setVisible(bool);
+    virtual void setupAdditionalRoles();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
     
-    todoList *_todoList;
+    taskList *_taskList;
     contacts *_contacts;
+    addresses *_addresses;
 
 signals:
     void saved(int);
@@ -80,10 +84,8 @@ private:
     bool        _modal;
     int         _mode;
     int         _crmacctId;
-    int         _competitorId;
     int         _custId;
     int         _empId;
-    int         _partnerId;
     int         _prospectId;
     int         _salesrepId;
     int         _taxauthId;
@@ -97,6 +99,7 @@ private:
     bool        _closed;
 
     QSqlError   saveNoErrorCheck(bool pInTxn = false);
+    QMap<QString, int> _roles;
 
 };
 

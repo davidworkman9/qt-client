@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -57,7 +57,7 @@ CrmaccountMergePickAccountsPage::CrmaccountMergePickAccountsPage(QWidget *parent
   _sources->addColumn(tr("Name"),             -1, Qt::AlignLeft,  true, "crmacct_name");
   _sources->addColumn(tr("First"),            50, Qt::AlignLeft,  true, "cntct_first_name" );
   _sources->addColumn(tr("Last"),             -1, Qt::AlignLeft,  true, "cntct_last_name" );
-  _sources->addColumn(tr("Phone"),           100, Qt::AlignLeft,  true, "cntct_phone" );
+  _sources->addColumn(tr("Phone"),           100, Qt::AlignLeft,  true, "contact_phone" );
   _sources->addColumn(tr("Email"),           100, Qt::AlignLeft,  true, "cntct_email" );
   _sources->addColumn(tr("Address"),          -1, Qt::AlignLeft,  false, "addr_line1" );
   _sources->addColumn(tr("City"),             75, Qt::AlignLeft,  false, "addr_city" );
@@ -67,14 +67,11 @@ CrmaccountMergePickAccountsPage::CrmaccountMergePickAccountsPage(QWidget *parent
   _sources->addColumn(tr("Customer"),  _ynColumn, Qt::AlignCenter,true,  "cust");
   _sources->addColumn(tr("Prospect"),  _ynColumn, Qt::AlignCenter,true,  "prospect");
   _sources->addColumn(tr("Vendor"),    _ynColumn, Qt::AlignCenter,true,  "vend");
-  _sources->addColumn(tr("Competitor"),_ynColumn, Qt::AlignCenter,false, "competitor");
-  _sources->addColumn(tr("Partner"),   _ynColumn, Qt::AlignCenter,false, "partner");
   _sources->addColumn(tr("Tax Auth."), _ynColumn, Qt::AlignCenter,false, "taxauth");
   _sources->addColumn(tr("User"),      _ynColumn, Qt::AlignCenter,false, "usr");
   _sources->addColumn(tr("Employee"),  _ynColumn, Qt::AlignCenter,false, "emp");
   _sources->addColumn(tr("Sales Rep"), _ynColumn, Qt::AlignCenter,false, "salesrep");
 
-  _filter->append(tr("Hide Merges in Progress"),"excludeMergeWIP",        ParameterWidget::Exists, true);
   _filter->append(tr("Show Inactive"),          "showInactive",           ParameterWidget::Exists, true);
   _filter->append(tr("Account Number Pattern"), "crmacct_number_pattern", ParameterWidget::Text);
   _filter->append(tr("Account Name Pattern"),   "crmacct_name_pattern",   ParameterWidget::Text);
@@ -151,22 +148,18 @@ bool CrmaccountMergePickAccountsPage::validatePage()
     updq.prepare("UPDATE crmacctsel SET crmacctsel_dest_crmacct_id=:new,"
                  " crmacctsel_mrg_crmacct_number         = (crmacctsel_src_crmacct_id=:new),"
                  " crmacctsel_mrg_crmacct_active         = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_cntct_id_1     = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_cntct_id_2     = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_competitor_id  = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_cust_id        = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_emp_id         = (crmacctsel_src_crmacct_id=:new),"
+                 " crmacctsel_mrg_custinfo               = (crmacctsel_src_crmacct_id=:new),"
+                 " crmacctsel_mrg_emp                    = (crmacctsel_src_crmacct_id=:new),"
+                 " crmacctsel_mrg_prospect               = (crmacctsel_src_crmacct_id=:new),"
+                 " crmacctsel_mrg_salesrep               = (crmacctsel_src_crmacct_id=:new),"
+                 " crmacctsel_mrg_taxauth                = (crmacctsel_src_crmacct_id=:new),"
+                 " crmacctsel_mrg_vendinfo               = (crmacctsel_src_crmacct_id=:new), "
                  " crmacctsel_mrg_crmacct_name           = (crmacctsel_src_crmacct_id=:new),"
                  " crmacctsel_mrg_crmacct_notes          = (crmacctsel_src_crmacct_id=:new),"
                  " crmacctsel_mrg_crmacct_owner_username = (crmacctsel_src_crmacct_id=:new),"
                  " crmacctsel_mrg_crmacct_parent_id      = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_partner_id     = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_prospect_id    = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_salesrep_id    = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_taxauth_id     = (crmacctsel_src_crmacct_id=:new),"
                  " crmacctsel_mrg_crmacct_type           = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_usr_username   = (crmacctsel_src_crmacct_id=:new),"
-                 " crmacctsel_mrg_crmacct_vend_id        = (crmacctsel_src_crmacct_id=:new) "
+                 " crmacctsel_mrg_crmacct_usr_username   = (crmacctsel_src_crmacct_id=:new)"
                  " WHERE crmacctsel_dest_crmacct_id=:old;");
     updq.bindValue(":new", _target->id());
     updq.bindValue(":old", _data->_targetid_cache);
@@ -184,25 +177,19 @@ bool CrmaccountMergePickAccountsPage::validatePage()
                     "  crmacctsel_src_crmacct_id, crmacctsel_dest_crmacct_id,"
                     "  crmacctsel_mrg_crmacct_number,"
                     "  crmacctsel_mrg_crmacct_active,"
-                    "  crmacctsel_mrg_crmacct_cntct_id_1,"
-                    "  crmacctsel_mrg_crmacct_cntct_id_2,"
-                    "  crmacctsel_mrg_crmacct_competitor_id,"
-                    "  crmacctsel_mrg_crmacct_cust_id,"
-                    "  crmacctsel_mrg_crmacct_emp_id,"
+                    "  crmacctsel_mrg_custinfo,"
+                    "  crmacctsel_mrg_emp,"
+                    "  crmacctsel_mrg_prospect,"
+                    "  crmacctsel_mrg_salesrep,"
+                    "  crmacctsel_mrg_taxauth,"
+                    "  crmacctsel_mrg_vendinfo,"
                     "  crmacctsel_mrg_crmacct_name,"
                     "  crmacctsel_mrg_crmacct_notes,"
                     "  crmacctsel_mrg_crmacct_owner_username,"
                     "  crmacctsel_mrg_crmacct_parent_id,"
-                    "  crmacctsel_mrg_crmacct_partner_id,"
-                    "  crmacctsel_mrg_crmacct_prospect_id,"
-                    "  crmacctsel_mrg_crmacct_salesrep_id,"
-                    "  crmacctsel_mrg_crmacct_taxauth_id,"
                     "  crmacctsel_mrg_crmacct_type,"
-                    "  crmacctsel_mrg_crmacct_usr_username,"
-                    "  crmacctsel_mrg_crmacct_vend_id"
+                    "  crmacctsel_mrg_crmacct_usr_username"
                     ") SELECT <? value('srcid') ?>, <? value('destid') ?>,"
-                    "         <? value('istarget') ?>,"
-                    "         <? value('istarget') ?>,"
                     "         <? value('istarget') ?>,"
                     "         <? value('istarget') ?>,"
                     "         <? value('istarget') ?>,"

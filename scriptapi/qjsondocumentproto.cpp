@@ -1,22 +1,35 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qjsondocumentproto.h"
 
-#if QT_VERSION < 0x050000
-void setupQJsonDocumentProto(QScriptEngine *engine)
-{
-  // do nothing
-}
-#else
 #include <QJsonDocument>
+
+QScriptValue DataValidationToScriptValue(QScriptEngine *engine, const enum QJsonDocument::DataValidation &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void DataValidationFromScriptValue(const QScriptValue &obj, enum QJsonDocument::DataValidation &p)
+{
+  p = (enum QJsonDocument::DataValidation)obj.toInt32();
+}
+
+QScriptValue JsonFormatToScriptValue(QScriptEngine *engine, const enum QJsonDocument::JsonFormat &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void JsonFormatFromScriptValue(const QScriptValue &obj, enum QJsonDocument::JsonFormat &p)
+{
+  p = (enum QJsonDocument::JsonFormat)obj.toInt32();
+}
 
 void setupQJsonDocumentProto(QScriptEngine *engine)
 {
@@ -26,6 +39,14 @@ void setupQJsonDocumentProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQJsonDocument,
                                                  proto);
   engine->globalObject().setProperty("QJsonDocument",  constructor);
+
+  qScriptRegisterMetaType(engine, DataValidationToScriptValue, DataValidationFromScriptValue);
+  constructor.setProperty("Validate",         QScriptValue(engine, QJsonDocument::Validate),         ENUMPROPFLAGS);
+  constructor.setProperty("BypassValidation", QScriptValue(engine, QJsonDocument::BypassValidation), ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, JsonFormatToScriptValue, JsonFormatFromScriptValue);
+  constructor.setProperty("Indented", QScriptValue(engine, QJsonDocument::Indented), ENUMPROPFLAGS);
+  constructor.setProperty("Compact",  QScriptValue(engine, QJsonDocument::Compact),  ENUMPROPFLAGS);
 }
 
 QScriptValue constructQJsonDocument(QScriptContext * context,
@@ -197,4 +218,3 @@ QJsonDocument QJsonDocumentProto::fromVariant(const QVariant & variant)
     return item->fromVariant(variant);
   return QJsonDocument();
 }
-#endif

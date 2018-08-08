@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,7 +16,7 @@
 
 #include "applock.h"
 #include "contacts.h"
-#include "todoList.h"
+#include "taskList.h"
 #include "quotes.h"
 #include "openSalesOrders.h"
 #include "returnAuthorizationWorkbench.h"
@@ -101,7 +101,7 @@ signals:
 protected:
     virtual void closeEvent(QCloseEvent*);
     virtual void setValid(bool valid);
-    todoList *_todoList;
+    taskList *_taskList;
     contacts *_contacts;
     quotes *_quotes;
     openSalesOrders *_orders;

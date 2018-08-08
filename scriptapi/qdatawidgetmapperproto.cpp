@@ -8,7 +8,18 @@
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qdatawidgetmapperproto.h"
+
+QScriptValue SubmitPolicyToScriptValue(QScriptEngine *engine, const enum QDataWidgetMapper::SubmitPolicy &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void SubmitPolicyFromScriptValue(const QScriptValue &obj, enum QDataWidgetMapper::SubmitPolicy &p)
+{
+  p = (enum QDataWidgetMapper::SubmitPolicy)obj.toInt32();
+}
+
 
 QDataWidgetMapperProto::QDataWidgetMapperProto(QObject *parent)
   : QObject(parent)
@@ -145,8 +156,11 @@ void setupQDataWidgetMapperProto(QScriptEngine *engine)
     QScriptValue ctor = engine->newFunction(constructQDataWidgetMapper);
     QScriptValue meta = engine->newQMetaObject(&QDataWidgetMapper::staticMetaObject, ctor);
 
-    engine->globalObject().setProperty("QDataWidgetMapper", meta,
-                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("QDataWidgetMapper", meta, CTORPROPFLAGS);
+
+    qScriptRegisterMetaType(engine, SubmitPolicyToScriptValue, SubmitPolicyFromScriptValue);
+    ctor.setProperty("AutoSubmit",   QScriptValue(engine, QDataWidgetMapper::AutoSubmit),   ENUMPROPFLAGS);
+    ctor.setProperty("ManualSubmit", QScriptValue(engine, QDataWidgetMapper::ManualSubmit), ENUMPROPFLAGS);
   }
 }
 

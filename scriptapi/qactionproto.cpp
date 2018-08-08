@@ -1,16 +1,18 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qactionproto.h"
 
 #include <QActionGroup>
+#include <QDebug>
 #include <QGraphicsWidget>
 #include <QIcon>
 #include <QString>
@@ -25,6 +27,33 @@ QScriptValue QActiontoScriptValue(QScriptEngine *engine, QAction* const &item)
 void QActionfromScriptValue(const QScriptValue &obj, QAction* &item)
 {
   item = qobject_cast<QAction*>(obj.toQObject());
+}
+
+QScriptValue ActionEventtoScriptValue(QScriptEngine *engine, const enum QAction::ActionEvent &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void ActionEventfromScriptValue(const QScriptValue &obj, enum QAction::ActionEvent &p)
+{
+  p = (enum QAction::ActionEvent)obj.toInt32();
+}
+
+QScriptValue MenuRoletoScriptValue(QScriptEngine *engine, const enum QAction::MenuRole &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void MenuRolefromScriptValue(const QScriptValue &obj, enum QAction::MenuRole &p)
+{
+  p = (enum QAction::MenuRole)obj.toInt32();
+}
+
+QScriptValue PrioritytoScriptValue(QScriptEngine *engine, const enum QAction::Priority &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void PriorityfromScriptValue(const QScriptValue &obj, enum QAction::Priority &p)
+{
+  p = (enum QAction::Priority)obj.toInt32();
 }
 
 QScriptValue QActionListtoScriptValue(QScriptEngine *engine, QList<QAction*> const &cpplist)
@@ -54,15 +83,30 @@ void setupQActionProto(QScriptEngine *engine)
   QScriptValue proto = engine->newQObject(new QActionProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QAction*>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQAction,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQAction, proto);
   engine->globalObject().setProperty("QAction", constructor);
+
+  qScriptRegisterMetaType(engine, ActionEventtoScriptValue, ActionEventfromScriptValue);
+  constructor.setProperty("Trigger",     QScriptValue(engine,   QAction::Trigger),     ENUMPROPFLAGS);
+  constructor.setProperty("Hover",       QScriptValue(engine,   QAction::Hover),       ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, MenuRoletoScriptValue, MenuRolefromScriptValue);
+  constructor.setProperty("NoRole",                  QScriptValue(engine,   QAction::NoRole),                  ENUMPROPFLAGS);
+  constructor.setProperty("TextHeuristicRole",       QScriptValue(engine,   QAction::TextHeuristicRole),       ENUMPROPFLAGS);
+  constructor.setProperty("ApplicationSpecificRole", QScriptValue(engine,   QAction::ApplicationSpecificRole), ENUMPROPFLAGS);
+  constructor.setProperty("AboutQtRole",             QScriptValue(engine,   QAction::AboutQtRole),             ENUMPROPFLAGS);
+  constructor.setProperty("AboutRole",               QScriptValue(engine,   QAction::AboutRole),               ENUMPROPFLAGS);
+  constructor.setProperty("PreferencesRole",         QScriptValue(engine,   QAction::PreferencesRole),         ENUMPROPFLAGS);
+  constructor.setProperty("QuitRole",                QScriptValue(engine,   QAction::QuitRole),                ENUMPROPFLAGS);
+
 }
 
-QScriptValue constructQAction(QScriptContext *context,
-                              QScriptEngine  *engine)
+QScriptValue constructQAction(QScriptContext *context, QScriptEngine *engine)
 {
   QAction *obj = 0;
+  qDebug() << context->argumentCount();
+  for (int i = 0; i < context->argumentCount(); i++)
+    qDebug() << context->argument(i).toVariant();
 
   if (context->argumentCount() == 1 && context->argument(0).isQObject())
   {

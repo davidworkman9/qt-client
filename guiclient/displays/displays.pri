@@ -186,6 +186,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspPricesByCustomer.h \
            displays/dspPricesByCustomerType.h \
            displays/dspPricesByItem.h \
+           displays/dspProjectSummary.h \
            displays/dspPurchaseReqsByItem.h \
            displays/dspPurchaseReqsByPlannerCode.h \
            displays/dspQOH.h \
@@ -321,6 +322,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspPricesByCustomer.cpp \
            displays/dspPricesByCustomerType.cpp \
            displays/dspPricesByItem.cpp \
+           displays/dspProjectSummary.cpp \
            displays/dspPurchaseReqsByItem.cpp \
            displays/dspPurchaseReqsByPlannerCode.cpp \
            displays/dspQOH.cpp \

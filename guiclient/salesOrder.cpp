@@ -819,14 +819,15 @@ bool salesOrder::save(bool partial)
 
   if (_opportunity->isValid())
   {
-    saveSales.prepare( "SELECT crmacct_cust_id, crmacct_prospect_id "
+    saveSales.prepare( "SELECT (crmacctTypes(crmacct_id)#>>'{customer}')::INT AS customer, "
+                       "       (crmacctTypes(crmacct_id)#>>'{prospect}')::INT AS prospect "
                "FROM crmacct JOIN ophead ON (crmacct_id = ophead_crmacct_id) "
                "WHERE (ophead_id = :ophead_id);" );
     saveSales.bindValue(":ophead_id", _opportunity->id());
     saveSales.exec();
     if (saveSales.first())
     {
-      if (saveSales.value("crmacct_cust_id").toInt() == 0 && saveSales.value("crmacct_prospect_id").toInt() == 0)
+      if (saveSales.value("customer").toInt() == 0 && saveSales.value("prospect").toInt() == 0)
       {
         errors << GuiErrorCheck(true, _opportunity,
                               tr("Only opportunities from Customers or Prospects can be related.") );
@@ -1784,7 +1785,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "  LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
                 "  LEFT OUTER JOIN shiptoinfo ON ((shipto_cust_id=cust_id)"
                 "                         AND (shipto_default)) "
-                "LEFT OUTER JOIN crmacct ON (crmacct_cust_id = cust_id) "
+                "LEFT OUTER JOIN crmacct ON (cust_crmacct_id = crmacct_id) "
                 "WHERE (cust_id=<? value('cust_id') ?>) "
                 "<? if exists('isQuote') ?>"
                 "UNION "
@@ -1793,7 +1794,8 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_shipform_id,"
                 "       0.0 AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
-                "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
+                "       prospect_taxzone_id AS cust_taxzone_id, "
+                "       getcrmaccountcontact(crmacct_id, 'Primary') AS cust_cntct_id, "
                 "       true AS cust_ffshipto, true AS cust_ffbillto, "
                 "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
                 "       NULL AS cust_shipvia,"
@@ -1802,9 +1804,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
                 "       false AS iscustomer "
                 "FROM prospect "
-                "  LEFT OUTER JOIN cntct  ON (prospect_cntct_id=cntct_id) "
+                "  LEFT OUTER JOIN crmacct ON (prospect_crmacct_id = crmacct_id) "
+                "  LEFT OUTER JOIN cntct  ON (cntct_id=getcrmaccountcontact(crmacct_id, 'Primary')) "
                 "  LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
-                "  LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
                 "WHERE (prospect_id=<? value('cust_id') ?>) "
                 "<? endif ?>"
                 ";" );
@@ -1962,7 +1964,7 @@ void salesOrder::populateShipto(int pShiptoid)
   {
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
-                    "       cntct_phone, shipto_cntct_id, shipto_shipzone_id,"
+                    "       shipto_cntct_id, shipto_shipzone_id,"
                     "       shipto_shipvia, shipto_shipcomments, shipto_comments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"

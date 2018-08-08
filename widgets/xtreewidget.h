@@ -254,6 +254,9 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
     static GuiClientInterface *_guiClientInterface;
 
+    bool  _forgetful;
+    QString _settingsName;
+
   public slots:
     void  addColumn(const QString&, int, int, bool = true, const QString = QString(), const QString = QString(), const int scale = 0);
     void  clear();
@@ -267,6 +270,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void  sCopyCellToClipboard();
     void  sCopyColumnToClipboard();
     void  sSearch(const QString&);
+    void  sToggleForgetfulness();
 
   signals:
     void  valid(bool);
@@ -316,16 +320,14 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     QMenu   *_menu;
     QMap<int, int>  _defaultColumnWidths;
     QMap<int, int>  _savedColumnWidths;
-    QMap<int, bool> _savedVisibleColumns;
+    QHash<QString, bool> _preferenceColumns;
     QMap<int, QVariantMap *>     _roles;
     QList<int>      _lockedColumns;
     QVector<int>    _stretch;
     bool          _resizingInProcess;
-    bool          _forgetful;
     bool          _forgetfulOrder;
     bool          _savedId;
     bool          _settingsLoaded;
-    QString       _settingsName;
     int           _resetWhichWidth;
     QList<QPair<int, Qt::SortOrder> > _sort;
     static void   loadLocale();
@@ -354,7 +356,6 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void  sColumnSizeChanged(int, int, int);
     void  sResetWidth();
     void  sResetAllWidths();
-    void  sToggleForgetfulness();
     void  sToggleForgetfulnessOrder();
     void  popupMenuActionTriggered(QAction *);
 };

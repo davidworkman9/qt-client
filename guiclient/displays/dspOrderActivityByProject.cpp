@@ -246,7 +246,7 @@ void dspOrderActivityByProject::sEdit()
   if(list()->altId() == 5)
   {
     params.append("mode", "edit");
-    params.append("prjtask_id", list()->id());
+    params.append("task_id", list()->id());
 
     task newdlg(this, "", true);
     newdlg.set(params);
@@ -338,7 +338,7 @@ void dspOrderActivityByProject::sView()
   if(list()->altId() == 5)
   {
     params.append("mode", "view");
-    params.append("prjtask_id", list()->id());
+    params.append("task_id", list()->id());
 
     task newdlg(this, "", true);
     newdlg.set(params);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -49,6 +49,7 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
       void setExtraClause(const QString &pExt);
       void setAllowedStatuses(const ProjectStatuses);
       void setType(enum ProjectType ptype);
+      void setAccount(const int);
       void sCopy();
 
     protected:
@@ -56,6 +57,7 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
 
       QString          _prjExtraClause;
       ProjectStatuses  _allowedStatuses;
+      int              _crma;
   
     private:
       enum ProjectType _type;
@@ -79,6 +81,7 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
       virtual void setAllowedStatuses(const ProjectLineEdit::ProjectStatuses);
       virtual void setAllowedStatuses(const int);
       virtual void setType(enum ProjectLineEdit::ProjectType ptype);
+      virtual void setAccount(const int pCrma);
 
 };
 

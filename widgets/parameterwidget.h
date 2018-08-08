@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -34,8 +34,9 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     {
       Crmacct, User, Text, Date, XComBox, Contact,
       Multiselect, GLAccount, Exists, CheckBox, Project,
-      Customer, Site, Vendor, Item, Employee, Shipto,
-      SalesOrder, WorkOrder, PurchaseOrder, TransferOrder
+      Customer, Prospect, Site, Vendor, Item, Employee, Shipto,
+      SalesOrder, WorkOrder, PurchaseOrder, TransferOrder,
+      Incident, Opportunity, Numeric
     };
     Q_ENUM(ParameterWidgetTypes)
 
@@ -55,7 +56,8 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void applySaved(int pId = 0, int filter_id = 0);
     void changeFilterObject(int index);
     void clearFilters();
-    void removeParam(int);
+    void removeParam(QString pName);
+    void removeFilter(int);
     void save();
     void setDefault(QString pName, QVariant pDefault = QVariant(), bool pAutoApply = false);
     void setEnabled(QString pName, bool pEnabled);
@@ -73,6 +75,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
 
   signals:
     void cleared();
+    void filterApplySaved(int, QString);
     void filterChanged();
     void filterSetSaved();
     void updated();
