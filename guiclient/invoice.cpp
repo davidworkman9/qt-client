@@ -1352,11 +1352,8 @@ void invoice::newInvoice(int pCustid, QWidget *parent )
     if(QString::compare(w->objectName(), "invoice new")==0)
     {
       w->setFocus();
-      if(omfgThis->showTopLevel())
-      {
-        w->raise();
-        w->activateWindow();
-      }
+      w->raise();
+      w->activateWindow();
       return;
     }
   }
@@ -1383,11 +1380,8 @@ void invoice::editInvoice( int pId, QWidget *parent  )
     if(QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
-      if(omfgThis->showTopLevel())
-      {
-        w->raise();
-        w->activateWindow();
-      }
+      w->raise();
+      w->activateWindow();
       return;
     }
   }
@@ -1413,11 +1407,8 @@ void invoice::viewInvoice( int pId, QWidget *parent  )
     if(QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
-      if(omfgThis->showTopLevel())
-      {
-        w->raise();
-        w->activateWindow();
-      }
+      w->raise();
+      w->activateWindow();
       return;
     }
   }

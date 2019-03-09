@@ -213,7 +213,6 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE GUIClient::WindowSystem getWindowSystem();
 
     Q_INVOKABLE bool singleCurrency();
-    Q_INVOKABLE bool showTopLevel() const { return _showTopLevel; }
     Q_INVOKABLE QWidgetList windowList();
     Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 
@@ -418,7 +417,6 @@ class GUIClient : public QMainWindow
     QPushButton  *_errorButton;
     QString      _databaseURL;
     QString      _username;
-    bool         _showTopLevel;
     QWidgetList  _windowList;
     QMenuBar	*_menuBar;
 

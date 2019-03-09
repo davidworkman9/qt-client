@@ -854,11 +854,8 @@ void reconcileBankaccount::openReconcileBankaccount(int pBankaccntid, QWidget *p
       if (QString::compare(w->objectName(), "reconcileBankaccount")==0)
       {
         w->setFocus();
-        if (omfgThis->showTopLevel())
-        {
-          w->raise();
-          w->activateWindow();
-        }
+        w->raise();
+        w->activateWindow();
         return;
       }
     }

@@ -622,11 +622,9 @@ void purchaseOrder::createHeader()
        (_metrics->value("PONumberGeneration") == "O") )
   {
     populateOrderNumber();
-    // Tabbed mode has problems with this behavior
-    if(omfgThis->showTopLevel())
-      _vendor->setFocus();
+    _vendor->setFocus();
   }
-  else if (omfgThis->showTopLevel())
+  else
     _orderNumber->setFocus();
 
   purchasecreateHeader.exec("SELECT NEXTVAL('pohead_pohead_id_seq') AS pohead_id;");
