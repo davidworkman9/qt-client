@@ -84,15 +84,39 @@ void employees::sDelete()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
+  XSqlQuery rollbackq;
+  rollbackq.prepare("ROLLBACK;");
+  XSqlQuery begin("BEGIN;");
+
   XSqlQuery delq;
-  delq.prepare("DELETE FROM charass WHERE charass_target_type = 'EMP' AND charass_target_id = :emp_id;"
-               "DELETE FROM empgrpitem WHERE groupsitem_reference_id = :emp_id;"
-               "DELETE FROM emp WHERE emp_id = :emp_id;");
+  delq.prepare("DELETE FROM charass WHERE charass_target_type = 'EMP' AND charass_target_id = :emp_id;");
   delq.bindValue(":emp_id", list()->id());
   delq.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Employee"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Employee"),
                            delq, __FILE__, __LINE__))
+  {
+    rollbackq.exec();
     return;
+  }
+  delq.prepare("DELETE FROM empgrpitem WHERE groupsitem_reference_id = :emp_id;");
+  delq.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Employee"),
+                           delq, __FILE__, __LINE__))
+  {
+    rollbackq.exec();
+    return;
+  }
+  delq.prepare("DELETE FROM emp WHERE emp_id = :emp_id;");
+  delq.bindValue(":emp_id", list()->id());
+  delq.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Employee"),
+                           delq, __FILE__, __LINE__))
+  {
+    rollbackq.exec();
+    return;
+  }
+
+  delq.exec("COMMIT;");
   sFillList();
 }
 
