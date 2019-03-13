@@ -159,13 +159,15 @@ void AddressCluster::init()
   _grid->addWidget(_addr3,         3, 1, 1, -1);
   _grid->addWidget(_cityLit,       4, 0);
   _grid->addWidget(_city,          4, 1, 1, 3);
+
   _grid->addWidget(_postalcodeLit, 5, 4);
-  _grid->addWidget(_postalcode,    5, 5, 1, 1);
-  _grid->addWidget(_more,          5, 6, 1, 1);
+  _grid->addWidget(_postalcode,    5, 5);
+  _grid->addWidget(_more,          5, 6);
   _grid->addWidget(_countryLit,    5, 0);
-  _grid->addWidget(_country,       5, 1, 1, 1);
+  _grid->addWidget(_country,       5, 1);
   _grid->addWidget(_stateLit,      5, 2);
   _grid->addWidget(_state,         5, 3);
+
   _grid->addWidget(_active,        4, 4);
 
   QHBoxLayout* hbox = new QHBoxLayout;
@@ -181,6 +183,8 @@ void AddressCluster::init()
   hbox2->addWidget(_accuracy);
   hbox2->addWidget(_mktg);
   _grid->addLayout(hbox2, 6, 0, 1, 6, Qt::AlignRight);
+
+
 
   _grid->setColumnStretch(0, 0);
   _grid->setColumnStretch(1, 3);
@@ -805,7 +809,7 @@ void AddressCluster::setActiveVisible(const bool p)
   {
     _grid->removeWidget(_active);
     _grid->removeWidget(_country);
-    _grid->addWidget(_country, 5, 1, 1, 4);
+    _grid->addWidget(_country, 5, 1, 1, 1);
   }
 }
 
