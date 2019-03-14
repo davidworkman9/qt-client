@@ -91,28 +91,12 @@ void menuWindow::sPrepareWindowMenu()
 {
   _windowMenu->clear();
 
-  if (! _parent->showTopLevel())
-  {
-    _windowMenu->addAction(_data->_cascade);
-    _windowMenu->addAction(_data->_tile);
-
-    _windowMenu->addSeparator();
-  }
-
   _windowMenu->addAction(_data->_closeActive);
   _windowMenu->addAction(_data->_closeAll);
 
   QWidgetList windows = _parent->windowList();
 
-  bool b;
-  if(_preferences->value("InterfaceWindowOption") != "TopLevel")
-  {
-  b = windows.isEmpty();
-  }
-  else
-  {
-  b = !windows.isEmpty();
-  }
+  bool b = !windows.isEmpty();
 
   _data->_cascade->setEnabled(b);
   _data->_tile->setEnabled(b);
@@ -122,10 +106,8 @@ void menuWindow::sPrepareWindowMenu()
 
   _windowMenu->addSeparator();
 
-  if (_parent->showTopLevel())
+  if (QApplication::activeWindow())
     _data->_lastActive = QApplication::activeWindow();
-  else if (_parent->workspace() && _parent->workspace()->activeSubWindow())
-    _data->_lastActive = _parent->workspace()->activeSubWindow()->widget();
   else
     _data->_lastActive = 0;
 
@@ -178,13 +160,8 @@ void menuWindow::sActivateWindow()
 
   if (wind)
   {
-    if (_parent->showTopLevel())
-    {
-      wind->raise();
-      wind->activateWindow();
-    }
-    else
-      wind->setFocus();
+    wind->raise();
+    wind->activateWindow();
   }
 }
 
@@ -198,24 +175,14 @@ void menuWindow::sCascade()
 
 void menuWindow::sCloseActive()
 {
-  if (_parent->showTopLevel())
-  {
-    if (_parent->windowList().contains(QApplication::activeWindow()))
-      QApplication::activeWindow()->close();
-  }
-  else
-    _parent->workspace()->closeActiveSubWindow();
+  if (_parent->windowList().contains(QApplication::activeWindow()))
+    QApplication::activeWindow()->close();
 }
 
 void menuWindow::sCloseAll()
 {
-  if (_parent->showTopLevel())
-  {
-    foreach(QWidget *w, _parent->windowList())
-      w->close();
-  }
-  else
-    _parent->workspace()->closeAllSubWindows();
+  foreach(QWidget *w, _parent->windowList())
+    w->close();
 }
 
 void menuWindow::sRememberPositionToggle()

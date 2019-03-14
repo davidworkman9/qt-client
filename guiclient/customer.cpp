@@ -392,11 +392,8 @@ enum SetResponse customer::set(const ParameterList &pParams)
         _closed = true;
       } else if (p) {
         w->setFocus();
-        if (omfgThis->showTopLevel())
-        {
-          w->raise();
-          w->activateWindow();
-        }
+        w->raise();
+        w->activateWindow();
         _closed = true;
       }
       break;

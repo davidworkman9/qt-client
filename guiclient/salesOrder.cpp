@@ -4003,11 +4003,8 @@ void salesOrder::newSalesOrder(int pCustid, QWidget *parent)
       if (QString::compare(w->objectName(), "salesOrder new")==0)
       {
         w->setFocus();
-        if (omfgThis->showTopLevel())
-        {
-          w->raise();
-          w->activateWindow();
-        }
+        w->raise();
+        w->activateWindow();
         return;
       }
     }
@@ -4035,11 +4032,8 @@ void salesOrder::editSalesOrder( int pId, bool enableSaveAndAdd, QWidget *parent
     if (QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
-      if (omfgThis->showTopLevel())
-      {
-        w->raise();
-        w->activateWindow();
-      }
+      w->raise();
+      w->activateWindow();
       return;
     }
   }
@@ -4067,11 +4061,8 @@ void salesOrder::viewSalesOrder( int pId, QWidget *parent )
     if (QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
-      if (omfgThis->showTopLevel())
-      {
-        w->raise();
-        w->activateWindow();
-      }
+      w->raise();
+      w->activateWindow();
       return;
     }
   }

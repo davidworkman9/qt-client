@@ -583,11 +583,8 @@ bool prospect::sPopulate()
           _closed = true;
         } else if (p) {
           w->setFocus();
-          if (omfgThis->showTopLevel())
-          {
-            w->raise();
-            w->activateWindow();
-          }
+          w->raise();
+          w->activateWindow();
           _closed = true;
         }
         break;

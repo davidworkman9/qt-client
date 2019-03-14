@@ -246,11 +246,6 @@ void userPreferences::sPopulate()
     _warehouse->setId(_pref->value("PreferredWarehouse").toInt());
   }
 
-  if (_pref->value("InterfaceWindowOption") == "Workspace")
-    _interfaceWorkspace->setChecked(true);
-  else
-    _interfaceTopLevel->setChecked(true);
-    
   if (_pref->boolean("CopyListsPlainText"))
     _plainText->setChecked(true);
   else
@@ -404,11 +399,6 @@ void userPreferences::sSave(bool close)
 
   _pref->set("NoAlternatingRowColors", !_alternating->isChecked());
 
-  if(_interfaceWorkspace->isChecked())
-    _pref->set("InterfaceWindowOption", QString("Workspace"));
-  else
-    _pref->set("InterfaceWindowOption", QString("TopLevel"));
-    
   _pref->set("CopyListsPlainText", _plainText->isChecked());
   _pref->set("XTreeWidgetDataLimit", QString::number(_richLimit->value()));
   _pref->set("EmailEvents", _emailEvents->isChecked());

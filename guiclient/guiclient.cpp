@@ -333,7 +333,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
-  _showTopLevel = (_preferences->value("InterfaceWindowOption") != "Workspace");
   _mqlhash = new MqlHash(this);
 
   qry.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
@@ -515,8 +514,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
     _singleWindow = window.value("usr_window").toString();
   if (_singleWindow.isEmpty())
     initMenuBar();
-  else
-    _showTopLevel = true; // if we are in single level mode we want to run toplevel always
 
 }
 
@@ -732,26 +729,13 @@ void GUIClient::saveToolbarPositions()
   */
 void GUIClient::closeEvent(QCloseEvent *event)
 {
-  if (_showTopLevel || _workspace->viewMode() == QMdiArea::SubWindowView)
+
+  foreach (QWidget *child, QApplication::topLevelWidgets())
   {
-    foreach (QWidget *child, QApplication::topLevelWidgets())
+    if (child != this && ! child->close())
     {
-      if (child != this && ! child->close())
-      {
-        event->ignore();
-        return;
-      }
-    }
-  }
-  else
-  {
-    foreach (QMdiSubWindow *child, _workspace->subWindowList())
-    {
-      if (! child->close())
-      {
-        event->ignore();
-        return;
-      }
+      event->ignore();
+      return;
     }
   }
 
@@ -1972,10 +1956,7 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
     {
       QString objName = w->objectName();
       xtsettingsSetValue(objName + "/geometry/size", w->size());
-      if(omfgThis->showTopLevel())
-        xtsettingsSetValue(objName + "/geometry/pos", w->pos());
-      else if (w->parentWidget() != 0)
-        xtsettingsSetValue(objName + "/geometry/pos", w->parentWidget()->pos());
+      xtsettingsSetValue(objName + "/geometry/pos", w->pos());
     }
   }
   return QObject::eventFilter(obj, event);
@@ -2034,9 +2015,6 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
   qDebug() << "GUIClient::handleNewWindow() called on object that doesn't inherit XMainWindow: " << w->objectName();
 
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
-  if(!_showTopLevel && !w->isModal() && !forceFloat)
-    availableGeometry = _workspace->geometry();
-
   QString objName = w->objectName();
   QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
   QSize size = xtsettingsValue(objName + "/geometry/size").toSize();
@@ -2046,39 +2024,17 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
     w->resize(size);
 
   bool wIsModal = w->isModal();
-  if(_showTopLevel || wIsModal || forceFloat)
-  {
-    _windowList.append(w);
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    QMainWindow *mw = qobject_cast<QMainWindow*>(w);
-    if (mw)
-      mw->statusBar()->show();
-    QRect r(pos, w->size());
-    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-      w->move(pos);
-    else if(currsize!=w->size())
-      w->move(QPoint(1, 1));
-    w->show();
-  }
-  else
-  {
-    QWidget * fw = w->focusWidget();
-    w->setAttribute(Qt::WA_DeleteOnClose);
-
-    // this verboseness works around what appear to be qt bugs
-    QMdiSubWindow *subwin = new QMdiSubWindow();
-    subwin->setParent(_workspace);
-    subwin->setWidget(w);
-
-    _workspace->setActiveSubWindow(subwin);
-    connect(w, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
-    QRect r(pos, w->size());
-    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-      w->move(pos);
-    w->show();
-    if(fw)
-      fw->setFocus();
-  }
+  _windowList.append(w);
+  w->setAttribute(Qt::WA_DeleteOnClose);
+  QMainWindow *mw = qobject_cast<QMainWindow*>(w);
+  if (mw)
+    mw->statusBar()->show();
+  QRect r(pos, w->size());
+  if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+    w->move(pos);
+  else if(currsize!=w->size())
+    w->move(QPoint(1, 1));
+  w->show();
 
   if(!wIsModal)
     w->installEventFilter(__saveSizePositionEventFilter);

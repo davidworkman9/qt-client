@@ -105,8 +105,6 @@ void reports::sNew()
   if (!omfgThis->_reportHandler)
   {
     omfgThis->_reportHandler = new ReportHandler(omfgThis, "report handler");
-    if(_preferences->value("InterfaceWindowOption") != "TopLevel")
-      omfgThis->_reportHandler->setParentWindow(omfgThis->workspace());
     omfgThis->_reportHandler->setAllowDBConnect(false);
     omfgThis->_reportHandler->setPlaceMenusOnWindows(true);
     omfgThis->_reportHandler->setPlaceToolbarsOnWindows(true);
@@ -121,8 +119,6 @@ void reports::sEdit()
   if (!omfgThis->_reportHandler)
   {
     omfgThis->_reportHandler = new ReportHandler(omfgThis, "report handler");
-    if(_preferences->value("InterfaceWindowOption") == "Workspace")
-      omfgThis->_reportHandler->setParentWindow(omfgThis->workspace());
     omfgThis->_reportHandler->setAllowDBConnect(false);
     omfgThis->_reportHandler->setPlaceMenusOnWindows(true);
     omfgThis->_reportHandler->setPlaceToolbarsOnWindows(true);

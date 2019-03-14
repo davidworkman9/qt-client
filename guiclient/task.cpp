@@ -357,13 +357,8 @@ void task::populate()
     if (w && w->id()==_taskid)
     {
       w->setFocus();
-
-      if (omfgThis->showTopLevel())
-      {
-        w->raise();
-        w->activateWindow();
-      }
-
+      w->raise();
+      w->activateWindow();
       _close = true;
       break;
     }
