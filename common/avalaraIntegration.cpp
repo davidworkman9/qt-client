@@ -185,9 +185,9 @@ void AvalaraIntegration::handleResponse(QNetworkReply* reply)
     QJsonObject responseJson = QJsonDocument::fromJson(response).object();
     replies.removeOne(reply);
     TaxIntegration::handleResponse(type, orderType, orderId, QString::fromUtf8(response), error(type, reply, responseJson));
-
-    delete reply;
   }
+
+  reply->deleteLater();
 }
 
 QString AvalaraIntegration::error(QString type, QNetworkReply* reply, QJsonObject response)
