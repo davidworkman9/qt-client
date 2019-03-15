@@ -420,6 +420,9 @@ to be bound by its terms.</comment>
              <property name="allowNull">
               <bool>true</bool>
              </property>
+             <property name="nullStr">
+              <string>[ Default ]</string>
+             </property>
              <property name="type">
               <enum>XComboBox::TaxTypes</enum>
              </property>

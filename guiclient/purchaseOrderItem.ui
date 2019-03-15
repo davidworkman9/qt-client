@@ -451,7 +451,7 @@ to be bound by its terms.</comment>
                  <bool>true</bool>
                 </property>
                 <property name="nullStr">
-                 <string>None</string>
+                 <string>[ Default ]</string>
                 </property>
                 <property name="type">
                  <enum>XComboBox::TaxTypes</enum>

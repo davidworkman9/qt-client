@@ -895,7 +895,7 @@ bool vendor::sPopulate()
             "       formatbytea(decrypt(setbytea(vend_ach_accntnumber),"
             "                           setbytea(<? value('key') ?>), 'bf'))"
             "            ELSE '' END AS accntnum, "
-            "       COALESCE(vend_tax_exemption, fetchMetricText('AvalaraUserExemptionCode')) "
+            "       COALESCE(vend_tax_exemption, fetchMetricText('AvalaraPurchaseExemptionCode')) "
             "       AS tax_exemption "
             "<? else ?>"
             "       <? value('na') ?> AS routingnum,"

@@ -98,6 +98,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _reqInvoiceReg->setChecked(_metrics->boolean("ReqInvRegVoucher"));
   _reqInvoiceMisc->setChecked(_metrics->boolean("ReqInvMiscVoucher"));
   _recurringVoucherBuffer->setValue(_metrics->value("RecurringVoucherBuffer").toInt());
+  _assumeCorrectTax->setChecked(_metrics->boolean("AssumeCorrectTax"));
   _reprint->setChecked(_metrics->boolean("ReprintPaymentNumbers"));
 
   // AR
@@ -708,6 +709,7 @@ bool configureGL::sSave()
   _metrics->set("ReqInvRegVoucher", _reqInvoiceReg->isChecked());
   _metrics->set("ReqInvMiscVoucher", _reqInvoiceMisc->isChecked());
   _metrics->set("RecurringVoucherBuffer", _recurringVoucherBuffer->value());
+  _metrics->set("AssumeCorrectTax", _assumeCorrectTax->isChecked());
   _metrics->set("ReprintPaymentNumbers", _reprint->isChecked());
 
   // AR

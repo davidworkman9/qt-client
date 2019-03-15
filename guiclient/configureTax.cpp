@@ -50,7 +50,8 @@ configureTax::configureTax(QWidget* parent, const char* name, bool /*modal*/, Qt
   if (_logFile->text().isEmpty())
     _logFile->setText(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/log.txt");
 
-  _taxExempt->setCode(_metrics->value("AvalaraUserExemptionCode"));
+  _salesExempt->setCode(_metrics->value("AvalaraSalesExemptionCode"));
+  _purchaseExempt->setCode(_metrics->value("AvalaraPurchaseExemptionCode"));
 
   _salesAccount->setId(_metrics->value("AvalaraSalesAccountId").toInt());
   _useAccount->setId(_metrics->value("AvalaraUseAccountId").toInt());
@@ -108,7 +109,8 @@ bool configureTax::sSave()
     _metrics->set("TaxServiceLogFile", _logFile->text());
     _metrics->set("AvalaraSalesAccountId", _salesAccount->id());
     _metrics->set("AvalaraUseAccountId", _useAccount->id());
-    _metrics->set("AvalaraUserExemptionCode", _taxExempt->code());
+    _metrics->set("AvalaraSalesExemptionCode", _salesExempt->code());
+    _metrics->set("AvalaraPurchaseExemptionCode", _purchaseExempt->code());
   }
 
   _taxIntegration->wait();
@@ -128,7 +130,8 @@ bool configureTax::sCheck()
   {
     QStringList configuration;
     configuration << _account->text() << _key->text() << _url->text() << _company->text();
-    _taxExempt->populate(configuration);
+    _salesExempt->populate(configuration);
+    _purchaseExempt->populate(configuration);
   }
 
   return valid;

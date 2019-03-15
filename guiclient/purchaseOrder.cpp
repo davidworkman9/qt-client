@@ -1302,7 +1302,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       COALESCE((SELECT potype_id FROM potype WHERE potype_default),-1) AS default_potype,"
                "       COALESCE(vend_addr_id, -1) AS vendaddrid,"
                "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid,"
-               "       COALESCE(vend_tax_exemption, fetchMetricText('AvalaraUserExemptionCode')) AS taxexempt,"
+               "       COALESCE(vend_tax_exemption, fetchMetricText('AvalaraPurchaseExemptionCode')) AS taxexempt,"
                "       crmacct_id"
                "  FROM vendinfo"
                "  LEFT OUTER JOIN addr ON (vend_addr_id=addr_id)"
