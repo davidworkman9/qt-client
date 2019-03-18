@@ -521,8 +521,8 @@ void task::sClose()
                              query, __FILE__, __LINE__))
         return;
 
-    if (_metrics->value("TaskNumberGeneration") != "A" ||
-        _metrics->value("TaskNumberGeneration") != "O")
+    if (_metrics->value("TaskNumberGeneration") == "A" ||
+        _metrics->value("TaskNumberGeneration") == "O")
     {
       query.prepare("SELECT releasetasknumber(:task);");
       query.bindValue(":task", _number->text().trimmed());
