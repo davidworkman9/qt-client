@@ -2338,12 +2338,14 @@ void salesOrder::sEdit()
 
   salesOrderItem newdlg(this);
   newdlg.set(params);
-  newdlg.exec();
 
-  if ( ( (_mode == cNew) || (_mode == cNewQuote) || (_mode == cEdit) || (_mode == cEditQuote) ) )
-    sFillItemList();
+  if (newdlg.exec() != XDialog::Rejected)
+  {
+    if ( ( (_mode == cNew) || (_mode == cNewQuote) || (_mode == cEdit) || (_mode == cEditQuote) ) )
+      sFillItemList();
 
-  _tax->invalidate();
+    _tax->invalidate();
+  }
 }
 
 void salesOrder::sHandleButtons()
