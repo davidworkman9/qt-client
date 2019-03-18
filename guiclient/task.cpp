@@ -520,6 +520,17 @@ void task::sClose()
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Task Information"),
                              query, __FILE__, __LINE__))
         return;
+
+    if (_metrics->value("TaskNumberGeneration") != "A" ||
+        _metrics->value("TaskNumberGeneration") != "O")
+    {
+      query.prepare("SELECT releasetasknumber(:task);");
+      query.bindValue(":task", _number->text().trimmed());
+      query.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Task Number"),
+                               query, __FILE__, __LINE__))
+          return;
+    }
   }
 }
 
