@@ -351,7 +351,7 @@ bool miscVoucher::save(bool partial)
       updq.bindValue(":vohead_recurring_vohead_id", _voheadid);
   }
   updq.bindValue(":vohead_notes",   _notes->toPlainText());
-  if (!_taxCharged->isEmpty())
+  if (!_metrics->boolean("AssumeCorrectTax") || !_taxCharged->isEmpty())
     updq.bindValue(":vohead_tax_charged", _taxCharged->localValue());
   updq.bindValue(":vohead_tax_exemption", _taxExempt->code());
   updq.exec();
@@ -578,7 +578,7 @@ void miscVoucher::sPopulateDistributed()
   sumq.exec();
   if (sumq.first())
   {
-    _amountDistributed->setLocalValue(sumq.value("distrib").toDouble() + (_taxCharged->isEmpty() ? _tax->localValue() : _taxCharged->localValue()));
+    _amountDistributed->setLocalValue(sumq.value("distrib").toDouble() + ((_metrics->boolean("AssumeCorrectTax") && _taxCharged->isEmpty()) ? _tax->localValue() : _taxCharged->localValue()));
     sPopulateBalanceDue();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Total"),
@@ -643,7 +643,7 @@ void miscVoucher::populate()
     if(vohead.value("vohead_posted").toBool())
       _postVoucher->setVisible(false);
 
-    if (!vohead.value("vohead_tax_charged").isNull())
+    if (!_metrics->boolean("AssumeCorrectTax") || !vohead.value("vohead_tax_charged").isNull())
       _taxCharged->setLocalValue(vohead.value("vohead_tax_charged").toDouble());
     _taxExempt->setCode(vohead.value("vohead_tax_exemption").toString());
 
@@ -706,7 +706,8 @@ void miscVoucher::sDistributionDateUpdated()
 
 void miscVoucher::sCalculateTaxOwed()
 {
-  double diff = _taxCharged->isEmpty() ? 0.0 : _tax->localValue() - _taxCharged->localValue();
+  double diff = (_metrics->boolean("AssumeCorrectTax") && _taxCharged->isEmpty()) ?
+                0.0 : _tax->localValue() - _taxCharged->localValue();
   _taxOwed->setLocalValue(diff < 0.0 ? 0.0 : diff);
 }
 

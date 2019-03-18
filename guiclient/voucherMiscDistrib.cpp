@@ -358,7 +358,8 @@ void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
                           "       COALESCE(vend_tax_id, -1) AS vend_tax_id, "
                           "       COALESCE(vend_taxtype_id, -1) AS vend_taxtype_id, "
                           "       COALESCE(vend_tax_exemption, "
-                          "                fetchMetricText('AvalaraUserExemptionCode')) AS exempt "
+                          "                fetchMetricText('AvalaraPurchaseExemptionCode')) "
+                          "       AS exempt "
                           "FROM vendinfo "
                           "WHERE (vend_id=:vend_id);" );
   populateVoucher.bindValue(":vend_id", pVendid);

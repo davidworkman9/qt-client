@@ -400,7 +400,7 @@ bool voucher::save(bool partial)
   updq.bindValue(":frghtDistr", _frghtdistr);
   if (_freightExpcat->isValid())
     updq.bindValue(":vohead_freight_expcat", _freightExpcat->id());
-  if (!_taxCharged->isEmpty())
+  if (!_metrics->boolean("AssumeCorrectTax") || !_taxCharged->isEmpty())
     updq.bindValue(":vohead_tax_charged", _taxCharged->localValue());
   updq.bindValue(":vohead_freight_taxtype_id", _freightTaxtype->id());
   updq.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
@@ -817,7 +817,7 @@ void voucher::sPopulateDistributed()
     getq.exec();
     if (getq.first())
     {
-      _amountDistributed->setLocalValue(getq.value("distrib").toDouble() + _freight->localValue() - _frghtdistr + (_taxCharged->isEmpty() ? _tax->localValue() : _taxCharged->localValue()));
+      _amountDistributed->setLocalValue(getq.value("distrib").toDouble() + _freight->localValue() - _frghtdistr + ((_metrics->boolean("AssumeCorrectTax") && _taxCharged->isEmpty()) ? _tax->localValue() : _taxCharged->localValue()));
     }
     else if (ErrorReporter::error(QtCriticalMsg, this,
                                   tr("Getting Distributions"),
@@ -885,7 +885,7 @@ void voucher::populate()
     _freight->set(vohead.value("vohead_freight").toDouble(),
                              vohead.value("vohead_curr_id").toInt(),
                              vohead.value("vohead_docdate").toDate(), false);
-    if (!vohead.value("vohead_tax_charged").isNull())
+    if (!_metrics->boolean("AssumeCorrectTax") || !vohead.value("vohead_tax_charged").isNull())
       _taxCharged->setLocalValue(vohead.value("vohead_tax_charged").toDouble());
 
     _frghtdistr = vohead.value("vohead_freight_distributed").toDouble();
@@ -1076,7 +1076,8 @@ bool voucher::saveDetail()
 
 void voucher::sCalculateTaxOwed()
 {
-  double diff = _taxCharged->isEmpty() ? 0.0 : _tax->localValue() - _taxCharged->localValue();
+  double diff = (_metrics->boolean("AssumeCorrectTax") && _taxCharged->isEmpty()) ?
+                0.0 : _tax->localValue() - _taxCharged->localValue();
   _taxOwed->setLocalValue(diff < 0.0 ? 0.0 : diff);
 }
 

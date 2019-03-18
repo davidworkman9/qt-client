@@ -1264,7 +1264,9 @@ void customer::populate()
   cust.prepare( "SELECT custinfo.*, "
                 "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
                 "       COALESCE(cust_financecharge, true) AS financecharge,"
-                "       crmacct_owner_username "
+                "       crmacct_owner_username, "
+                "       COALESCE(cust_tax_exemption, fetchMetricText('AvalaraSalesExemptionCode')) "
+                "       AS tax_exemption "
                 "FROM custinfo LEFT OUTER JOIN "
                 "     crmacct ON (cust_crmacct_id=crmacct_id) "
                 "WHERE (cust_id=:cust_id);" );
@@ -1324,8 +1326,8 @@ void customer::populate()
     _defaultCommissionPrcnt->setDouble(cust.value("cust_commprcnt").toDouble() * 100);
     _terms->setId(cust.value("cust_terms_id").toInt());
     _taxzone->setId(cust.value("cust_taxzone_id").toInt());
-    if (!cust.value("cust_tax_exemption").toString().isEmpty())
-      _taxExempt->setCode(cust.value("cust_tax_exemption").toString());
+    if (!cust.value("tax_exemption").toString().isEmpty())
+      _taxExempt->setCode(cust.value("tax_exemption").toString());
     _shipform->setId(cust.value("cust_shipform_id").toInt());
     _shipchrg->setId(cust.value("cust_shipchrg_id").toInt());
     _shipvia->setText(cust.value("cust_shipvia").toString());
