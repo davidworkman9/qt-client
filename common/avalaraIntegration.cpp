@@ -209,7 +209,7 @@ QString AvalaraIntegration::error(QString type, QNetworkReply* reply, QJsonObjec
       QJsonArray details = err["details"].toArray();
       QJsonObject ary = details.at(0).toObject();
       QString errhelp = ary["description"].toString();
-      return tr("%1: %2<br><br>Caused by:<br>%3.").arg(errcode).arg(errmsg).arg(errhelp);
+      return tr("%1: %2\n\nCaused by:\n%3.").arg(errcode).arg(errmsg).arg(errhelp);
     }
   }
   else

@@ -1006,9 +1006,10 @@ void invoice::sNew()
   invoiceItem newdlg(this);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
+  {
     sFillItemList();
-
-  _tax->invalidate();
+    _tax->invalidate();
+  }
 }
 
 void invoice::sEdit()
@@ -1027,9 +1028,10 @@ void invoice::sEdit()
   invoiceItem newdlg(this);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
+  {
     sFillItemList();
-
-  _tax->invalidate();
+    _tax->invalidate();
+  }
 }
 
 void invoice::sView()

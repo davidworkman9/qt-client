@@ -1140,9 +1140,10 @@ void purchaseOrder::sEdit()
   purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
+  {
     sFillList();
-
-  _tax->invalidate();
+    _tax->invalidate();
+  }
 }
 
 void purchaseOrder::sDelete()
