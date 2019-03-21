@@ -117,13 +117,12 @@ void unpostedInvoices::sDelete()
         rollback.prepare("ROLLBACK;");
 
         XSqlQuery("BEGIN;");
-
         unpostedDelete.bindValue(":invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
         unpostedDelete.exec();
         if (unpostedDelete.first())
         {
-	      int result = unpostedDelete.value("result").toInt();
-	      if (result < 0)
+          int result = unpostedDelete.value("result").toInt();
+          if (result < 0)
           {
             rollback.exec();
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Invoice Information"),
@@ -147,6 +146,7 @@ void unpostedInvoices::sDelete()
                              unpostedDelete, __FILE__, __LINE__);
           continue;
         }
+        XSqlQuery("COMMIT;");
       }
     }
 
