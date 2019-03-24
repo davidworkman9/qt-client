@@ -37,7 +37,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::Wi
           " WHERE (orderseq_name='IncidentNumber');" );
   if (configureconfigureCRM.first())
     _nextInNumber->setText(configureconfigureCRM.value("innumber"));
-    
+
   configureconfigureCRM.exec( "SELECT orderseq_number AS acnumber "
           "  FROM orderseq"
           " WHERE (orderseq_name='CRMAccountNumber');" );
@@ -70,7 +70,6 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::Wi
   _acctGeneration->setCode(_metrics->value("CRMAccountNumberGeneration"));
   _projectGeneration->setCode(_metrics->value("ProjectNumberGeneration"));
   _taskGeneration->setCode(_metrics->value("TaskNumberGeneration"));
-    
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));
   _accountChangeLog->setChecked(_metrics->boolean("AccountChangeLog"));
@@ -109,6 +108,20 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::Wi
     _incdtDelGroup->hide();
   }
 
+  connect(_validateEmail,  SIGNAL(clicked()), this, SLOT(sEmailValidation()));
+  _validateEmail->setChecked(_metrics->boolean("ValidateEmail"));
+  sEmailValidation();
+  _defaultRegexp = "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+
+  _emailValidatorMethod->append(0, tr("Basic"), "B");
+  // _emailValidatorMethod->append(1, "External Service", "E");
+
+  connect(_emailValidatorMethod,  SIGNAL(currentIndexChanged(int)), this, SLOT(sEmailValidator()));
+  if (_metrics->value("EmailValidatorMethod").length() > 0)
+    _emailValidatorMethod->setCode(_metrics->value("EmailValidatorMethod"));
+
+  sEmailValidator();
+
   configureconfigureCRM.exec("SELECT * FROM status WHERE (status_type='INCDT') ORDER BY status_seq;");
   configureconfigureCRM.first();
   _new->setText(configureconfigureCRM.value("status_color"));
@@ -136,6 +149,29 @@ void configureCRM::languageChange()
     retranslateUi(this);
 }
 
+void configureCRM::sEmailValidation()
+{
+  _emailValidatorGroup->setVisible(_validateEmail->isChecked());
+}
+
+void configureCRM::sEmailValidator()
+{
+  int _method = _emailValidatorMethod->id();
+// Use of Validation method and stacked widget allows for future
+// External service plugins.
+  _emailStack->setCurrentIndex(_method);
+  switch(_method){
+    case 0:  // Basic Validation
+      if (_metrics->value("EmailValidatorRegexp").length() == 0)
+        _emailRegexp->setText(_defaultRegexp);
+      else
+        _emailRegexp->setText(_metrics->value("EmailValidatorRegexp"));
+      break;
+    default:
+      _emailValidatorGroup->setVisible(false);
+  }
+}
+
 bool configureCRM::sSave()
 {
   emit saving();
@@ -144,7 +180,7 @@ bool configureCRM::sSave()
   configq.prepare( "SELECT setNextIncidentNumber(:innumber);" );
   configq.bindValue(":innumber", _nextInNumber->text().toInt());
   configq.exec();
-  
+
   if (_acctGeneration->code() != "M" && _nextAcctNumber->text().toInt() < 1)
     _nextAcctNumber->setText("1");
   if (_projectGeneration->code() != "M" && _nextProjectNumber->text().toInt() < 1)
@@ -167,7 +203,7 @@ bool configureCRM::sSave()
   _metrics->set("CRMAccountNumberGeneration", _acctGeneration->code());
   _metrics->set("ProjectNumberGeneration", _projectGeneration->code());
   _metrics->set("TaskNumberGeneration", _taskGeneration->code());
-  
+
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));
   _metrics->set("AccountChangeLog", _accountChangeLog->isChecked());
@@ -177,6 +213,13 @@ bool configureCRM::sSave()
   _metrics->set("RequireProjectAssignment", _requireProjectAssignment->isChecked());
   _metrics->set("ProjectDueDateWarning", _projectWarningDays->value());
   _metrics->set("UnprivilegedViewDocInList", _documentPrivileges->isChecked());
+  _metrics->set("ValidateEmail", _validateEmail->isChecked());
+  _metrics->set("EmailValidatorMethod", _emailValidatorMethod->code());
+  if (_validateEmail->isChecked())
+  {
+    if (_emailValidatorMethod->code() == "B")   //Basic Validation
+      _metrics->set("EmailValidatorRegexp", _emailRegexp->toPlainText());
+  }
 
   if (_country->isValid())
     _metrics->set("DefaultAddressCountry", _country->code());

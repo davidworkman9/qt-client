@@ -266,16 +266,6 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="_requireUniqueEmails">
-             <property name="toolTip">
-              <string>Require unique email addresses across Contacts.  System checks uniqueness when activating this setting.</string>
-             </property>
-             <property name="text">
-              <string>Require Unique Contact Email Addresses</string>
-             </property>
-            </widget>
-	   </item>
-	   <item>
             <widget class="QCheckBox" name="_autoCreate">
              <property name="enabled">
               <bool>false</bool>
@@ -288,10 +278,10 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QCheckBox" name="_requireProjectAssignment">
              <property name="toolTip">
-               <string>Require assignment of a Project # to Sales Order/Purchase Order/Work Order</string>
+              <string>Require assignment of a Project # to Sales Order/Purchase Order/Work Order</string>
              </property>
              <property name="text">
-               <string>Require SO/PO/WO assignment to Project</string>
+              <string>Require SO/PO/WO assignment to Project</string>
              </property>
             </widget>
            </item>
@@ -556,9 +546,9 @@ to be bound by its terms.</comment>
              <property name="text">
               <string>Default Country for Addresses:</string>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
              <property name="buddy">
               <cstring>_country</cstring>
              </property>
@@ -593,6 +583,94 @@ to be bound by its terms.</comment>
           </layout>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_emailGroup">
+         <property name="title">
+          <string>Contact Emails</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QCheckBox" name="_requireUniqueEmails">
+            <property name="toolTip">
+             <string>Require unique email addresses across Contacts.  System checks uniqueness when activating this setting.</string>
+            </property>
+            <property name="text">
+             <string>Require Unique Contact Email Addresses</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_validateEmail">
+            <property name="text">
+             <string>Validate Email Addresses</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="_emailValidatorGroup">
+            <property name="title">
+             <string/>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="XLabel" name="_emailValidatorMethodLit">
+                 <property name="text">
+                  <string>Validation Method:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="XComboBox" name="_emailValidatorMethod">
+                 <property name="allowNull">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QStackedWidget" name="_emailStack">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <widget class="QWidget" name="basicPage">
+                <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <item>
+                  <widget class="XLabel" name="_emailRegexpLit">
+                   <property name="text">
+                    <string>Validation Expression:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XTextEdit" name="_emailRegexp"/>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="externalPage1"/>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer">
@@ -647,6 +725,11 @@ to be bound by its terms.</comment>
    <class>XSpinBox</class>
    <extends>QSpinBox</extends>
    <header>xspinbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
