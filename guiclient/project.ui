@@ -204,6 +204,9 @@ to be bound by its terms.</comment>
           <property name="text">
            <string>Department:</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignTop|Qt::AlignTrailing</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -346,7 +349,7 @@ to be bound by its terms.</comment>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string/>
+      <string>Contact</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
