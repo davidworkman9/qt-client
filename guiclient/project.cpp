@@ -209,11 +209,14 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       projectet.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id, "
                      "COALESCE((SELECT incdtpriority_id FROM incdtpriority "
-                     " WHERE incdtpriority_default), -1) AS prioritydefault;");
+                     " WHERE incdtpriority_default), -1) AS prioritydefault, "
+                     "COALESCE((SELECT prjtype_id FROM prjtype "
+                     " WHERE prjtype_default), -1) AS typedefault;");
       if (projectet.first())
       {
         _prjid = projectet.value("prj_id").toInt();
         _priority->setId(projectet.value("prioritydefault").toInt());
+        _projectType->setId(projectet.value("typedefault").toInt());
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Project Information"),
                                     projectet, __FILE__, __LINE__))
