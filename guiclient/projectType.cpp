@@ -105,19 +105,21 @@ void projectType::sSave()
 
   if (_mode == cNew)
     typeSave.prepare( "INSERT INTO prjtype "
-               "(prjtype_code, prjtype_descr, prjtype_active, prjtype_tasktmpl_id) "
+               "(prjtype_code, prjtype_descr, prjtype_active, prjtype_tasktmpl_id, prjtype_default) "
                "VALUES "
-               "(:prjtype_typeCode, :prjtype_typeDescr, :prjtype_active, :template);" );
+               "(:prjtype_typeCode, :prjtype_typeDescr, :prjtype_active, :template, :default);" );
   else
     typeSave.prepare( "UPDATE prjtype "
                "SET prjtype_code=:prjtype_typeCode, prjtype_descr=:prjtype_typeDescr, "
-               "    prjtype_active=:prjtype_active, prjtype_tasktmpl_id=:template "
+               "    prjtype_active=:prjtype_active, prjtype_tasktmpl_id=:template, "
+               "    prjtype_default=:default "
                "WHERE (prjtype_id=:prjtype_id);" );
 
   typeSave.bindValue(":prjtype_id", _prjtypeid);
   typeSave.bindValue(":prjtype_typeCode", _typeCode->text());
   typeSave.bindValue(":prjtype_typeDescr", _typeDescr->text());
   typeSave.bindValue(":prjtype_active", QVariant(_active->isChecked()));
+  typeSave.bindValue(":default", QVariant(_default->isChecked()));
   if (_template->isValid())
     typeSave.bindValue(":template", _template->id());
   typeSave.exec();
@@ -144,6 +146,7 @@ void projectType::populate()
     _typeCode->setText(typepopulate.value("prjtype_code").toString());
     _typeDescr->setText(typepopulate.value("prjtype_descr").toString());
     _active->setChecked(typepopulate.value("prjtype_active").toBool());
+    _default->setChecked(typepopulate.value("prjtype_default").toBool());
     _template->setId(typepopulate.value("prjtype_tasktmpl_id").toInt());
   }
 }

@@ -33,6 +33,7 @@ projectTypes::projectTypes(QWidget* parent, const char* name, Qt::WindowFlags fl
   _projecttype->addColumn(tr("Code"),        -1, Qt::AlignLeft, true, "prjtype_code" );
   _projecttype->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "prjtype_descr" );
   _projecttype->addColumn(tr("Active"),      -1, Qt::AlignLeft, true, "prjtype_active" );
+  _projecttype->addColumn(tr("Default"),     -1, Qt::AlignLeft, true, "prjtype_default" );
   
   if (_privileges->check("MaintainProjectTypes"))
   {
@@ -116,7 +117,7 @@ void projectTypes::sEdit()
 void projectTypes::sFillList()
 {
   _projecttype->populate( "SELECT * "
-                      "FROM prjtype "
-                      "ORDER BY prjtype_code;" );
+                      "      FROM prjtype "
+                      "  ORDER BY prjtype_code;" );
 }
 
