@@ -240,6 +240,7 @@ const struct {
 				"as there is inventory at shipping."),	0, "" },
   { "cntctEmailUnique", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Emails are required to be unique. "
                                                                    "You cannot use this email more than once."),	0, "" },
+  { "cntctEmailValid",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An invalid email address was entered. Please check and correct."), 0, "" },
   { "convertCustomerToProspect",	-1, "", -1, "deleteCustomer" },
   { "convertCustomerToProspect",	-2, "", -2, "deleteCustomer" },
   { "convertCustomerToProspect",	-3, "", -3, "deleteCustomer" },

@@ -24,6 +24,8 @@ public:
     ~configureCRM();
 
 public slots:
+    virtual void sEmailValidation();
+    virtual void sEmailValidator();
     virtual bool sSave();
 
 protected slots:
@@ -31,6 +33,9 @@ protected slots:
 
 signals:
     void saving();
+
+private:
+    QString _defaultRegexp;
 
 };
 
