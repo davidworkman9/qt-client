@@ -107,13 +107,6 @@ void AddressCluster::init()
   _active->setObjectName("_active");
   _mapper->setObjectName("_mapper");
 
-  _longitudeLit->setVisible(false);
-  _latitudeLit->setVisible(false);
-  _accuracyLit->setVisible(false);
-  _longitude->setVisible(false);
-  _latitude->setVisible(false);
-  _accuracy->setVisible(false);
-  _mktg->setVisible(false);
   if (_x_metrics)
     _mktg->setChecked(_x_metrics->boolean("DefaultAddressOptIn"));
 
@@ -234,6 +227,12 @@ void AddressCluster::init()
   silentSetId(-1);
   _list->show();
   _mode = Edit;
+
+  _moreVisibility = true;
+  if(_x_preferences)
+    _moreVisibility = !_x_preferences->boolean("AddrShowAll");
+
+  sMore();
 }
 
 AddressCluster::AddressCluster(QWidget* pParent, const char* pName)
@@ -731,14 +730,17 @@ void AddressCluster::sEllipses()
 
 void AddressCluster::sMore()
 {
-  bool show = !_longitude->isVisible();
-  _longitudeLit->setVisible(show);
-  _longitude->setVisible(show);
-  _latitudeLit->setVisible(show);
-  _latitude->setVisible(show);
-  _accuracyLit->setVisible(show);
-  _accuracy->setVisible(show);
-  _mktg->setVisible(show);
+  _moreVisibility = !_moreVisibility;
+  _longitudeLit->setVisible(_moreVisibility);
+  _longitude->setVisible(_moreVisibility);
+  _latitudeLit->setVisible(_moreVisibility);
+  _latitude->setVisible(_moreVisibility);
+  _accuracyLit->setVisible(_moreVisibility);
+  _accuracy->setVisible(_moreVisibility);
+  _mktg->setVisible(_moreVisibility);
+
+  if (_x_preferences)
+    _x_preferences->set("AddrShowAll", _moreVisibility);
 }
 
 void AddressCluster::sInfo()

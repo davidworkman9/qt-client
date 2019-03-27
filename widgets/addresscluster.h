@@ -228,6 +228,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QString		_titlePlural;
 	QString		_titleSingular;
 	bool		_valid;
+        bool            _moreVisibility;
 	XDataWidgetMapper* _mapper;
         QPushButton*    _list;
         QPushButton*    _more;
