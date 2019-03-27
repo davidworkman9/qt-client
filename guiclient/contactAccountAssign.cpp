@@ -128,7 +128,7 @@ void contactAccountAssign::sSave()
                                 saveq, __FILE__, __LINE__))
     return;
 
-  omfgThis->sCrmAccountsUpdated(-1);
+  omfgThis->sContactsUpdated(-1);
   done(_assignid);
 }
 
