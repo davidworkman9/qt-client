@@ -203,6 +203,7 @@ enum SetResponse prospect::set(const ParameterList &pParams)
         _prospectid = getq.value("prospect_id").toInt();
         emit newId(_prospectid);
         _taskList->parameterWidget()->setDefault(tr("Prospect"), _prospectid, true);
+        sSetCrmAccountId();
         _created->setDate(QDate::currentDate());
       }
       
