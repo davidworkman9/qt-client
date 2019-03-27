@@ -218,6 +218,7 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_detachUse,      SIGNAL(clicked()), this, SLOT(sDetachUse()));
   connect(_editUse,        SIGNAL(clicked()), this, SLOT(sEditUse()));
   connect(_showOrders,     SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showInactive,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_uses,           SIGNAL(valid(bool)), this, SLOT(sHandleValidUse(bool)));
   connect(_uses,           SIGNAL(populateMenu(QMenu*, XTreeWidgetItem*)), this, SLOT(sPopulateUsesMenu(QMenu*)));
   connect(_viewUse,        SIGNAL(clicked()), this, SLOT(sViewUse()));
@@ -687,6 +688,8 @@ void contact::sFillList()
   }
   if (_showOrders->isChecked())
     getp.append("showOrders");
+  if (_showInactive->isChecked())
+    getp.append("showInactive");
 
   XSqlQuery getq = getm.toQuery(getp);
   _uses->populate(getq, true);

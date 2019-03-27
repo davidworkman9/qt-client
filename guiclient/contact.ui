@@ -220,6 +220,13 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="XCheckBox" name="_showInactive">
+           <property name="text">
+            <string>Show Inactive Roles</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
