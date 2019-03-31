@@ -422,25 +422,22 @@ void issueLineToShipping::sIssue()
 
       // If controlled item, get the inventory history from post production trans. 
       // so we can create itemlocdist records for issue to shipping transaction and auto-distribute to them in postInvTrans.
-      if (issueIssue.value("woItemControlled").toBool())
+      prod.prepare("SELECT invhist_id "
+                   "FROM invhist "
+                   "WHERE ((invhist_series = :itemlocseries) "
+                   " AND (invhist_transtype = 'RM')); ");
+      prod.bindValue(":itemlocseries" , itemlocSeries);
+      prod.exec();
+      if (prod.first())
+        invhistid = prod.value("invhist_id").toInt();
+      else
       {
-        prod.prepare("SELECT invhist_id "
-                     "FROM invhist "
-                     "WHERE ((invhist_series = :itemlocseries) "
-                     " AND (invhist_transtype = 'RM')); ");
-        prod.bindValue(":itemlocseries" , itemlocSeries);
-        prod.exec();
-        if (prod.first())
-          invhistid = prod.value("invhist_id").toInt();
-        else
-        {
-          rollback.exec();
-          cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                               tr("Inventory history not found")
-                               .arg(windowTitle()),__FILE__,__LINE__);
-          return;
-        }
+        rollback.exec();
+        cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                             tr("Inventory history not found")
+                             .arg(windowTitle()),__FILE__,__LINE__);
+        return;
       }
     }
     else
@@ -461,9 +458,10 @@ void issueLineToShipping::sIssue()
   issue.bindValue(":qty",         _qtyToIssue->toDouble());
   issue.bindValue(":ts",          _transTS);
   issue.bindValue(":itemlocSeries", itemlocSeries);
-  if (invhistid)
+  if (invhistid > 0)
     issue.bindValue(":invhist_id", invhistid);
   issue.exec();
+
   if (issue.first())
   {
     int result = issue.value("result").toInt();
