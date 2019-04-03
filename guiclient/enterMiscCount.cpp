@@ -106,7 +106,7 @@ void enterMiscCount::sPost()
   {
     return;
   }
-#pragma comment(linker,"/SUBSYSTEM:CONSOLE")
+
   enterPost.prepare( "SELECT postMiscCount(itemsite_id, :qty, :comments) AS cnttag_id "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
