@@ -235,6 +235,8 @@ int main(int argc, char *argv[])
   if (!loggedIn)
   {
     ParameterList params;
+    params.append("earliest", "9.5.0");
+    params.append("latest", "11.0.0");
     params.append("copyright", _Copyright);
     params.append("version",   _Version);
     params.append("build",     _Build.arg(__DATE__).arg(__TIME__));
@@ -810,6 +812,7 @@ int main(int argc, char *argv[])
   app.exec();
 
 //  Clean up
+  qInstallMessageHandler(0);
   delete _metrics;
   delete _preferences;
   delete _privileges;

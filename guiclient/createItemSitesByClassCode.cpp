@@ -256,16 +256,15 @@ void createItemSitesByClassCode::sSave()
                "       CASE WHEN(item_type='R') THEN 'N' ELSE :itemsite_costmethod END, "
                "       :itemsite_cosdefault,  :itemsite_lsseq_id "
                "FROM item "
-               "WHERE ( (item_id NOT IN ( SELECT itemsite_item_id"
+               "WHERE item_active "
+               "  AND item_id NOT IN ( SELECT itemsite_item_id"
                "                          FROM itemsite"
-               "                          WHERE (itemsite_warehous_id=:warehous_id) ) )" );
+               "                          WHERE (itemsite_warehous_id=:warehous_id) ) " );
 
   if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
+    sql += " AND item_classcode_id=:classcode_id";
   else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-
-  sql += ");";
+    sql += " AND item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern))";
 
   createSave.prepare(sql);
   createSave.bindValue(":itemsite_reorderlevel", _reorderLevel->toDouble());

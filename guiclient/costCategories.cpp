@@ -161,7 +161,7 @@ void costCategories::sPopulateMenu(QMenu *menu)
 {
   QAction *menuItem;
 
-  menuItem = menu->addAction(tr("Edit Inventory Cost Cateogry"), this, SLOT(sEdit()));
+  menuItem = menu->addAction(tr("Edit Inventory Cost Category"), this, SLOT(sEdit()));
   menuItem->setEnabled(_privileges->check("MaintainCostCategories"));
 
   menuItem = menu->addAction(tr("View Inventory Cost Category"), this, SLOT(sView()));

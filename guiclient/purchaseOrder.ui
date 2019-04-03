@@ -235,21 +235,9 @@ to be bound by its terms.</comment>
              </item>
              <item row="2" column="3">
               <widget class="XComboBox" name="_status">
-               <item>
-                <property name="text">
-                 <string>Unreleased</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Open</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Closed</string>
-                </property>
-               </item>
+               <property name="allowNull">
+                <bool>false</bool>
+               </property>
               </widget>
              </item>
              <item row="2" column="4">

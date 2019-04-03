@@ -352,6 +352,12 @@ void arOpenItem::sSave()
   }
 }
 
+void arOpenItem::closeEvent(QCloseEvent *pEvent)
+{
+  sClose();
+  XDialog::closeEvent(pEvent);
+}
+
 void arOpenItem::sClose()
 {
   XSqlQuery deleteARDocument;

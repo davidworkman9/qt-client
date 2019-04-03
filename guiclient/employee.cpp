@@ -345,7 +345,7 @@ bool employee::sSave(const bool pClose)
   upsq.bindValue(":number",         _number->text());
   upsq.bindValue(":active",         _active->isChecked());
   if (_contact->isValid())
-    upsq.bindValue(":cntct_id",     _contact->id());
+    upsq.bindValue(":cntct_id",     cntctResult);
   if (_site->isValid())
     upsq.bindValue(":warehous_id",  _site->id());
   if (_mgr->isValid())
