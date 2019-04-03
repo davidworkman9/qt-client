@@ -808,6 +808,29 @@ void purchaseOrder::sSave()
 {
   _save->setFocus();
 
+  XSqlQuery purchaseSave;
+  purchaseSave.prepare( "SELECT EXISTS( SELECT 1 "
+                        "  FROM poitem "
+                        " WHERE poitem_pohead_id=:pohead_id "
+                        "   AND poitem_status <> 'C') AS isOpen;" );
+  purchaseSave.bindValue(":pohead_id", _poheadid);
+  purchaseSave.exec();
+  if (purchaseSave.first() && !purchaseSave.value("isOpen").toBool())
+  {
+     if (QMessageBox::question(this, tr("Close Purchase Order?"),
+                                  tr("<p>There are no open items on this Purchase Order. "
+                                     "Do you wish to close this Purchase Order?"),
+         QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+     {
+       _status->setCode("C");
+     }
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order"),
+                                   purchaseSave, __FILE__, __LINE__))
+  {
+     return;
+  }
+
   if(!save(false))
     return;
 
@@ -815,7 +838,6 @@ void purchaseOrder::sSave()
 
   if (!_pridList.isEmpty())
   {
-    XSqlQuery purchaseSave;
     purchaseSave.prepare("SELECT deletePr(:pr_id) AS _result;");
     for(int i = 0; i < _pridList.size(); ++i)
     {
@@ -965,28 +987,6 @@ bool purchaseOrder::save(bool partial)
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
     return false;
-
-  purchaseSave.prepare( "SELECT EXISTS( SELECT 1 "
-                        "  FROM poitem "
-                        " WHERE poitem_pohead_id=:pohead_id "
-                        "   AND poitem_status <> 'C') AS isOpen;" );
-  purchaseSave.bindValue(":pohead_id", _poheadid);
-  purchaseSave.exec();
-  if (purchaseSave.first() && !purchaseSave.value("isOpen").toBool())
-  {
-     if (QMessageBox::question(this, tr("Close Purchase Order?"),
-                                  tr("<p>There are no open items on this Purchase Order. "
-                                     "Do you wish to close this Purchase Order?"),
-         QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
-     {
-       _status->setCode("C");
-     }
-  }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order"),
-                                   purchaseSave, __FILE__, __LINE__))
-  {
-     return;
-  }
 
   purchaseSave.prepare( "UPDATE pohead "
              "SET pohead_warehous_id=:pohead_warehous_id, pohead_orderdate=:pohead_orderdate,"
