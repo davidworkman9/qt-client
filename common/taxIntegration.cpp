@@ -59,7 +59,7 @@ void TaxIntegration::test(QStringList config)
   sendRequest("test", QString(), 0, QString(), config);
 }
 
-void TaxIntegration::calculateTax(QString orderType, int orderId, bool record)
+bool TaxIntegration::calculateTax(QString orderType, int orderId, bool record)
 {
   XSqlQuery qry;
   qry.prepare("SELECT calculateOrderTax(:orderType, :orderId, :record) AS request;");
@@ -73,8 +73,13 @@ void TaxIntegration::calculateTax(QString orderType, int orderId, bool record)
     else
       sendRequest("createtransaction", orderType, orderId, qry.value("request").toString());
   else
-    ErrorReporter::error(QtCriticalMsg, 0, tr("Error calculating tax"),
-                         qry, __FILE__, __LINE__);
+  {
+    _error = qry.lastError().text();
+    return false;
+  }
+
+  wait();
+  return _error.isEmpty();
 }
 
 bool TaxIntegration::commit(QString orderType, int orderId)
