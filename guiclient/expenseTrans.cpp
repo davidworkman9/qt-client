@@ -51,6 +51,9 @@ expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WindowFlags fl
   }
 
   _item->setFocus();
+
+  if (_metrics->value("TaxService") == "N")
+    _useTax->hide();
 }
 
 expenseTrans::~expenseTrans()
@@ -141,6 +144,11 @@ void expenseTrans::sPost()
                           tr("You must select an Expense Category before "
                              "posting this transaction."))
          ;
+  if (_metrics->value("TaxService") != "N" && _useTax->isChecked())
+    errors << GuiErrorCheck(_documentNum->text().isEmpty(), _documentNum,
+                            tr("You must enter a Document # when assessing use tax "
+                               "before posting this transaction."));
+
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Transaction"), errors))
     return;
 
@@ -193,6 +201,10 @@ void expenseTrans::sPost()
   }
 
   // Proceed to post inventory transaction
+  XSqlQuery begin("BEGIN;");
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   XSqlQuery expq;
   expq.prepare("SELECT invExpense(:itemsite_id, :qty, :expcatid, :docNumber, "
                "  :comments, :date, :prj_id, :itemlocSeries, TRUE) AS result;");
@@ -211,11 +223,67 @@ void expenseTrans::sPost()
     int result = expq.value("result").toInt();
     if (result < 0 || result != itemlocSeries)
     {
+      rollback.exec();
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Inventory Expense transaction."),
         expq, __FILE__, __LINE__);
       return;
     }
+
+    if (_metrics->value("TaxService") != "N" && _useTax->isChecked())
+    {
+      expq.prepare("SELECT invhist_id "
+                   "  FROM invhist "
+                   " WHERE invhist_series = :invhist_series;");
+      expq.bindValue(":invhist_series", result);
+      expq.exec();
+      if (expq.first())
+      {
+        int invhistid = expq.value("invhist_id").toInt();
+        if (!_taxIntegration->calculateTax("EX", invhistid, true))
+        {
+          rollback.exec();
+          cleanup.exec();
+          QMessageBox::critical(this, tr("Error Posting Inventory Expense transaction."),
+                                _taxIntegration->error());
+          return;
+        }
+
+        expq.prepare("SELECT insertGLTransaction('I/M', 'EX', invhist_ordnumber, '', "
+                     "                           fetchMetricValue('AvalaraUseAccountId')::INTEGER, "
+                     "                           getPrjAccntId(:prj_id, expcat_exp_accnt_id), "
+                     "                           invhist_id, getOrderTax('EX', invhist_id), "
+                     "                           CURRENT_DATE) "
+                     "  FROM invhist "
+                     "  JOIN invhistexpcat ON invhist_id = invhistexpcat_invhist_id "
+                     "  JOIN expcat ON invhistexpcat_expcat_id = expcat_id "
+                     " WHERE invhist_id = :invhist_id;");
+        expq.bindValue(":invhist_id", invhistid);
+        if (_prjid != -1)
+          expq.bindValue(":prj_id", _prjid);
+        expq.exec();
+
+        if (expq.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Could Not Post"),
+                               expq, __FILE__, __LINE__);
+          return;
+        }
+      }
+      else if (expq.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Could Not Post"),
+                             expq, __FILE__, __LINE__);
+        return;
+      }
+    }
+
+    expq.exec("COMMIT;");
+
     if (_captive)
       close();
     else
@@ -234,6 +302,7 @@ void expenseTrans::sPost()
   }
   else if (expq.lastError().type() != QSqlError::NoError)
   {
+    rollback.exec();
     cleanup.exec(); 
     ErrorReporter::error(QtCriticalMsg, this, tr("Could Not Post"),
                          expq, __FILE__, __LINE__);
@@ -241,6 +310,7 @@ void expenseTrans::sPost()
   }
   else
   {
+    rollback.exec();
     cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Item not found"),
                          tr("<p>No transaction was done because Item %1 "

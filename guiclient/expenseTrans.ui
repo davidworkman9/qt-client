@@ -283,20 +283,27 @@ to be bound by its terms.</comment>
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="_notesLit">
      <property name="text">
       <string>Notes:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <widget class="XTextEdit" name="_notes">
      <property name="tabChangesFocus">
       <bool>true</bool>
      </property>
      <property name="spellEnable">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="XCheckBox" name="_useTax">
+     <property name="text">
+      <string>Assess Use Tax</string>
      </property>
     </widget>
    </item>
@@ -325,6 +332,11 @@ to be bound by its terms.</comment>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

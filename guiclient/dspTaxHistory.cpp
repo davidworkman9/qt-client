@@ -246,6 +246,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
   params.append("purchase",tr("Purchase"));
   params.append("voucher",tr("Voucher"));
   params.append("check",tr("Misc. Check"));
+  params.append("expense",tr("Expense"));
   params.append("reversecharge", tr("Reverse Charge"));
   params.append("avalara",tr("Avalara"));
   params.append("freight",tr("Freight"));
