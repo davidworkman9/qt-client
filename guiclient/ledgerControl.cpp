@@ -32,3 +32,10 @@ bool ledgerControl::setParams(ParameterList &params)
 
   return true;
 }
+
+void ledgerControl::sFillList()
+{
+  XSqlQuery("SELECT forwardUpdateAccount(accnt_id) "
+            "  FROM accnt;");
+  display::sFillList();
+}

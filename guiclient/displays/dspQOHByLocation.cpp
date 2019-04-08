@@ -16,6 +16,8 @@
 #include <QVariant>
 
 #include "inputManager.h"
+#include "errorReporter.h"
+#include "mqlutil.h"
 #include "relocateInventory.h"
 
 dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WindowFlags fl)
@@ -182,6 +184,12 @@ void dspQOHByLocation::sFillList()
       _netable->setText(qq.value("netable").toString());
       _restricted->setText(qq.value("restricted").toString());
     }
+
+    MetaSQLQuery mql = mqlLoad("forwardUpdate", "invbal");
+    XSqlQuery sql = mql.toQuery(getParams());
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error updating trial balances"),
+                             sql, __FILE__, __LINE__))
+      return;
 
     display::sFillList();
     list()->expandAll();

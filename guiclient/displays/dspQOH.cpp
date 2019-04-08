@@ -20,6 +20,8 @@
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
+#include "errorReporter.h"
+#include "mqlutil.h"
 #include "parameterwidget.h"
 #include "xtreewidget.h"
 
@@ -270,6 +272,12 @@ void dspQOH::sFillList()
   list()->clear();
   list()->setColumnVisible(list()->column("costmethod"),
                          _showValue->isChecked() && _usePostedCosts->isChecked());
+
+  MetaSQLQuery mql = mqlLoad("forwardUpdate", "invbal");
+  XSqlQuery sql = mql.toQuery(getParams());
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error updating trial balances"),
+                           sql, __FILE__, __LINE__))
+    return;
 
   display::sFillList();
 }

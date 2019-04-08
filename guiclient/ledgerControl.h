@@ -23,6 +23,9 @@ class ledgerControl : public display
     ledgerControl(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
 
     Q_INVOKABLE virtual bool setParams(ParameterList &params);
+
+  public slots:
+    virtual void sFillList();
 };
 
 #endif
