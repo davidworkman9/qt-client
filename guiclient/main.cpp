@@ -115,6 +115,7 @@
 #include "errorReporter.h"
 #include "login2.h"
 #include "currenciesDialog.h"
+#include "currencyConversions.h"
 #include "registrationKeyDialog.h"
 #include "guiclient.h"
 #include "version.h"
@@ -774,12 +775,28 @@ int main(int argc, char *argv[])
 	          "  GROUP BY curr_abbr"
 	          "  HAVING NOT BOOL_OR(current_date BETWEEN curr_effective AND curr_expires);");
   if (xrateCheck.first())
-    QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
-      QObject::tr("<p>Your system has alternate currencies without exchange rates "
-                  "entered for the current date. "
-                  "You should define the exchange rates for these currencies in 'System | "
-                  "Setup | Exchange Rates...' before posting any "
-                  "transactions in the system.") );
+  {
+    if (_privileges->check("MaintainCurrencyRates"))
+    {
+      if (QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
+          QObject::tr("<p>Your system has alternate currencies without exchange rates "
+                    "entered for the current date. "
+                    "You should define the exchange rates for these currencies before posting any "
+                    "transactions in the system. Would you like to maintain rates now?"),
+           QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes ) == QMessageBox::Yes)
+      {
+        currencyConversions *newdlg = new currencyConversions();
+        omfgThis->handleNewWindow(newdlg);
+      }
+    }
+    else
+      QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
+        QObject::tr("<p>Your system has alternate currencies without exchange rates "
+                    "entered for the current date. "
+                    "You should define the exchange rates for these currencies in 'System | "
+                    "Setup | Exchange Rates...' before posting any "
+                    "transactions in the system.") );
+  }
 
 // Check for presence of password reset requirement and user last reset days
   XSqlQuery resetCheck("SELECT fetchmetricbool('EnforcePasswordReset') as passreset, "
