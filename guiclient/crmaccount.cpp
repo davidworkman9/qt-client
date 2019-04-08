@@ -132,6 +132,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_addressButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));       
 
   _comments->setType("CRMA");
+  _documents->setType("CRMA");
   _charass->setType("CRMACCT");
 
   _reg->addColumn(tr("Lot/Serial")  ,  _itemColumn,  Qt::AlignLeft, true, "ls_number" );
