@@ -42,6 +42,12 @@ void Comments::showEvent(QShowEvent *event)
 
 QMap<QString, struct CommentMap*> Comments::_strMap;
 QMap<int,     struct CommentMap*> Comments::_intMap;
+void Comments::cleanup()
+{
+  QMap<QString, struct CommentMap*>::iterator i;
+  for (i = _strMap.begin(); i != _strMap.end(); i++)
+    delete i.value();
+}
 
 /** Add another document type to the map by both key and int.
 
@@ -209,6 +215,12 @@ Comments::Comments(QWidget *pParent, const char *name) :
 
   setFocusProxy(_comment);
   setVerboseCommentList(_verboseCommentList);
+}
+
+Comments::~Comments()
+{
+  delete _editmap;
+  delete _editmap2;
 }
 
 int Comments::type() const

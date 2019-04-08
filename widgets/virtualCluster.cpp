@@ -420,7 +420,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     setMinimumHeight(height);
 
     // Set default menu with standard actions
-    QMenu* menu = new QMenu;
+    QMenu* menu = new QMenu(this);
     menu->setObjectName("menu");
     menu->addAction(_listAct);
     menu->addAction(_searchAct);

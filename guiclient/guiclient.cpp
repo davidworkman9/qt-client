@@ -71,6 +71,7 @@
 #include "xdoublevalidator.h"
 
 #include "distributeInventory.h"
+#include "comments.h"
 #include "documents.h"
 #include "splashconst.h"
 #include "scripttoolbox.h"
@@ -513,6 +514,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 GUIClient::~GUIClient()
 {
   QApplication::closeAllWindows();
+
+  XComboBox::cleanup();
+  Comments::cleanup();
+  Documents::cleanup();
 
   errorLogListener::destroy();
   //omfgThis = 0;
