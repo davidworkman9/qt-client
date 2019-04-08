@@ -45,7 +45,6 @@ public slots:
     virtual void sAllWarehousesToggled( int pEvnttypeid );
     virtual void sWarehouseToggled( QTreeWidgetItem * selected );
     virtual void sFillWarehouseList();
-    virtual void sTranslations();
     virtual void sDictionaries();
 
 protected slots:
