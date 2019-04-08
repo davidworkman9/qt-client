@@ -663,8 +663,8 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
         return false;
       }
 
-      // If controlled item, get the inventory history from post production trans.
-      // so we can create itemlocdist records for issue to shipping transaction and auto-distribute to them in postInvTrans.
+      // Get the inventory history from post production trans. so job costs are applied to subsequent
+      // inventory movements.
       prod.prepare("SELECT invhist_id "
                    "FROM invhist "
                    "WHERE ((invhist_series = :itemlocseries) "
