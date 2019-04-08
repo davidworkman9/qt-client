@@ -68,6 +68,7 @@
 #include "plugins/recurrencewidgetplugin.h"
 #include "plugins/revisionclusterplugin.h"
 #include "plugins/screenplugin.h"
+#include "plugins/selectionwidgetplugin.h"
 #include "plugins/shiftclusterplugin.h"
 #include "plugins/shipmentclusterplugin.h"
 #include "plugins/shiptoclusterplugin.h"
@@ -154,6 +155,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new RecurrenceWidgetPlugin(this));
   m_plugins.append(new RevisionClusterPlugin(this));
   m_plugins.append(new ScreenPlugin(this));
+  m_plugins.append(new SelectionWidgetPlugin(this));
   m_plugins.append(new ShiftClusterPlugin(this));
   m_plugins.append(new ShipmentClusterPlugin(this));
   m_plugins.append(new ShiptoClusterPlugin(this));

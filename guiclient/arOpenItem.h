@@ -42,6 +42,7 @@ public slots:
     virtual void sPrintOnPost(int temp_id);
     virtual void sTaxDetail();
     virtual void sReleaseNumber();
+    virtual void closeEvent( QCloseEvent *pEvent );
 
 protected slots:
     virtual void languageChange();

@@ -19,6 +19,7 @@
 #include <openreports.h>
 #include "arOpenItem.h"
 #include "cashReceipt.h"
+#include "creditcardprocessor.h"
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
@@ -252,6 +253,59 @@ void dspCashReceipts::sReversePosted()
                                      QMessageBox::Yes | QMessageBox::Default,
                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
   {
+    if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
+    {
+      XSqlQuery ccq;
+      ccq.prepare("SELECT cashrcpt_docnumber, ccpay_id, ccpay_ccard_id, ccpay_curr_id, "
+                  "       ccpay_amount, ccpay_r_tax, ccpay_r_shipping "
+                  "  FROM cashrcpt "
+                  "  JOIN ccpay ON cashrcpt_ccpay_id = ccpay_id "
+                  " WHERE cashrcpt_id = :cashrcpt_id;");
+      ccq.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
+      ccq.exec();
+      if (ccq.first())
+      {
+        CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+        if (! cardproc)
+        {
+          QMessageBox::critical(this, tr("Credit Card Processing Error"),
+                                CreditCardProcessor::errorMsg());
+          return;
+        }
+
+        QString docnum = ccq.value("cashrcpt_docnumber").toString();
+        QString refnum = docnum;
+        int ccpayid    = ccq.value("ccpay_id").toInt();
+        int cashrcptid = list()->currentItem()->id("source");
+
+        int returnVal = cardproc->credit(ccq.value("ccpay_ccard_id").toInt(),
+                                         "-2",
+                                         ccq.value("ccpay_amount").toDouble(),
+                                         ccq.value("ccpay_r_tax").toDouble(),
+                                         false,
+                                         ccq.value("ccpay_r_shipping").toDouble(),
+                                         0,
+                                         ccq.value("ccpay_curr_id").toInt(),
+                                         docnum, refnum, ccpayid,
+                                         "cashrcpt", cashrcptid);
+        if (returnVal < 0)
+          QMessageBox::critical(this, tr("Credit Card Processing Error"),
+                                cardproc->errorMsg());
+        else if (returnVal > 0)
+          QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+                               cardproc->errorMsg());
+        else if (! cardproc->errorMsg().isEmpty())
+          QMessageBox::information(this, tr("Credit Card Processing Note"),
+                                   cardproc->errorMsg());
+
+        if (returnVal < 0)
+          return;
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Reversing Posted Cash Receipt"),
+                                    ccq, __FILE__, __LINE__))
+        return;
+    }
+
     dspReversePosted.prepare("SELECT reverseCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
     dspReversePosted.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
     dspReversePosted.exec();

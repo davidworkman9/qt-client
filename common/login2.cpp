@@ -47,6 +47,8 @@ class login2Private {
     QString _cUsername;
     QString _cPassword;
     QString _connAppName;
+    QString _earliest;
+    QString _latest;
     XAbstractMessageHandler* _handler;
 
     login2Private() :
@@ -141,6 +143,14 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
   param = pParams.value("name", &valid);
   if (valid)
     _nameLit->setText(param.toString());
+
+  param = pParams.value("earliest", &valid);
+  if (valid)
+    _d->_earliest = param.toString();
+
+  param = pParams.value("latest", &valid);
+  if (valid)
+    _d->_latest = param.toString();
 
   param = pParams.value("databaseURL", &valid);
   if (valid)
@@ -300,23 +310,21 @@ void login2::sLogin()
   }
 
 connected:
-  if (db.isOpen())
+  if (db.isOpen() && !_d->_earliest.isEmpty() && !_d->_latest.isEmpty())
   {
-    QString earliest = "9.5.0",
-            latest   = "11.0.0";
     XSqlQuery checkVersion;   // include earliest in the range but exclude latest
     checkVersion.prepare("SELECT compareVersion(:earliest) <= 0"
                          "   AND compareVersion(:latest)   > 0 AS ok,"
                          "       version() AS version;");
-    checkVersion.bindValue(":earliest", earliest);
-    checkVersion.bindValue(":latest",   latest);
+    checkVersion.bindValue(":earliest", _d->_earliest);
+    checkVersion.bindValue(":latest",   _d->_latest);
     checkVersion.exec();
     if (checkVersion.first() && ! checkVersion.value("ok").toBool() &&
         _d->_handler->question(tr("<p>The database server is at version %1 but "
                                 "xTuple ERP only supports from %2 up to but "
                                 "not including %3.</p><p>Continue anyway?</p>")
                                .arg(checkVersion.value("version").toString(),
-                                    earliest, latest),
+                                    _d->_earliest, _d->_latest),
                            QMessageBox::Yes | QMessageBox::No,
                            QMessageBox::No) == QMessageBox::No) {
       if (_d->_splash) {

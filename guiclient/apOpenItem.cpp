@@ -350,6 +350,12 @@ void apOpenItem::sSave()
   }
 }
 
+void apOpenItem::closeEvent(QCloseEvent *pEvent)
+{
+  sClose();
+  XDialog::closeEvent(pEvent);
+}
+
 void apOpenItem::sClose()
 {
   XSqlQuery deleteOpenItem;

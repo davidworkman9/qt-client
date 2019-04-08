@@ -184,12 +184,11 @@ void location::sSave()
   
   locationSave.prepare("SELECT location_id"
             "  FROM location"
-            " WHERE((location_id != :location_id)"
-            "   AND (location_warehous_id=:location_warehous_id)"
-            "   AND (location_aisle=:location_aisle)"
-            "   AND (location_rack=:location_rack)"
-            "   AND (location_bin=:location_bin)"
-            "   AND (location_name=:location_name))");
+            " WHERE location_id != :location_id"
+            "   AND location_warehous_id=:location_warehous_id"
+            "   AND location_rack=:location_rack"
+            "   AND location_bin=:location_bin"
+            "   AND location_name=:location_name" );
   locationSave.bindValue(":location_id", _locationid);
   locationSave.bindValue(":location_warehous_id", _warehouse->id());
   locationSave.bindValue(":location_aisle", _aisle->text());
@@ -205,6 +204,9 @@ void location::sSave()
     _location->setFocus();
     return;
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Location"),
+                                locationSave, __FILE__, __LINE__))
+    return;
   
 
   if (_mode == cNew)
@@ -248,6 +250,9 @@ void location::sSave()
   locationSave.bindValue(":location_restrict", QVariant(_restricted->isChecked()));
   locationSave.bindValue(":location_active",   QVariant(_active->isChecked()));
   locationSave.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Location"),
+                                locationSave, __FILE__, __LINE__))
+    return;
 
   done(_locationid);
 }
@@ -383,6 +388,9 @@ void location::sHandleWarehouse(int pWarehousid)
     if (!_whsezone->count())
       _whsezone->setEnabled(false);
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Warehouse Details"),
+                                locationHandleWarehouse, __FILE__, __LINE__))
+    return;
 }
 
 void location::sNew()
@@ -404,6 +412,10 @@ void location::sNew()
     locationNew.bindValue(":location_id", _locationid);
     locationNew.bindValue(":item_id", itemid);
     locationNew.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Location Error"),
+                                locationNew, __FILE__, __LINE__))
+      return;
+
     if (locationNew.first())
 //  Tell the user that a locitem already exists for this location/item
       QMessageBox::information( this, tr("Location/Item Exists"),
@@ -419,6 +431,9 @@ void location::sNew()
       locationNew.bindValue(":location_id", _locationid);
       locationNew.bindValue(":item_id", itemid);
       locationNew.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Location Error"),
+                                locationNew, __FILE__, __LINE__))
+        return;
 
       sFillList();
     }
@@ -433,6 +448,9 @@ void location::sDelete()
              "WHERE (locitem_id=:locitem_id);" );
   locationDelete.bindValue(":locitem_id", _locitem->id());
   locationDelete.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Location Deletion Error"),
+                                locationDelete, __FILE__, __LINE__))
+    return;
 
   sFillList();
 }
@@ -476,6 +494,9 @@ void location::sFillList()
              " AND (locitem_location_id=:location_id) );" );
   locationFillList.bindValue(":location_id", _locationid);
   locationFillList.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Location Error"),
+                                locationFillList, __FILE__, __LINE__))
+    return;
   _locitem->populate(locationFillList);
 }
 
@@ -507,4 +528,7 @@ void location::populate()
 
     sFillList();
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Location Error"),
+                                locationpopulate, __FILE__, __LINE__))
+    return;
 }

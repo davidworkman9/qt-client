@@ -42,6 +42,7 @@ public slots:
     virtual void sToggleAccount();
     virtual void sCalcBalance();
     virtual void sViewMode();
+    virtual void closeEvent( QCloseEvent *pEvent );
 
 protected slots:
     virtual void languageChange();
