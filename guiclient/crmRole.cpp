@@ -93,9 +93,9 @@ void crmRole::sSave()
 
   if (_mode == cNew)
     typeSave.prepare( "INSERT INTO crmrole "
-               "(crmrole_id, crmrole_name, crmrole_cntct, crmrole_addr, crmrole_crmacct, crmrole_phone, crmrole_sort) "
+               "(crmrole_name, crmrole_cntct, crmrole_addr, crmrole_crmacct, crmrole_phone, crmrole_sort) "
                "VALUES "
-               "(:crmrole_id, :crmrole_name, :crmrole_cntct, :crmrole_addr, :crmrole_crmacct, :crmrole_phone, :crmrole_sort);" );
+               "(:crmrole_name, :crmrole_cntct, :crmrole_addr, :crmrole_crmacct, :crmrole_phone, :crmrole_sort);" );
   else
     typeSave.prepare( "UPDATE crmrole "
                "SET crmrole_name=:crmrole_name, crmrole_cntct=:crmrole_cntct, crmrole_addr=:crmrole_addr, "
