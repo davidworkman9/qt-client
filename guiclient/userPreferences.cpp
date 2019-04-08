@@ -27,7 +27,6 @@
 #include "hotkey.h"
 #include "imageList.h"
 #include "timeoutHandler.h"
-#include "translations.h"
 #include "dictionaries.h"
 #include "exporthelper.h"
 
@@ -71,7 +70,6 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   connect(_warehouses, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(sWarehouseToggled(QTreeWidgetItem*)));
   connect(_event, SIGNAL(itemSelected(int)), this, SLOT(sAllWarehousesToggled(int)));
   connect(_event, SIGNAL(itemSelectionChanged()), this, SLOT(sFillWarehouseList()));
-  connect(_translations, SIGNAL(clicked()), this, SLOT(sTranslations()));
   connect(_dictionaries, SIGNAL(clicked()), this, SLOT(sDictionaries()));
 
   _event->addColumn(tr("Module"),      50,   Qt::AlignCenter, true,  "evnttype_module" );
@@ -128,7 +126,6 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
     _alarmEmail->setVisible(false);
     _emailEvents->setVisible(false);
   }
-  _translations->setEnabled(_privileges->check("MaintainTranslations"));
   _dictionaries->setEnabled(_privileges->check("MaintainDictionaries"));
 
   _deprecationLevel->append(1, tr("Debug"),    "debug");
@@ -769,11 +766,6 @@ void userPreferences::sFillWarehouseList()
       return;
     }
   }
-}
-
-void userPreferences::sTranslations()
-{
-  omfgThis->handleNewWindow(new translations(this));
 }
 
 void userPreferences::sDictionaries()
