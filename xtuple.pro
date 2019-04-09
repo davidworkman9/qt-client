@@ -7,8 +7,12 @@
 # is available at www.xtuple.com/CPAL.  By using this software, you agree
 # to be bound by its terms.
 #
+include( global.pri )
+
 TEMPLATE = subdirs
-SUBDIRS = common \
+SUBDIRS = $${OPENRPT_PATH} \
+          $${CSVIMP_PATH} \
+          common \
           scriptapi \
           widgets/dll.pro \
           widgets \
