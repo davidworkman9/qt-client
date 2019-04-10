@@ -27,10 +27,13 @@ public:
 
   SelectionWidget(QWidget* parent = 0, Qt::WindowFlags fl = 0);
   ~SelectionWidget();
-
+  /**@brief Returns the "available" tree*/
   Q_INVOKABLE inline XTreeWidget  *getAvail() const { return _avail; }
+  /**@brief Returns the "selected" tree*/
   Q_INVOKABLE inline XTreeWidget  *getSel() const { return _sel; }
+  /**@brief Returns the _added list*/
   Q_INVOKABLE inline QList<XTreeWidgetItem*> getAdded() const { return _added; }
+  /**@brief Returns the _removed list*/
   Q_INVOKABLE inline QList<XTreeWidgetItem*> getRemoved() const { return _removed; }
   Q_INVOKABLE inline QString getModifyTableName() const { return _modifyTableName; }
   Q_INVOKABLE inline ParameterList getAddConstraints() const { return _addConstraints; }
@@ -39,9 +42,13 @@ public:
   Q_INVOKABLE inline bool  getRemoveByAltId() const { return _removeByAltId; }
   Q_INVOKABLE inline bool  isParentInTrans() const { return _parentInTrans; }
 
+  /**@brief Hides the cancel button*/
   Q_INVOKABLE void hideCancel();
+  /**@brief Shows the cancel button*/
   Q_INVOKABLE void showCancel();
+  /**@brief Hides the select button*/
   Q_INVOKABLE void hideSelect();
+  /**@brief Shows the select button*/
   Q_INVOKABLE void showSelect();
   Q_INVOKABLE void setModifyTableName(QString name) { _modifyTableName = name; }
   Q_INVOKABLE void setAddConstraints(ParameterList constraints) { _addConstraints = constraints; }
@@ -80,14 +87,14 @@ protected slots:
   void sFilterDuplicates();
 
 protected:
-  QList<XTreeWidgetItem*> _added;
-  QList<XTreeWidgetItem*> _removed;
-  QString _modifyTableName;
-  QString _removeByIdTableColName;
-  ParameterList _addConstraints;
-  ParameterList _equalityColumns;
-  bool _removeByAltId;
-  bool _parentInTrans;
+  QList<XTreeWidgetItem*> _added; /**<@brief List of items added to "available" tree since loading*/
+  QList<XTreeWidgetItem*> _removed; /**<@brief List of items removed from the "selected" tree since loading*/
+  QString _modifyTableName; /**<@brief Name of table where items will be added or removed*/
+  QString _removeByIdTableColName; /**<@brief Column name used as a key by the delete statement to remove records*/
+  ParameterList _addConstraints; /**<@brief Name value pairs indicating column names and values to insert */
+  ParameterList _equalityColumns; /**<@brief Name Value pairs indicating pairs of columns to be compared for equality*/
+  bool _removeByAltId; /**<@brief When true, delete statements use the item's altId instead of id.*/
+  bool _parentInTrans; /**<@brief When true, insert and delete statements will not be wrapped in a transaction block.*/
   void move(XTreeWidgetItem *pXtitem, bool pAdd);
   bool isSameItem(XTreeWidgetItem *pXtitem1, XTreeWidgetItem *pXtitem2) const;
   int execAddQuery(XSqlQuery &outQry);
