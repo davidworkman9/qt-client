@@ -58,6 +58,9 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 
   public:
     Comments(QWidget *, const char * = 0);
+    ~Comments();
+
+    static void cleanup();
 
     // if you add to this then add to the _commentMap[] in the .cpp
     enum CommentSources

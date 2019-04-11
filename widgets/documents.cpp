@@ -33,6 +33,13 @@
 
 QMap<QString, struct DocumentMap*> Documents::_strMap;
 QMap<int,     struct DocumentMap*> Documents::_intMap;
+void Documents::cleanup()
+{
+  QMap<QString, struct DocumentMap*>::iterator i;
+  for (i = _strMap.begin(); i != _strMap.end(); i++)
+    delete i.value();
+}
+
 
 /** Add another document type to the map by both key and int.
 
