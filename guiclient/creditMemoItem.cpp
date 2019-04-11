@@ -220,7 +220,9 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 void creditMemoItem::sSave()
 {
   QList<GuiErrorCheck> errors;
-  errors << GuiErrorCheck(_qtyToCredit->toDouble() == 0.0, _qtyToCredit,
+  errors << GuiErrorCheck(_itemSelected->isChecked() && _item->id() < 0, _item,
+                          tr("<p>You must enter an Item for this Credit Memo Item before you may save it."))
+         << GuiErrorCheck(_qtyToCredit->toDouble() == 0.0, _qtyToCredit,
                           tr("<p>You have not selected a quantity of the "
 			    "selected item to credit. If you wish to return a "
 			    "quantity to stock but not issue a Sales Credit "
