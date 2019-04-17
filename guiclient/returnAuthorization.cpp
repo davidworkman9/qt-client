@@ -1460,7 +1460,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
 
 void returnAuthorization::sTaxZoneChanged()
 {
-  if (_metrics->value("TaxService") == "N")
+  if (_metrics->value("TaxService") == "N" && _saved)
     _tax->sRecalculate();
 }
 
@@ -2064,13 +2064,15 @@ void returnAuthorization::sCheckNumber()
 
 void returnAuthorization::sMiscTaxtypeChanged()
 {
-  _tax->invalidate();
+  if (_saved)
+    _tax->invalidate();
 }
 
 void returnAuthorization::sMiscChargeChanged()
 {
   sCalculateTotal();
-  _tax->invalidate();
+  if (_saved)
+    _tax->invalidate();
 }
 
 void returnAuthorization::sFreightChanged()
