@@ -999,16 +999,6 @@ void ItemCluster::setReadOnly(const bool pReadOnly)
     _number->setEnabled(true);
 }
 
-void ItemCluster::setEnabled(const bool pEnabled)
-{
-  setReadOnly(!pEnabled);
-}
-
-void ItemCluster::setDisabled(bool pDisabled)
-{
-  setReadOnly(pDisabled);
-}
-
 void ItemCluster::setId(const int pId, const QString&)
 {
   _number->setId(pId);

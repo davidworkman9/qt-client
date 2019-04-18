@@ -173,6 +173,7 @@ void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 
 void VirtualCluster::setEnabled(const bool p)
 {
+  QWidget::setEnabled(p);
   QList<QWidget*> child = findChildren<QWidget*>();
   for (int i = 0; i < child.size(); i++)
   {
