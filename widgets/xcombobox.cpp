@@ -1359,6 +1359,7 @@ void XComboBox::setText(const QString &pString)
         setCurrentIndex(counter);
         updateMapperData();
         emit newID(id());
+        _lastid = id();
         return;
       }
     }
@@ -1392,6 +1393,7 @@ void XComboBox::setNull()
     emit newID(-1);
     emit valid(false);
     emit notNull(false);
+    _lastid = -1;
   }
 }
 
