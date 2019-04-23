@@ -1289,8 +1289,8 @@ void ParameterWidget::changeFilterObject(int index)
           qDebug() << objectName() << __FUNCTION__ << "Multiselect added"
                    << item->text() << item->data(Qt::UserRole) << "at" << i;
         tab->setItem(i, 0, item);
-        tab->setRowHeight(i, (tab->fontMetrics().height() * 110) / 100); // TODO: a better way?
       }
+      tab->resizeRowsToContents();
       // keep the filter vertically small
       tab->setMaximumHeight(qMin(6, tab->rowCount()) * tab->rowHeight(0));
       tab->show();
