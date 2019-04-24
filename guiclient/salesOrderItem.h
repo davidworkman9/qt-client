@@ -101,6 +101,8 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void  reject();
 
   private:
+    virtual void  handleFieldsOnModeChange(int pMode);
+
     double  _priceRatio;
     int     _preferredWarehouseid;
     int     _saletypeid;

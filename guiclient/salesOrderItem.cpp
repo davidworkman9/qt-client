@@ -37,6 +37,9 @@
 
 #define ISQUOTE(mode) (((mode) & 0x20) == 0x20)
 #define ISORDER(mode) (!ISQUOTE(mode))
+#define ISNEW(mode)   (((mode) & (~ 0x20)) == cNew)
+#define ISEDIT(mode)  (((mode) & (~ 0x20)) == cEdit)
+#define ISVIEW(mode)  (((mode) & (~ 0x20)) == cView)
 
 #define iDontUpdate   1
 #define iAskToUpdate  2
@@ -113,6 +116,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _authLineNumberLit->hide();
 
   _charVars << -1 << -1 << -1 << 0 << -1 << omfgThis->dbDate();
+
+  _initialMode = -1;
 
   //  Configure some Widgets
   _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
@@ -437,13 +442,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      _save->setEnabled(false);
-      _next->setEnabled(false);
-      _comments->setType(Comments::SalesOrderItem);
-      _comments->setReadOnly(false);
-      _item->setReadOnly(false);
-      _warehouse->setEnabled(true);
-      _cancel->setEnabled(false);
+      handleFieldsOnModeChange(_mode);
       _supplyOrderType = "";
       _supplyOrderId = -1;
       _itemsrc = -1;
@@ -488,23 +487,9 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNewQuote;
 
-      setWindowTitle(tr("Quote Item"));
-
-      _save->setEnabled(false);
-      _next->setEnabled(false);
-      _comments->setType(Comments::QuoteItem);
-      _comments->setReadOnly(true);
-      _cancel->hide();
-      _sub->hide();
-      _subItem->hide();
-      _subItemList->hide();
-      _item->setReadOnly(false);
-      _warehouse->setEnabled(true);
+      handleFieldsOnModeChange(_mode);
       _supplyOrderId = -1;
       _itemsrc = -1;
-      _warranty->hide();
-      _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
-
       _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2, '%3') ) )").arg(_custid).arg(_shiptoid).arg(asOf.toString(Qt::ISODate)) );
 
       prepare();
@@ -541,9 +526,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _item->setReadOnly(true);
-      _listPrices->setEnabled(true);
-      _comments->setType(Comments::SalesOrderItem);
+      handleFieldsOnModeChange(_mode);
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()), Qt::UniqueConnection);
       connect(_netUnitPrice,           SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()), Qt::UniqueConnection);
@@ -567,20 +550,11 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     else if (param.toString() == "editQuote")
     {
       _mode = cEditQuote;
+
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
 
-      setWindowTitle(tr("Quote Item"));
-
-      _item->setReadOnly(true);
-      _listPrices->setEnabled(true);
-      _comments->setType(Comments::QuoteItem);
-      _cancel->hide();
-      _sub->hide();
-      _subItem->hide();
-      _subItemList->hide();
-      _warranty->hide();
-      _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
+      handleFieldsOnModeChange(_mode);
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()), Qt::UniqueConnection);
       connect(_netUnitPrice,           SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()), Qt::UniqueConnection);
@@ -600,61 +574,21 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-
-      _comments->setType(Comments::SalesOrderItem);
-      _sub->setEnabled(false);
-      _subItem->setEnabled(false);
-      _supplyWarehouse->setEnabled(false);
-      _supplyOverridePrice->setEnabled(false);
+      handleFieldsOnModeChange(_mode);
     }
     else if (param.toString() == "viewQuote")
     {
       _mode = cViewQuote;
+
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
 
-      setWindowTitle(tr("Quote Item"));
-
-      _cancel->hide();
-      _sub->hide();
-      _subItem->hide();
-      _comments->setType(Comments::QuoteItem);
-      _warranty->hide();
-      _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
+      handleFieldsOnModeChange(_mode);
     }
   }
 
   if (_initialMode == -1)
     _initialMode = _mode;
-
-  bool viewMode = (cView == _mode || cViewQuote == _mode);
-  if (viewMode)
-  {
-    _item->setReadOnly(viewMode);
-    _customerPN->setEnabled(!viewMode);
-    _qtyOrdered->setEnabled(!viewMode);
-    _netUnitPrice->setEnabled(!viewMode);
-    _discountFromCust->setEnabled(!viewMode);
-    _unitCost->setEnabled(!viewMode);
-    _markupFromUnitCost->setEnabled(!viewMode);
-    _scheduledDate->setEnabled(!viewMode);
-    _createSupplyOrder->setEnabled(!viewMode);
-    _notes->setEnabled(!viewMode);
-    _comments->setReadOnly(viewMode);
-    _taxtype->setEnabled(!viewMode);
-    _itemcharView->setEnabled(!viewMode);
-    _socharView->setEnabled(!viewMode);
-    _promisedDate->setEnabled(!viewMode);
-    _qtyUOM->setEnabled(!viewMode);
-    _priceUOM->setEnabled(!viewMode);
-    _warranty->setEnabled(!viewMode);
-    _listPrices->setEnabled(!viewMode);
-    _altCosAccnt->setEnabled(!viewMode);
-    _altRevAccnt->setEnabled(!viewMode);
-
-    _subItemList->setVisible(!viewMode);
-    _save->setVisible(!viewMode);
-  }
 
   param = pParams.value("soitem_id", &valid);
   if (valid)
@@ -908,7 +842,6 @@ void salesOrderItem::clear()
   _canceling                     = false;
   _custid                        = -1;
   _error                         = false;
-  _initialMode                   = -1;
   _invIsFractional               = false;
   _invuomid                      = -1;
   _itemsiteLastItemid            = -1;
@@ -991,7 +924,6 @@ void salesOrderItem::clear()
   _subItem->setEnabled(false);
   _subItemList->setEnabled(false);
   _warehouse->setEnabled(true);
-
 }
 
 void salesOrderItem::sSaveClicked()
@@ -4369,6 +4301,8 @@ void salesOrderItem::populate()
       _warehouse->setEnabled(false);
     }
   }
+
+  _save->setEnabled(ISEDIT(_mode));
 }
 
 void salesOrderItem::sFindSellingWarehouseItemsites( int id )
@@ -5189,4 +5123,67 @@ void salesOrderItem::sHandleScheduleDate()
 
   sDeterminePrice();
   sDetermineAvailability();
+}
+
+/** @brief Set field visibility and enabled state based purely on window mode.
+
+    This is called exclusively by ::set(). The goal is to restore
+    field settings based only on the window mode. Further processing
+    by ::set() may change them. Prompted by bug 34342 and the
+    handling of kit items and enhanced pricing sublines.
+
+    @param pMode The mode the window will be in when ::set() is done
+  */
+void salesOrderItem::handleFieldsOnModeChange(int pMode)
+{
+  if (ISQUOTE(pMode))
+  {
+    setWindowTitle(tr("Quote Item"));
+    _comments->setType(Comments::QuoteItem);
+    _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
+
+    _cancel->hide();
+    _sub->hide();
+    _subItem->hide();
+    _subItemList->hide();
+    _warranty->hide();
+  }
+  else
+  {
+    _comments->setType(Comments::SalesOrderItem);
+  }
+
+  _warehouse->setEnabled(true);
+  _save->setEnabled(false);             // _save will be enabled when _item.isValid()
+
+  _comments->setReadOnly(pMode == cNewQuote);   // prior code really is this specific
+  _item->setReadOnly(ISEDIT(pMode) || ISVIEW(pMode));
+
+  _cancel->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
+  _next  ->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
+  _prev  ->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
+
+  _altCosAccnt        ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _altRevAccnt        ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _createSupplyOrder  ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _customerPN         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _discountFromCust   ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _itemcharView       ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _listPrices         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _markupFromUnitCost ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _netUnitPrice       ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _notes              ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _priceUOM           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _promisedDate       ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _qtyOrdered         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _qtyUOM             ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _scheduledDate      ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _socharView         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _sub	->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _subItem	->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _supplyOverridePrice->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _supplyWarehouse	->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _taxtype            ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _unitCost           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _warranty           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
 }
