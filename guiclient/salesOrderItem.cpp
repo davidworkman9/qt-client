@@ -308,6 +308,15 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _altCosAccnt->setType(GLCluster::cRevenue | GLCluster::cExpense);
   _altRevAccnt->setType(GLCluster::cRevenue);
+
+  _custid                        = -1;
+  _initialMode                   = -1;
+  _preferredWarehouseid          = -1;
+  _saletypeid                    = -1;
+  _shiptoid                      = -1;
+  _shiptoname                    = "";
+  _shipzoneid                    = -1;
+  _taxzoneid                     = -1;
 }
 
 salesOrderItem::~salesOrderItem()
@@ -840,7 +849,6 @@ void salesOrderItem::clear()
   _availabilityLastWarehousid    = -1;
   _availabilityQtyOrdered        = 0.0;
   _canceling                     = false;
-  _custid                        = -1;
   _error                         = false;
   _invIsFractional               = false;
   _invuomid                      = -1;
@@ -853,7 +861,6 @@ void salesOrderItem::clear()
   _modified                      = false;
   _originalQtyOrd                = 0.0;
   _partialsaved                  = false;
-  _preferredWarehouseid          = -1;
   _priceMode                     = "D";  // default to discount
   _priceRatio                    = 1.0;
   _priceUOMCache                 = -1;
@@ -862,10 +869,6 @@ void salesOrderItem::clear()
   _qtyatshipping                 = 0.0;
   _qtyinvuomratio                = 1.0;
   _qtyreserved                   = 0.0;
-  _saletypeid                    = -1;
-  _shiptoid                      = -1;
-  _shiptoname                    = "";
-  _shipzoneid                    = -1;
   _supplyConnectionsCache        = false;
   _supplyOrderDropShipCache      = false;
   _supplyOrderId                 = -1;
@@ -874,7 +877,6 @@ void salesOrderItem::clear()
   _supplyOrderQtyOrderedInvCache = 0.0;
   _supplyOrderType               = "";
   _supplyOverridePriceCache      = 0.0;
-  _taxzoneid                     = -1;
   _updateItemsite                = false;
   _updatePrice                   = true;
 
@@ -926,6 +928,17 @@ void salesOrderItem::clear()
   _warehouse->setEnabled(true);
 }
 
+void salesOrderItem::setSaveStatus(SaveStatus status, QString msg)
+{
+  _saveStatus = status;
+  _scriptErrorMsg = msg;
+}
+
+void salesOrderItem::showScriptError()
+{
+  QMessageBox::critical(this, tr("Script Error"), _scriptErrorMsg);
+}
+
 void salesOrderItem::sSaveClicked()
 {
   ENTERED;
@@ -935,6 +948,7 @@ void salesOrderItem::sSaveClicked()
 void salesOrderItem::sSave(bool pPartial)
 {
   ENTERED << "with" << pPartial;
+  emit startingSave(pPartial);
   if (_soitemid < 0)
     return;
   XSqlQuery salesSave;
@@ -1016,10 +1030,12 @@ void salesOrderItem::sSave(bool pPartial)
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");  // In case of failure along the way
+  setSaveStatus(OK);
 
   emit saveBeforeBegin();
   if (_saveStatus == Failed)
   {
+    showScriptError();
     return;
   }
 
@@ -1029,6 +1045,7 @@ void salesOrderItem::sSave(bool pPartial)
   if (_saveStatus == Failed)
   {
     rollback.exec();
+    showScriptError();
     return;
   }
 
@@ -1591,34 +1608,35 @@ void salesOrderItem::sSave(bool pPartial)
   if (_saveStatus == Failed)
   {
     rollback.exec();
+    showScriptError();
     return;
   }
 
   XSqlQuery commit("COMMIT;");
 
   bool tryAgain = false;
-
   do
   {
     emit saveAfterCommit();
     if (_saveStatus == Failed)
     {
       QMessageBox failure(QMessageBox::Critical, tr("Script Error"),
-        tr("A script has failed after the main window saved successfully. How do "
-          "you wish to proceed?"));
+        tr("After the Sales Order Item was saved, a script failed with error:<br/>%1<br/>"
+           "How do you wish to proceed?").arg(_scriptErrorMsg));
       QPushButton* retry = failure.addButton(tr("Retry"), QMessageBox::NoRole);
-      failure.addButton(tr("Ignore"), QMessageBox::YesRole);
-      QPushButton* cancel = failure.addButton(QMessageBox::Cancel);
-      failure.setDefaultButton(cancel);
-      failure.setEscapeButton((QAbstractButton*)cancel);
+      QPushButton* ignore = failure.addButton(tr("Ignore Script Error"), QMessageBox::YesRole);
+      failure.setDefaultButton(ignore);
+      failure.setEscapeButton((QAbstractButton*)ignore);
       failure.exec();
       if (failure.clickedButton() == (QAbstractButton*)retry)
       {
         setSaveStatus(OK);
         tryAgain = true;
       }
-      else if (failure.clickedButton() == (QAbstractButton*)cancel)
-        return;
+      else if (failure.clickedButton() == (QAbstractButton*)ignore)
+      {
+        tryAgain = false;
+      }
     }
   } while (tryAgain);
 
@@ -5186,4 +5204,22 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
   _taxtype            ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _unitCost           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _warranty           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+}
+
+//script exposure
+
+QScriptValue constructSalesOrderItem(QScriptContext *context, QScriptEngine  *engine)
+{
+  return engine->toScriptValue(new salesOrderItem());
+}
+
+void setupsalesOrderItem(QScriptEngine *engine)
+{
+  if (!engine->globalObject().property("salesOrderItem").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructSalesOrderItem);
+    QScriptValue meta = engine->newQMetaObject(&salesOrderItem::staticMetaObject, ctor);
+    engine->globalObject().setProperty("salesOrderItem", meta, 
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }
