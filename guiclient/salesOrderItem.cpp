@@ -995,6 +995,17 @@ void salesOrderItem::clear()
 
 }
 
+void salesOrderItem::setSaveStatus(SaveStatus status, QString msg)
+{
+  _saveStatus = status;
+  _scriptErrorMsg = msg;
+}
+
+void salesOrderItem::showScriptError()
+{
+  QMessageBox::critical(this, tr("Script Error"), _scriptErrorMsg);
+}
+
 void salesOrderItem::sSaveClicked()
 {
   ENTERED;
@@ -1004,6 +1015,7 @@ void salesOrderItem::sSaveClicked()
 void salesOrderItem::sSave(bool pPartial)
 {
   ENTERED << "with" << pPartial;
+  emit startingSave(pPartial);
   if (_soitemid < 0)
     return;
   XSqlQuery salesSave;
@@ -1085,10 +1097,12 @@ void salesOrderItem::sSave(bool pPartial)
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");  // In case of failure along the way
+  setSaveStatus(OK);
 
   emit saveBeforeBegin();
   if (_saveStatus == Failed)
   {
+    showScriptError();
     return;
   }
 
@@ -1098,6 +1112,7 @@ void salesOrderItem::sSave(bool pPartial)
   if (_saveStatus == Failed)
   {
     rollback.exec();
+    showScriptError();
     return;
   }
 
@@ -1660,34 +1675,35 @@ void salesOrderItem::sSave(bool pPartial)
   if (_saveStatus == Failed)
   {
     rollback.exec();
+    showScriptError();
     return;
   }
 
   XSqlQuery commit("COMMIT;");
 
   bool tryAgain = false;
-
   do
   {
     emit saveAfterCommit();
     if (_saveStatus == Failed)
     {
       QMessageBox failure(QMessageBox::Critical, tr("Script Error"),
-        tr("A script has failed after the main window saved successfully. How do "
-          "you wish to proceed?"));
+        tr("After the Sales Order Item was saved, a script failed with error:<br/>%1<br/>"
+           "How do you wish to proceed?").arg(_scriptErrorMsg));
       QPushButton* retry = failure.addButton(tr("Retry"), QMessageBox::NoRole);
-      failure.addButton(tr("Ignore"), QMessageBox::YesRole);
-      QPushButton* cancel = failure.addButton(QMessageBox::Cancel);
-      failure.setDefaultButton(cancel);
-      failure.setEscapeButton((QAbstractButton*)cancel);
+      QPushButton* ignore = failure.addButton(tr("Ignore Script Error"), QMessageBox::YesRole);
+      failure.setDefaultButton(ignore);
+      failure.setEscapeButton((QAbstractButton*)ignore);
       failure.exec();
       if (failure.clickedButton() == (QAbstractButton*)retry)
       {
         setSaveStatus(OK);
         tryAgain = true;
       }
-      else if (failure.clickedButton() == (QAbstractButton*)cancel)
-        return;
+      else if (failure.clickedButton() == (QAbstractButton*)ignore)
+      {
+        tryAgain = false;
+      }
     }
   } while (tryAgain);
 
@@ -5190,4 +5206,22 @@ void salesOrderItem::sHandleScheduleDate()
 
   sDeterminePrice();
   sDetermineAvailability();
+}
+
+//script exposure
+
+QScriptValue constructSalesOrderItem(QScriptContext *context, QScriptEngine  *engine)
+{
+  return engine->toScriptValue(new salesOrderItem());
+}
+
+void setupsalesOrderItem(QScriptEngine *engine)
+{
+  if (!engine->globalObject().property("salesOrderItem").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructSalesOrderItem);
+    QScriptValue meta = engine->newQMetaObject(&salesOrderItem::staticMetaObject, ctor);
+    engine->globalObject().setProperty("salesOrderItem", meta, 
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

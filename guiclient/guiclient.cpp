@@ -77,6 +77,7 @@
 #include "scripttoolbox.h"
 #include "menubutton.h"
 #include "guiErrorCheck.h"
+#include "salesOrderItem.h"
 #include "xtupleguiclientinterface.h"
 
 #include "include.h"
@@ -2293,6 +2294,7 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   setupWidgetsScriptApi(engine, ScriptableWidget::_guiClientInterface); // what's a better way?
   setupSetupApi(engine);
   setupGuiErrorCheck(engine);
+  setupsalesOrderItem(engine);
 
   // TODO: Make all classes work this way instead of setup* as above?
   // TODO: This interface sets this instance as the global. we can do better.

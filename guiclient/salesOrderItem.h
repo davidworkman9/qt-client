@@ -39,6 +39,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     Q_INVOKABLE virtual int modeType() const;
 
   signals:
+    virtual void startingSave(bool);
     virtual void saveBeforeBegin();
     virtual void saveAfterBegin();
     virtual void saveBeforeCommit();
@@ -93,7 +94,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sCalcUnitCost();
     virtual void        sHandleButton();
     virtual void        sHandleScheduleDate();
-    inline virtual void setSaveStatus(SaveStatus status) { _saveStatus = status; };
+    virtual void        setSaveStatus(SaveStatus status, QString msg = "");
 
   protected slots:
     virtual void  languageChange();
@@ -158,6 +159,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     int     _itemsubsLastItemid;
     int     _itemsubsLastWarehousid;
     SaveStatus _saveStatus;
+    QString _scriptErrorMsg;
 
     // For holding variables for characteristic pricing
     QList<QVariant> _charVars;
@@ -178,6 +180,9 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
       CURR_ID    = 4,
       EFFECTIVE  = 5
     };
+    
+    void showScriptError();
 };
+void setupsalesOrderItem(QScriptEngine *engine);
 
 #endif  // SALESORDERITEM_H
