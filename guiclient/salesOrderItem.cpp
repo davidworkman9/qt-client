@@ -303,6 +303,15 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _altCosAccnt->setType(GLCluster::cRevenue | GLCluster::cExpense);
   _altRevAccnt->setType(GLCluster::cRevenue);
+
+  _custid                        = -1;
+  _initialMode                   = -1;
+  _preferredWarehouseid          = -1;
+  _saletypeid                    = -1;
+  _shiptoid                      = -1;
+  _shiptoname                    = "";
+  _shipzoneid                    = -1;
+  _taxzoneid                     = -1;
 }
 
 salesOrderItem::~salesOrderItem()
@@ -906,9 +915,7 @@ void salesOrderItem::clear()
   _availabilityLastWarehousid    = -1;
   _availabilityQtyOrdered        = 0.0;
   _canceling                     = false;
-  _custid                        = -1;
   _error                         = false;
-  _initialMode                   = -1;
   _invIsFractional               = false;
   _invuomid                      = -1;
   _itemsiteLastItemid            = -1;
@@ -920,7 +927,6 @@ void salesOrderItem::clear()
   _modified                      = false;
   _originalQtyOrd                = 0.0;
   _partialsaved                  = false;
-  _preferredWarehouseid          = -1;
   _priceMode                     = "D";  // default to discount
   _priceRatio                    = 1.0;
   _priceUOMCache                 = -1;
@@ -929,10 +935,6 @@ void salesOrderItem::clear()
   _qtyatshipping                 = 0.0;
   _qtyinvuomratio                = 1.0;
   _qtyreserved                   = 0.0;
-  _saletypeid                    = -1;
-  _shiptoid                      = -1;
-  _shiptoname                    = "";
-  _shipzoneid                    = -1;
   _supplyConnectionsCache        = false;
   _supplyOrderDropShipCache      = false;
   _supplyOrderId                 = -1;
@@ -941,7 +943,6 @@ void salesOrderItem::clear()
   _supplyOrderQtyOrderedInvCache = 0.0;
   _supplyOrderType               = "";
   _supplyOverridePriceCache      = 0.0;
-  _taxzoneid                     = -1;
   _updateItemsite                = false;
   _updatePrice                   = true;
 
