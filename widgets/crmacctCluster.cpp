@@ -40,33 +40,39 @@ static QString _listAndSearchQueryString(
       "      LEFT OUTER JOIN crmacctcntctass ON (crmacct_id=crmacctcntctass_crmacct_id "
       "                                          AND crmacctcntctass_crmrole_id=getcrmroleid('Primary')) "
       "      LEFT OUTER JOIN cntct ON (crmacctcntctass_cntct_id=cntct_id)"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? elseif exists('customer') ?>"
       "    SELECT cust_id AS id,         cust_number AS number,"
       "           cust_name AS name,     cust_cntct_id AS cntct_id,"
       "           cust_active AS active, cntct_addr_id AS addr_id"
       "      FROM custinfo"
       "      LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? elseif exists('employee') ?>"
       "    SELECT emp_id AS id,         emp_code AS number,"
       "           emp_number AS name,   emp_cntct_id AS cntct_id,"
       "           emp_active AS active, cntct_addr_id AS addr_id"
       "      FROM emp"
       "      LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id)"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? elseif exists('salesrep') ?>"
       "    SELECT salesrep_id AS id,         salesrep_number AS number,"
       "           salesrep_name AS name,     NULL::INTEGER AS cntct_id,"
       "           salesrep_active AS active, NULL::INTEGER AS addr_id"
       "      FROM salesrep"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? elseif exists('taxauth') ?>"
       "    SELECT taxauth_id AS id,     taxauth_code AS number,"
       "           taxauth_name AS name, NULL::INTEGER AS cntct_id,"
       "           true AS active,       taxauth_addr_id AS addr_id"
       "      FROM taxauth"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? elseif exists('user') ?>"
       "    SELECT usr_id AS id,           usr_username AS number,"
       "           usr_propername AS name, NULL::INTEGER AS cntct_id,"
       "           usr_active AS active,   NULL::INTEGER AS addr_id"
       "      FROM usr"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? elseif exists('vendor') ?>"
       "    SELECT vend_id AS id,         vend_number AS number,"
       "           vend_name AS name,     vend_cntct1_id AS cntct_id,"
@@ -76,6 +82,7 @@ static QString _listAndSearchQueryString(
       "      FROM vendinfo"
       "      JOIN vendtype ON (vend_vendtype_id=vendtype_id)"
       "      LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id)"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? endif ?>"
       "<? if exists('prospect') ?>"
       "    <? if exists('customer') ?>UNION<? endif ?>"
@@ -84,6 +91,7 @@ static QString _listAndSearchQueryString(
       "           prospect_active AS active, cntct_addr_id AS addr_id"
       "      FROM prospect"
       "      LEFT OUTER JOIN cntct ON (getcrmaccountcontact(prospect_crmacct_id)=cntct_id)"
+      "  <? if exists('extraClause') ?> WHERE <? literal('extraClause') ?> <? endif ?> "
       "<? endif ?>"
       "  ) AS crminfo"
       "  LEFT OUTER JOIN cntct ON (crminfo.cntct_id=cntct.cntct_id)"
@@ -402,6 +410,9 @@ void CRMAcctList::sFillList()
   if (! _showInactive)
     params.append("activeOnly");
 
+  if (!qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause().isEmpty())
+    params.append("extraClause", qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause());
+
   XSqlQuery fillq = mql.toQuery(params);
 
   _listTab->populate(fillq);
@@ -690,6 +701,9 @@ void CRMAcctSearch::sFillList()
 
   if (! _showInactive->isChecked())
     params.append("activeOnly");
+
+  if (!qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause().isEmpty())
+    params.append("extraClause", qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause());
 
   if (_searchNumber->isChecked())
     params.append("searchNumber");
