@@ -5135,6 +5135,7 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
   }
   else
   {
+    _subItemList->setVisible(ISNEW(pMode) || ISEDIT(pMode));
     _comments->setType(Comments::SalesOrderItem);
     prevButtonSql = "SELECT EXISTS(SELECT 1 FROM coitem"
                     "               WHERE coitem_cohead_id = :head_id) AS hasLines;";
@@ -5146,8 +5147,8 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
   _save->setEnabled(false);
   _save->setVisible(ISNEW(_initialMode) || ISEDIT(_initialMode));
 
-  _comments->setReadOnly(pMode == cNewQuote);   // prior code really is this specific
-  _item->setReadOnly(ISEDIT(pMode) || ISVIEW(pMode));
+  _comments->setReadOnly(pMode == cNewQuote || ISVIEW(pMode));
+  _item    ->setReadOnly(ISEDIT(pMode)      || ISVIEW(pMode));
 
   _cancel->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
   _next  ->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
