@@ -304,7 +304,8 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
 
       QStringList clauses;
       clauses = _extraClauses;
-      clauses << _extraClause;
+      if (!_extraClause.isEmpty())
+        clauses << _extraClause;
       clauses << "(item_number=:item_number OR item_upccode=:item_number)";
 
       item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, false));
@@ -403,7 +404,8 @@ void ItemLineEdit::silentSetId(const int pId)
 
     QStringList clauses;
     clauses = _extraClauses;
-    clauses << _extraClause;
+    if (!_extraClause.isEmpty())
+      clauses << _extraClause;
     clauses << "(item_id=:item_id)";
 
     item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, false));
@@ -580,7 +582,8 @@ void ItemLineEdit::sHandleCompleter()
 
     QStringList clauses;
     clauses = _extraClauses;
-    clauses << _extraClause;
+    if (!_extraClause.isEmpty())
+      clauses << _extraClause;
     clauses << "((POSITION(:searchString IN item_number) = 1)"
             " OR (POSITION(:searchString IN item_upccode) = 1))";
     if (_crmacct > 0)
@@ -878,7 +881,8 @@ void ItemLineEdit::sParse()
       QStringList clauses;
       // first check item number
       clauses = _extraClauses;
-      clauses << _extraClause;
+      if (!_extraClause.isEmpty())
+        clauses << _extraClause;
       clauses << "(POSITION(:searchString IN item_number) = 1)";
       if (_crmacct > 0)
         clauses << QString("(itemalias_crmacct_id IS NULL OR itemalias_crmacct_id = %1)")
@@ -897,7 +901,8 @@ void ItemLineEdit::sParse()
       }
       // item number not found, check upccode
       clauses = _extraClauses;
-      clauses << _extraClause;
+      if (!_extraClause.isEmpty())
+        clauses << _extraClause;
       clauses << "(POSITION(:searchString IN item_upccode) = 1)";
       item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                    .replace(";"," ORDER BY item_number LIMIT 1;"));
@@ -1150,7 +1155,8 @@ void itemList::sFillList()
 {
   QStringList clauses;
   clauses = _extraClauses;
-  clauses << _parent->extraClause();
+  if (!_parent->extraClause().isEmpty())
+    clauses << _parent->extraClause();
   if(!(_itemType & ItemLineEdit::cActive) && !_showInactive->isChecked())
     clauses << "(item_active)"; 
 
@@ -1322,7 +1328,8 @@ void itemSearch::sFillList()
   QString sql;
   QStringList clauses;
   clauses = _extraClauses;
-  clauses << _parent->extraClause();
+  if (!_parent->extraClause().isEmpty())
+    clauses << _parent->extraClause();
   if(!(_itemType & ItemLineEdit::cActive) && !_showInactive->isChecked())
     clauses << "(item_active)";
 
