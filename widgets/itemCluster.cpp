@@ -58,13 +58,13 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
   }
 
   if (pType & (ItemLineEdit::cLocationControlled | ItemLineEdit::cLotSerialControlled | ItemLineEdit::cDefaultLocation | ItemLineEdit::cActive))
-    sql += "JOIN itemsite ON itemsite_item_id = item_id ";
+    sql += "  JOIN itemsite ON itemsite_item_id = item_id ";
 
   if (pType & (ItemLineEdit::cHasBom))
-    sql += "JOIN bomitem ON bomitem_parent_item_id = item_id ";
+    sql += "  JOIN bomitem ON bomitem_parent_item_id = item_id ";
 
   if (pType & (ItemLineEdit::cUsedOnBom))
-    sql += "JOIN bomitem ON bomitem_item_id = item_id ";
+    sql += "  JOIN bomitem ON bomitem_item_id = item_id ";
 
   if (pType & ItemLineEdit::cAllItemTypes_Mask)
   {

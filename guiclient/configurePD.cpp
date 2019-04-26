@@ -170,8 +170,8 @@ bool configurePD::sSave()
     {
       QMessageBox::warning(this, tr("Inactive BOM Items"),
                            tr("You cannot disallow inactive BOM items when inactive BOM items "
-                              "currently exist. Please ensure no BOM items are inactive before "
-                              "changing this setting"));
+                              "currently exist. Please review your inactive BOM items before "
+                              "changing this setting."));
       _inactiveBomItems->setChecked(true);
       return false;
     }
