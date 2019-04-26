@@ -117,8 +117,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _charVars << -1 << -1 << -1 << 0 << -1 << omfgThis->dbDate();
 
-  _initialMode = -1;
-
   //  Configure some Widgets
   _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
   _item->addExtraClause( QString("(itemsite_active)") );  // ItemLineEdit::cActive doesn't compare against the itemsite record
@@ -451,7 +449,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      handleFieldsOnModeChange(_mode);
       _supplyOrderType = "";
       _supplyOrderId = -1;
       _itemsrc = -1;
@@ -476,19 +473,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)), Qt::UniqueConnection);
       connect(_createSupplyOrder,      SIGNAL(toggled(bool)),        this,         SLOT(sHandleSupplyOrder()), Qt::UniqueConnection);
 
-      setSales.prepare("SELECT count(*) AS cnt"
-                "  FROM coitem"
-                " WHERE (coitem_cohead_id=:sohead_id);");
-      setSales.bindValue(":sohead_id", _soheadid);
-      setSales.exec();
-      if (!setSales.first() || setSales.value("cnt").toInt() == 0)
-        _prev->setEnabled(false);
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
-                                    setSales, __FILE__, __LINE__))
-      {
-        return UndefinedError;
-      }
-
       if (_metrics->boolean("EnableSOReservations"))
         _reserveOnSave->show();
     }
@@ -496,7 +480,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNewQuote;
 
-      handleFieldsOnModeChange(_mode);
       _supplyOrderId = -1;
       _itemsrc = -1;
       _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2, '%3') ) )").arg(_custid).arg(_shiptoid).arg(asOf.toString(Qt::ISODate)) );
@@ -517,25 +500,10 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       connect(_unitCost,               SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()), Qt::UniqueConnection);
       connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()), Qt::UniqueConnection);
       connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)), Qt::UniqueConnection);
-
-      setSales.prepare("SELECT count(*) AS cnt"
-                "  FROM quitem"
-                " WHERE (quitem_quhead_id=:sohead_id);");
-      setSales.bindValue(":sohead_id", _soheadid);
-      setSales.exec();
-      if (!setSales.first() || setSales.value("cnt").toInt() == 0)
-        _prev->setEnabled(false);
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Quote Information"),
-                                    setSales, __FILE__, __LINE__))
-      {
-        return UndefinedError;
-      }
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      handleFieldsOnModeChange(_mode);
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()), Qt::UniqueConnection);
       connect(_netUnitPrice,           SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()), Qt::UniqueConnection);
@@ -563,8 +531,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
 
-      handleFieldsOnModeChange(_mode);
-
       connect(_qtyOrdered,             SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()), Qt::UniqueConnection);
       connect(_netUnitPrice,           SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()), Qt::UniqueConnection);
       if (_metrics->boolean("AllowListPriceSchedules"))
@@ -583,7 +549,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-      handleFieldsOnModeChange(_mode);
     }
     else if (param.toString() == "viewQuote")
     {
@@ -591,13 +556,12 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
 
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
-
-      handleFieldsOnModeChange(_mode);
     }
   }
 
   if (_initialMode == -1)
     _initialMode = _mode;
+  handleFieldsOnModeChange(_mode);
 
   param = pParams.value("soitem_id", &valid);
   if (valid)
@@ -5154,6 +5118,7 @@ void salesOrderItem::sHandleScheduleDate()
   */
 void salesOrderItem::handleFieldsOnModeChange(int pMode)
 {
+  QString prevButtonSql;
   if (ISQUOTE(pMode))
   {
     setWindowTitle(tr("Quote Item"));
@@ -5165,21 +5130,39 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
     _subItem->hide();
     _subItemList->hide();
     _warranty->hide();
+    prevButtonSql = "SELECT EXISTS(SELECT 1 FROM quitem"
+                    "               WHERE quitem_quhead_id = :head_id) AS hasLines;";
   }
   else
   {
     _comments->setType(Comments::SalesOrderItem);
+    prevButtonSql = "SELECT EXISTS(SELECT 1 FROM coitem"
+                    "               WHERE coitem_cohead_id = :head_id) AS hasLines;";
   }
 
   _warehouse->setEnabled(true);
-  _save->setEnabled(false);             // _save will be enabled when _item.isValid()
+
+  // _save will be enabled when _item.isValid(). keep it visible to avoid jumping buttons.
+  _save->setEnabled(false);
+  _save->setVisible(ISNEW(_initialMode) || ISEDIT(_initialMode));
 
   _comments->setReadOnly(pMode == cNewQuote);   // prior code really is this specific
   _item->setReadOnly(ISEDIT(pMode) || ISVIEW(pMode));
 
   _cancel->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
   _next  ->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
-  _prev  ->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
+  if (ISEDIT(pMode) || ISVIEW(pMode))
+    _prev->setEnabled(true);
+  else if (ISNEW(pMode))
+  {
+    XSqlQuery prevButtonQ;
+    prevButtonQ.prepare(prevButtonSql);
+    prevButtonQ.bindValue(":head_id", _soheadid);
+    if (prevButtonQ.exec() && (! prevButtonQ.first() || prevButtonQ.value("cnt").toInt() == 0))
+      _prev->setEnabled(false);
+    (void)ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Line Item Count"),
+                               prevButtonQ, __FILE__, __LINE__);
+  }
 
   _altCosAccnt        ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _altRevAccnt        ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
@@ -5197,10 +5180,10 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
   _qtyUOM             ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _scheduledDate      ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _socharView         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
-  _sub	->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
-  _subItem	->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _sub	              ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _subItem	      ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _supplyOverridePrice->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
-  _supplyWarehouse	->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _supplyWarehouse    ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _taxtype            ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _unitCost           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _warranty           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
@@ -5210,6 +5193,7 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
 
 QScriptValue constructSalesOrderItem(QScriptContext *context, QScriptEngine  *engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(new salesOrderItem());
 }
 
