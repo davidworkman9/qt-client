@@ -453,7 +453,8 @@ void purchaseOrderItem::populate()
     if(purchasepopulate.value("override_cost").toDouble() > 0)
       _overriddenUnitPrice = true;
 
-    if(purchasepopulate.value("poitem_order_id") != -1)
+    if(purchasepopulate.value("poitem_order_id") != -1 && 
+       purchasepopulate.value("demand_type").toString()=="Sales Order #")
     {
       _ordered->setEnabled(false);
       _dueDate->setEnabled(false);
