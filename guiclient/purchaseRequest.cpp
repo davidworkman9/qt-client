@@ -271,11 +271,10 @@ void purchaseRequest::sSave()
         purchaseCreate.bindValue(":pr_id",  _prid);
         purchaseCreate.bindValue(":prj_id", _project->id());
         purchaseCreate.exec();
-
-        purchaseCreate.prepare("SELECT releasePlannedOrder(:planord_id, false) AS result;");
-        purchaseCreate.bindValue(":planord_id", _planordid);
-        purchaseCreate.exec();
       }
+      purchaseCreate.prepare("SELECT releasePlannedOrder(:planord_id, false) AS result;");
+      purchaseCreate.bindValue(":planord_id", _planordid);
+      purchaseCreate.exec();
     }
     else
     {
