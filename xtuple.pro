@@ -7,8 +7,12 @@
 # is available at www.xtuple.com/CPAL.  By using this software, you agree
 # to be bound by its terms.
 #
+include( global.pri )
+
 TEMPLATE = subdirs
-SUBDIRS = common \
+SUBDIRS = $${OPENRPT_PATH} \
+          $${CSVIMP_PATH} \
+          common \
           scriptapi \
           scriptapitest/scriptapitest.pro \
           widgets/dll.pro \
@@ -65,9 +69,8 @@ dictionaries.files = hunspell/*.aff hunspell/*.dic
 
 translations.path = $$absolute_path($${EXTRASDIR})/dict
 translations.files = $$replace(TRANSLATIONS, ts, qm)
-win32-msvc {
-  translations.extra = FOR %%f IN ( $${TRANSLATIONS} ) DO $$dirname(QMAKE_QMAKE)/lrelease %%f
-} else {
-  translations.extra = $$dirname(QMAKE_QMAKE)/lrelease $${TRANSLATIONS}
+translations.extra = cd share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts
+msvc{
+  translations.extra =  for %i IN ($${TRANSLATIONS}) DO $$dirname(QMAKE_QMAKE)/lrelease %i
 }
 translations.CONFIG = no_check_exist

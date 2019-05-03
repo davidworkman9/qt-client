@@ -173,6 +173,7 @@ void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 
 void VirtualCluster::setEnabled(const bool p)
 {
+  QWidget::setEnabled(p);
   QList<QWidget*> child = findChildren<QWidget*>();
   for (int i = 0; i < child.size(); i++)
   {
@@ -420,7 +421,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     setMinimumHeight(height);
 
     // Set default menu with standard actions
-    QMenu* menu = new QMenu;
+    QMenu* menu = new QMenu(this);
     menu->setObjectName("menu");
     menu->addAction(_listAct);
     menu->addAction(_searchAct);
@@ -606,7 +607,8 @@ void VirtualClusterLineEdit::sHandleCompleter()
 void VirtualClusterLineEdit::completerActivated(const QModelIndex &pIndex)
 {
   _completerId = _completer->completionModel()->data(pIndex.sibling(pIndex.row(), 0)).toInt();
-  setText(pIndex.sibling(pIndex.row(), 1).data().toString());
+  if (_completerId)
+    setText(pIndex.sibling(pIndex.row(), 1).data().toString());
   if (DEBUG)
     qDebug() << objectName() << "::completerActivated(" << pIndex << ")"
              << "corresponds to completerId" << _completerId;

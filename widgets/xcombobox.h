@@ -46,6 +46,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     XComboBox(QWidget * = 0, const char * = 0);
     XComboBox(bool, QWidget * = 0, const char * = 0);
     virtual ~XComboBox();
+    static void cleanup();
 
     enum Defaults { First, None };
     Q_ENUM(Defaults)

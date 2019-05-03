@@ -104,14 +104,14 @@
    <item row="1" column="2" rowspan="9">
     <widget class="XTreeWidget" name="_sel">
      <property name="selectionMode">
-      <enum>QAbstractItemView::MultiSelection</enum>
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
     </widget>
    </item>
    <item row="1" column="0" rowspan="9">
     <widget class="XTreeWidget" name="_avail">
      <property name="selectionMode">
-      <enum>QAbstractItemView::MultiSelection</enum>
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
     </widget>
    </item>

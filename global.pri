@@ -52,6 +52,11 @@ isEmpty( CSVIMP_HEADERS ) {
   error("Could not set the CSVIMP_HEADERS qmake variable.")
 }
 
+# copying over openrpt and csvipm directory paths for use in xtuple.pro
+OPENRPT_PATH = $${OPENRPT_DIR}
+CSVIMP_PATH = $${CSVIMP_DIR}
+
+
 # global.pri is processed at the top level but the variables are used down 1 level
 ! isEmpty( OPENRPT_DIR_REL    ) { OPENRPT_DIR    = ../$${OPENRPT_DIR}
                                   OPENRPT_BLD    = ../$${OPENRPT_BLD}    }

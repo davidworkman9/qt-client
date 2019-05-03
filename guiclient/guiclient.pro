@@ -605,7 +605,6 @@ FORMS =   absoluteCalendarItem.ui               \
           transferOrders.ui                     \
           transferTrans.ui                      \
           transformTrans.ui                     \
-          translations.ui                       \
           uiform.ui                             \
           uiformchooser.ui                      \
           uiforms.ui                            \
@@ -1220,7 +1219,6 @@ HEADERS = ../common/format.h                    \
           transferOrders.h              \
           transferTrans.h               \
           transformTrans.h              \
-          translations.h                \
           uiform.h                      \
           uiformchooser.h               \
           uiforms.h                     \
@@ -1843,7 +1841,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           transferOrders.cpp                    \
           transferTrans.cpp                     \
           transformTrans.cpp                    \
-          translations.cpp                      \
           uiform.cpp                            \
           uiformchooser.cpp                     \
           uiforms.cpp                           \

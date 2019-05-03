@@ -37,6 +37,9 @@
 
 #define ISQUOTE(mode) (((mode) & 0x20) == 0x20)
 #define ISORDER(mode) (!ISQUOTE(mode))
+#define ISNEW(mode)   (((mode) & (~ 0x20)) == cNew)
+#define ISEDIT(mode)  (((mode) & (~ 0x20)) == cEdit)
+#define ISVIEW(mode)  (((mode) & (~ 0x20)) == cView)
 
 #define iDontUpdate   1
 #define iAskToUpdate  2
@@ -304,13 +307,20 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _altCosAccnt->setType(GLCluster::cRevenue | GLCluster::cExpense);
   _altRevAccnt->setType(GLCluster::cRevenue);
 
+  _custid                        = -1;
+  _initialMode                   = -1;
+  _preferredWarehouseid          = -1;
+  _saletypeid                    = -1;
+  _shiptoid                      = -1;
+  _shiptoname                    = "";
+  _shipzoneid                    = -1;
+  _taxzoneid                     = -1;
+
   if (_metrics->value("TaxService") == "N")
   {
     _taxExemptLit->hide();
     _taxExempt->hide();
   }
-
-  // TO DO **** Fix tab order issues and offer alternate means for "Express Tab Order"  ****
 }
 
 salesOrderItem::~salesOrderItem()
@@ -450,13 +460,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      _save->setEnabled(false);
-      _next->setEnabled(false);
-      _comments->setType(Comments::SalesOrderItem);
-      _comments->setReadOnly(false);
-      _item->setReadOnly(false);
-      _warehouse->setEnabled(true);
-      _cancel->setEnabled(false);
       _supplyOrderType = "";
       _supplyOrderId = -1;
       _itemsrc = -1;
@@ -481,19 +484,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)), Qt::UniqueConnection);
       connect(_createSupplyOrder,      SIGNAL(toggled(bool)),        this,         SLOT(sHandleSupplyOrder()), Qt::UniqueConnection);
 
-      setSales.prepare("SELECT count(*) AS cnt"
-                "  FROM coitem"
-                " WHERE (coitem_cohead_id=:sohead_id);");
-      setSales.bindValue(":sohead_id", _soheadid);
-      setSales.exec();
-      if (!setSales.first() || setSales.value("cnt").toInt() == 0)
-        _prev->setEnabled(false);
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
-                                    setSales, __FILE__, __LINE__))
-      {
-        return UndefinedError;
-      }
-
       if (_metrics->boolean("EnableSOReservations"))
         _reserveOnSave->show();
     }
@@ -501,23 +491,8 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNewQuote;
 
-      setWindowTitle(tr("Quote Item"));
-
-      _save->setEnabled(false);
-      _next->setEnabled(false);
-      _comments->setType(Comments::QuoteItem);
-      _comments->setReadOnly(true);
-      _cancel->hide();
-      _sub->hide();
-      _subItem->hide();
-      _subItemList->hide();
-      _item->setReadOnly(false);
-      _warehouse->setEnabled(true);
       _supplyOrderId = -1;
       _itemsrc = -1;
-      _warranty->hide();
-      _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
-
       _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2, '%3') ) )").arg(_custid).arg(_shiptoid).arg(asOf.toString(Qt::ISODate)) );
 
       prepare();
@@ -536,27 +511,10 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       connect(_unitCost,               SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()), Qt::UniqueConnection);
       connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()), Qt::UniqueConnection);
       connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)), Qt::UniqueConnection);
-
-      setSales.prepare("SELECT count(*) AS cnt"
-                "  FROM quitem"
-                " WHERE (quitem_quhead_id=:sohead_id);");
-      setSales.bindValue(":sohead_id", _soheadid);
-      setSales.exec();
-      if (!setSales.first() || setSales.value("cnt").toInt() == 0)
-        _prev->setEnabled(false);
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Quote Information"),
-                                    setSales, __FILE__, __LINE__))
-      {
-        return UndefinedError;
-      }
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _item->setReadOnly(true);
-      _listPrices->setEnabled(true);
-      _comments->setType(Comments::SalesOrderItem);
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()), Qt::UniqueConnection);
       connect(_netUnitPrice,           SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()), Qt::UniqueConnection);
@@ -580,20 +538,9 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     else if (param.toString() == "editQuote")
     {
       _mode = cEditQuote;
+
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
-
-      setWindowTitle(tr("Quote Item"));
-
-      _item->setReadOnly(true);
-      _listPrices->setEnabled(true);
-      _comments->setType(Comments::QuoteItem);
-      _cancel->hide();
-      _sub->hide();
-      _subItem->hide();
-      _subItemList->hide();
-      _warranty->hide();
-      _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()), Qt::UniqueConnection);
       connect(_netUnitPrice,           SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()), Qt::UniqueConnection);
@@ -613,61 +560,19 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-
-      _comments->setType(Comments::SalesOrderItem);
-      _sub->setEnabled(false);
-      _subItem->setEnabled(false);
-      _supplyWarehouse->setEnabled(false);
-      _supplyOverridePrice->setEnabled(false);
     }
     else if (param.toString() == "viewQuote")
     {
       _mode = cViewQuote;
+
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
-
-      setWindowTitle(tr("Quote Item"));
-
-      _cancel->hide();
-      _sub->hide();
-      _subItem->hide();
-      _comments->setType(Comments::QuoteItem);
-      _warranty->hide();
-      _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
     }
   }
 
   if (_initialMode == -1)
     _initialMode = _mode;
-
-  bool viewMode = (cView == _mode || cViewQuote == _mode);
-  if (viewMode)
-  {
-    _item->setReadOnly(viewMode);
-    _customerPN->setEnabled(!viewMode);
-    _qtyOrdered->setEnabled(!viewMode);
-    _netUnitPrice->setEnabled(!viewMode);
-    _discountFromCust->setEnabled(!viewMode);
-    _unitCost->setEnabled(!viewMode);
-    _markupFromUnitCost->setEnabled(!viewMode);
-    _scheduledDate->setEnabled(!viewMode);
-    _createSupplyOrder->setEnabled(!viewMode);
-    _notes->setEnabled(!viewMode);
-    _comments->setReadOnly(viewMode);
-    _taxtype->setEnabled(!viewMode);
-    _itemcharView->setEnabled(!viewMode);
-    _socharView->setEnabled(!viewMode);
-    _promisedDate->setEnabled(!viewMode);
-    _qtyUOM->setEnabled(!viewMode);
-    _priceUOM->setEnabled(!viewMode);
-    _warranty->setEnabled(!viewMode);
-    _listPrices->setEnabled(!viewMode);
-    _altCosAccnt->setEnabled(!viewMode);
-    _altRevAccnt->setEnabled(!viewMode);
-
-    _subItemList->setVisible(!viewMode);
-    _save->setVisible(!viewMode);
-  }
+  handleFieldsOnModeChange(_mode);
 
   param = pParams.value("soitem_id", &valid);
   if (valid)
@@ -919,7 +824,6 @@ void salesOrderItem::clear()
   _availabilityLastWarehousid    = -1;
   _availabilityQtyOrdered        = 0.0;
   _canceling                     = false;
-  _custid                        = -1;
   _error                         = false;
   _invIsFractional               = false;
   _invuomid                      = -1;
@@ -932,7 +836,6 @@ void salesOrderItem::clear()
   _modified                      = false;
   _originalQtyOrd                = 0.0;
   _partialsaved                  = false;
-  _preferredWarehouseid          = -1;
   _priceMode                     = "D";  // default to discount
   _priceRatio                    = 1.0;
   _priceUOMCache                 = -1;
@@ -941,10 +844,6 @@ void salesOrderItem::clear()
   _qtyatshipping                 = 0.0;
   _qtyinvuomratio                = 1.0;
   _qtyreserved                   = 0.0;
-  _saletypeid                    = -1;
-  _shiptoid                      = -1;
-  _shiptoname                    = "";
-  _shipzoneid                    = -1;
   _supplyConnectionsCache        = false;
   _supplyOrderDropShipCache      = false;
   _supplyOrderId                 = -1;
@@ -953,7 +852,6 @@ void salesOrderItem::clear()
   _supplyOrderQtyOrderedInvCache = 0.0;
   _supplyOrderType               = "";
   _supplyOverridePriceCache      = 0.0;
-  _taxzoneid                     = -1;
   _updateItemsite                = false;
   _updatePrice                   = true;
 
@@ -1003,7 +901,17 @@ void salesOrderItem::clear()
   _subItem->setEnabled(false);
   _subItemList->setEnabled(false);
   _warehouse->setEnabled(true);
+}
 
+void salesOrderItem::setSaveStatus(SaveStatus status, QString msg)
+{
+  _saveStatus = status;
+  _scriptErrorMsg = msg;
+}
+
+void salesOrderItem::showScriptError()
+{
+  QMessageBox::critical(this, tr("Script Error"), _scriptErrorMsg);
 }
 
 void salesOrderItem::sSaveClicked()
@@ -1015,6 +923,7 @@ void salesOrderItem::sSaveClicked()
 void salesOrderItem::sSave(bool pPartial)
 {
   ENTERED << "with" << pPartial;
+  emit startingSave(pPartial);
   if (_soitemid < 0)
     return;
   XSqlQuery salesSave;
@@ -1096,10 +1005,12 @@ void salesOrderItem::sSave(bool pPartial)
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");  // In case of failure along the way
+  setSaveStatus(OK);
 
   emit saveBeforeBegin();
   if (_saveStatus == Failed)
   {
+    showScriptError();
     return;
   }
 
@@ -1109,6 +1020,7 @@ void salesOrderItem::sSave(bool pPartial)
   if (_saveStatus == Failed)
   {
     rollback.exec();
+    showScriptError();
     return;
   }
 
@@ -1679,34 +1591,35 @@ void salesOrderItem::sSave(bool pPartial)
   if (_saveStatus == Failed)
   {
     rollback.exec();
+    showScriptError();
     return;
   }
 
   XSqlQuery commit("COMMIT;");
 
   bool tryAgain = false;
-
   do
   {
     emit saveAfterCommit();
     if (_saveStatus == Failed)
     {
       QMessageBox failure(QMessageBox::Critical, tr("Script Error"),
-        tr("A script has failed after the main window saved successfully. How do "
-          "you wish to proceed?"));
+        tr("After the Sales Order Item was saved, a script failed with error:<br/>%1<br/>"
+           "How do you wish to proceed?").arg(_scriptErrorMsg));
       QPushButton* retry = failure.addButton(tr("Retry"), QMessageBox::NoRole);
-      failure.addButton(tr("Ignore"), QMessageBox::YesRole);
-      QPushButton* cancel = failure.addButton(QMessageBox::Cancel);
-      failure.setDefaultButton(cancel);
-      failure.setEscapeButton((QAbstractButton*)cancel);
+      QPushButton* ignore = failure.addButton(tr("Ignore Script Error"), QMessageBox::YesRole);
+      failure.setDefaultButton(ignore);
+      failure.setEscapeButton((QAbstractButton*)ignore);
       failure.exec();
       if (failure.clickedButton() == (QAbstractButton*)retry)
       {
         setSaveStatus(OK);
         tryAgain = true;
       }
-      else if (failure.clickedButton() == (QAbstractButton*)cancel)
-        return;
+      else if (failure.clickedButton() == (QAbstractButton*)ignore)
+      {
+        tryAgain = false;
+      }
     }
   } while (tryAgain);
 
@@ -4392,6 +4305,8 @@ void salesOrderItem::populate()
       _warehouse->setEnabled(false);
     }
   }
+
+  _save->setEnabled(ISEDIT(_mode));
 }
 
 void salesOrderItem::sFindSellingWarehouseItemsites( int id )
@@ -5202,4 +5117,106 @@ void salesOrderItem::sHandleScheduleDate()
 
   sDeterminePrice();
   sDetermineAvailability();
+}
+
+/** @brief Set field visibility and enabled state based purely on window mode.
+
+    This is called exclusively by ::set(). The goal is to restore
+    field settings based only on the window mode. Further processing
+    by ::set() may change them. Prompted by bug 34342 and the
+    handling of kit items and enhanced pricing sublines.
+
+    @param pMode The mode the window will be in when ::set() is done
+  */
+void salesOrderItem::handleFieldsOnModeChange(int pMode)
+{
+  QString prevButtonSql;
+  if (ISQUOTE(pMode))
+  {
+    setWindowTitle(tr("Quote Item"));
+    _comments->setType(Comments::QuoteItem);
+    _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
+
+    _cancel->hide();
+    _sub->hide();
+    _subItem->hide();
+    _subItemList->hide();
+    _warranty->hide();
+    prevButtonSql = "SELECT EXISTS(SELECT 1 FROM quitem"
+                    "               WHERE quitem_quhead_id = :head_id) AS hasLines;";
+  }
+  else
+  {
+    _subItemList->setVisible(ISNEW(pMode) || ISEDIT(pMode));
+    _comments->setType(Comments::SalesOrderItem);
+    prevButtonSql = "SELECT EXISTS(SELECT 1 FROM coitem"
+                    "               WHERE coitem_cohead_id = :head_id) AS hasLines;";
+  }
+
+  _warehouse->setEnabled(true);
+
+  // _save will be enabled when _item.isValid(). keep it visible to avoid jumping buttons.
+  _save->setEnabled(false);
+  _save->setVisible(ISNEW(_initialMode) || ISEDIT(_initialMode));
+
+  _comments->setReadOnly(pMode == cNewQuote || ISVIEW(pMode));
+  _item    ->setReadOnly(ISEDIT(pMode)      || ISVIEW(pMode));
+
+  _cancel->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
+  _next  ->setEnabled(ISEDIT(pMode) || ISVIEW(pMode));
+  if (ISEDIT(pMode) || ISVIEW(pMode))
+    _prev->setEnabled(true);
+  else if (ISNEW(pMode))
+  {
+    XSqlQuery prevButtonQ;
+    prevButtonQ.prepare(prevButtonSql);
+    prevButtonQ.bindValue(":head_id", _soheadid);
+    if (prevButtonQ.exec() && (! prevButtonQ.first() || prevButtonQ.value("cnt").toInt() == 0))
+      _prev->setEnabled(false);
+    (void)ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Line Item Count"),
+                               prevButtonQ, __FILE__, __LINE__);
+  }
+
+  _altCosAccnt        ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _altRevAccnt        ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _createSupplyOrder  ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _customerPN         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _discountFromCust   ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _itemcharView       ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _listPrices         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _markupFromUnitCost ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _netUnitPrice       ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _notes              ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _priceUOM           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _promisedDate       ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _qtyOrdered         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _qtyUOM             ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _scheduledDate      ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _socharView         ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _sub	              ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _subItem	      ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _supplyOverridePrice->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _supplyWarehouse    ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _taxtype            ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _unitCost           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+  _warranty           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+}
+
+//script exposure
+
+QScriptValue constructSalesOrderItem(QScriptContext *context, QScriptEngine  *engine)
+{
+  Q_UNUSED(context);
+  return engine->toScriptValue(new salesOrderItem());
+}
+
+void setupsalesOrderItem(QScriptEngine *engine)
+{
+  if (!engine->globalObject().property("salesOrderItem").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructSalesOrderItem);
+    QScriptValue meta = engine->newQMetaObject(&salesOrderItem::staticMetaObject, ctor);
+    engine->globalObject().setProperty("salesOrderItem", meta, 
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }
