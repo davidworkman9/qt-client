@@ -63,7 +63,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)), Qt::UniqueConnection);
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)), Qt::UniqueConnection);
-  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)), Qt::UniqueConnection);
+  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs()), Qt::UniqueConnection);
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateHistory()), Qt::UniqueConnection);
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sDetermineAvailability()), Qt::UniqueConnection);
   connect(_listPrices,        SIGNAL(clicked()),                    this, SLOT(sListPrices()), Qt::UniqueConnection);
@@ -79,7 +79,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_showIndented,      SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()), Qt::UniqueConnection);
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()), Qt::UniqueConnection);
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()), Qt::UniqueConnection);
-  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)), Qt::UniqueConnection);
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs()), Qt::UniqueConnection);
   connect(_subs,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateSubMenu(QMenu*,QTreeWidgetItem*,int)), Qt::UniqueConnection);
   connect(_next,              SIGNAL(clicked()),                    this, SLOT(sNext()), Qt::UniqueConnection);
   connect(_prev,              SIGNAL(clicked()),                    this, SLOT(sPrev()), Qt::UniqueConnection);
@@ -2511,9 +2511,8 @@ void salesOrderItem::sPopulateItemSources(int pItemid)
   }
 }
 
-void salesOrderItem::sPopulateItemSubs(int pItemid)
+void salesOrderItem::sPopulateItemSubs()
 {
-  ENTERED << "with" << pItemid;
   if (_item->isValid() && _warehouse->isValid())
   {
     if (_item->id() == _itemsubsLastItemid && _warehouse->id() == _itemsubsLastWarehousid)
@@ -2524,7 +2523,7 @@ void salesOrderItem::sPopulateItemSubs(int pItemid)
     XSqlQuery subq;
     MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
     ParameterList params;
-    params.append("item_id", pItemid);
+    params.append("item_id", _item->id());
     params.append("warehous_id", _warehouse->id());
     params.append("byDate", true);
     if (_scheduledDate->isValid())
