@@ -160,6 +160,26 @@ bool configurePD::sSave()
     }
   }
 
+  if (_metrics->boolean("AllowInactiveBomItems") && !_inactiveBomItems->isChecked())
+  {
+    configureSave.exec("SELECT EXISTS(SELECT 1 "
+                       "                FROM bomitem "
+                       "                JOIN item ON bomitem_item_id = item_id "
+                       "               WHERE NOT item_active) AS result;");
+    if (configureSave.first() && configureSave.value("result").toBool())
+    {
+      QMessageBox::warning(this, tr("Inactive BOM Items"),
+                           tr("You cannot disallow inactive BOM items when inactive BOM items "
+                              "currently exist. Please review your inactive BOM items before "
+                              "changing this setting."));
+      _inactiveBomItems->setChecked(true);
+      return false;
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error checking BOM items"),
+                                  configureSave, __FILE__, __LINE__))
+      return false;
+  }
+
   _metrics->set("Transforms", ((_transforms->isChecked()) && (!_transforms->isHidden())));
   _metrics->set("RevControl", ((_revControl->isChecked()) && (!_revControl->isHidden())));
   _metrics->set("AllowInactiveBomItems", _inactiveBomItems->isChecked());

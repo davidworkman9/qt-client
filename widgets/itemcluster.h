@@ -252,8 +252,6 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
     ItemCluster(QWidget*, const char* = 0);
 
     Q_INVOKABLE void setReadOnly(const bool);
-    void setEnabled(const bool);
-    void setDisabled(bool);
 
     Q_INVOKABLE inline void    setType(unsigned int pType)    { static_cast<ItemLineEdit*>(_number)->setType(pType);
                                                                 static_cast<ItemLineEdit*>(_number)->setDefaultType(pType); }

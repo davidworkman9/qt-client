@@ -72,11 +72,11 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       Q_INVOKABLE void setEmailBodyText(const QString text);
 
       Q_INVOKABLE QString name() const;
-      Q_INVOKABLE QString honorific() const { return _fname->at(0); }
-      Q_INVOKABLE QString first() const { return _fname->at(1); }
-      Q_INVOKABLE QString middle() const { return _fname->at(2); }
-      Q_INVOKABLE QString last() const { return _fname->at(3); }
-      Q_INVOKABLE QString suffix() const { return _fname->at(4); }
+      Q_INVOKABLE QString honorific() const { return _fname.at(0); }
+      Q_INVOKABLE QString first() const { return _fname.at(1); }
+      Q_INVOKABLE QString middle() const { return _fname.at(2); }
+      Q_INVOKABLE QString last() const { return _fname.at(3); }
+      Q_INVOKABLE QString suffix() const { return _fname.at(4); }
       Q_INVOKABLE QString title() const { return _description->text(); }
       Q_INVOKABLE QString phone() const { return _phone->text(); }
       Q_INVOKABLE QString fax() const { return _fax->text(); }
@@ -119,7 +119,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       QLabel* _webaddrLit;
       QLabel* _addr;
       QLabel* _addrLit;
-      QStringList* _fname;
+      QStringList _fname;
       XURLLabel* _email;
       XURLLabel* _webaddr;
       QString _subjText;

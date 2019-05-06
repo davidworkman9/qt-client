@@ -71,11 +71,13 @@
 #include "xdoublevalidator.h"
 
 #include "distributeInventory.h"
+#include "comments.h"
 #include "documents.h"
 #include "splashconst.h"
 #include "scripttoolbox.h"
 #include "menubutton.h"
 #include "guiErrorCheck.h"
+#include "salesOrderItem.h"
 #include "xtupleguiclientinterface.h"
 
 #include "include.h"
@@ -520,6 +522,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 GUIClient::~GUIClient()
 {
   QApplication::closeAllWindows();
+
+  XComboBox::cleanup();
+  Comments::cleanup();
+  Documents::cleanup();
 
   errorLogListener::destroy();
   //omfgThis = 0;
@@ -2300,6 +2306,7 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   setupWidgetsScriptApi(engine, ScriptableWidget::_guiClientInterface); // what's a better way?
   setupSetupApi(engine);
   setupGuiErrorCheck(engine);
+  setupsalesOrderItem(engine);
 
   // TODO: Make all classes work this way instead of setup* as above?
   // TODO: This interface sets this instance as the global. we can do better.

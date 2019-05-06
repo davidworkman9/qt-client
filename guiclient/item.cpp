@@ -650,7 +650,6 @@ void item::sSave()
   {
     if ((QString(_itemTypes[_itemtype->currentIndex()]) == "R") ||
         (QString(_itemTypes[_itemtype->currentIndex()]) == "S") ||
-        (QString(_itemTypes[_itemtype->currentIndex()]) == "T") ||
         (QString(_itemTypes[_itemtype->currentIndex()]) == "F"))
         {
       itemSave.prepare("SELECT itemsite_id "

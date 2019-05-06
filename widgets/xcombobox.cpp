@@ -59,6 +59,16 @@ QByteArray *UNWRAPSLOT(const char *slotCharStar)
 #endif
 
 QHash<XComboBox::XComboBoxTypes, XComboBoxDescrip*> XComboBoxPrivate::typeDescrip;
+void XComboBoxPrivate::cleanup()
+{
+  QHash<XComboBox::XComboBoxTypes, XComboBoxDescrip*>::iterator i;
+  for (i = typeDescrip.begin(); i != typeDescrip.end(); i++)
+    delete i.value();
+}
+void XComboBox::cleanup()
+{
+  XComboBoxPrivate::cleanup();
+}
 
 XComboBoxDescrip::XComboBoxDescrip()
   : type(XComboBox::Adhoc),
@@ -92,8 +102,6 @@ XComboBoxDescrip::XComboBoxDescrip(XComboBox::XComboBoxTypes pType,
     query = MetaSQLQuery(queryStr).toQuery(params, QSqlDatabase(), false);
   if (XComboBox::_guiClientInterface)
     connect(XComboBox::_guiClientInterface, SIGNAL(dbConnectionLost()), this, SLOT(sDbConnectionLost()));
-
-  sListen();
 }
 
 XComboBoxDescrip::~XComboBoxDescrip()
@@ -114,16 +122,16 @@ void XComboBoxDescrip::sListen()
   {
     if (! db.driver()->subscribedToNotifications().contains(notice))
       db.driver()->subscribeToNotification(notice);
-
-    connect(db.driver(), SIGNAL(notification(const QString&)),
-            this,        SLOT(sNotified(const QString&)));
   }
+
+  connect(db.driver(), SIGNAL(notification(const QString&)),
+          this,        SLOT(sNotified(const QString&)));
 }
 
 void XComboBoxDescrip::sNotified(const QString &pNotification)
 {
-  Q_UNUSED(pNotification);
-  isDirty = true;
+  if (notification.contains(pNotification))
+    isDirty = true;
 }
 
 static QString bankaccntMQL("SELECT bankaccnt_id,"
@@ -928,11 +936,15 @@ void XComboBoxPrivate::setType(XComboBox::XComboBoxTypes ptype)
 
   _type    = ptype;
   _descrip = typeDescrip.value(_type);
-  if (_descrip && _descrip->isDirty)
+  if (_descrip)
   {
     _descrip->sListen();
-    _descrip->query.exec();
-    _descrip->isDirty = _descrip->notification.isEmpty(); // empty => there's no notification to listen for
+
+    if (_descrip->isDirty)
+    {
+      _descrip->query.exec();
+      _descrip->isDirty = _descrip->notification.isEmpty(); // empty => there's no notification to listen for
+    }
   }
 
   addEditButton();

@@ -567,7 +567,9 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
               hitError = true;
               break;
             }
-	  }
+      else
+        model->setData(model->index(index.row(), POITEM_VEND_UOM_COL), item->uom());
+    }
 	}
       }
       break;

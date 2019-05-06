@@ -322,6 +322,7 @@ OrderLineEdit::~OrderLineEdit()
 void OrderLineEdit::sNewId(const int p)
 {
   emit newId(p, _name);
+  emit newId(p);
   emit numberChanged(text(), _name);
 }
 

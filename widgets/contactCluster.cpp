@@ -137,9 +137,9 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
 
   _crmAcctId = -1;
   _minLayout = true;
-  _fname = new QStringList();
+  _fname = QStringList();
   for (int i = 0; i < 5; ++i)
-    _fname->append("");
+    _fname.append("");
 
   _label = new QLabel(this);
   _label->setObjectName("_label");
@@ -200,7 +200,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _webaddrLit->setAlignment(Qt::AlignRight);
   _addrLit->setAlignment(Qt::AlignLeft);
 
-  _addrLayout = new QVBoxLayout;
+  _addrLayout = new QVBoxLayout(this);
   QSpacerItem* _addrSpacer = new QSpacerItem(20,0,QSizePolicy::Preferred,QSizePolicy::Expanding);
   _addrLayout->addWidget(_addrLit);
   _addrLayout->addWidget(_addr);
@@ -441,10 +441,10 @@ void ContactCluster::setName(int segment, const QString& name)
   if ((segment == 0 || segment == 2) &&
       !name.endsWith('.') &&
       !name.isEmpty())
-    _fname->replace(segment, name + ".");
+    _fname.replace(segment, name + ".");
   else
-    _fname->replace(segment, name);
-  _number->setText(_fname->join(" ").replace("  ", " ").trimmed());
+    _fname.replace(segment, name);
+  _number->setText(_fname.join(" ").replace("  ", " ").trimmed());
 }
 
 void ContactCluster::setHonorific(const QString honorific)

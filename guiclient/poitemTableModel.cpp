@@ -224,7 +224,7 @@ bool PoitemTableModel::submitAll()
 Qt::ItemFlags PoitemTableModel::flags(const QModelIndex& index) const
 {
   Qt::ItemFlags flags = QSqlRelationalTableModel::flags(index);
-  if (index.column() == POITEM_VEND_UOM_COL || index.column() == EXTPRICE_COL)
+  if (index.column() == EXTPRICE_COL)
     flags &= ~(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 
   return flags;

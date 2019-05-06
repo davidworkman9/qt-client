@@ -62,6 +62,8 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents, pub
   public:
     Documents(QWidget *);
 
+    static void cleanup();
+
     // If you add to this then add to the documentMap() function in documents.cpp
     enum DocumentSources
     {

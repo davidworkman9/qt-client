@@ -57,6 +57,7 @@ class XComboBoxPrivate : public QObject
     XComboBoxPrivate(XComboBox *parent);
     virtual ~XComboBoxPrivate();
     static QHash<XComboBox::XComboBoxTypes, XComboBoxDescrip*> typeDescrip;
+    static void cleanup();
 
     bool inDesigner();
 

@@ -87,6 +87,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 
   signals:
     void newId(const int, const QString &);
+    void newId(const int);
     void numberChanged(const QString &, const QString &);
 
   protected:
