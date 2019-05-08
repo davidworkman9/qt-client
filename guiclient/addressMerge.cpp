@@ -153,9 +153,12 @@ void addressMerge::sFillList()
 {
   ParameterList params;
   params.append("searchText", _search->text());
-  params.append("searchStreet", QVariant(_searchStreet->isChecked()));
-  params.append("searchCity", QVariant(_searchCity->isChecked()));
-  params.append("searchPostal", QVariant(_searchPostal->isChecked()));
+  if (_searchStreet->isChecked())
+    params.append("searchStreet");
+  if (_searchCity->isChecked())
+    params.append("searchCity");
+  if (_searchPostal->isChecked())
+    params.append("searchPostal");
   _filter->appendValue(params);
 
   MetaSQLQuery mql = mqlLoad("addressMerge", "search");
