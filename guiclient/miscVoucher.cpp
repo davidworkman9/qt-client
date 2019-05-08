@@ -341,7 +341,7 @@ bool miscVoucher::save(bool partial)
   updq.bindValue(":vohead_amount", _amountToDistribute->localValue());
   updq.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   updq.bindValue(":vohead_curr_id", _amountToDistribute->id());
-  if(!partial && _recurring->isRecurring())
+  if(_recurring->isRecurring())
   {
     if(_recurring->parentId() != 0)
       updq.bindValue(":vohead_recurring_vohead_id", _recurring->parentId());
