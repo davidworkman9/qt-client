@@ -628,7 +628,7 @@ to be bound by its terms.</comment>
    <sender>_buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>lotSerialRegistration</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>745</x>
