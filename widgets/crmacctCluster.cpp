@@ -410,7 +410,8 @@ void CRMAcctList::sFillList()
   if (! _showInactive)
     params.append("activeOnly");
 
-  if (!qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause().isEmpty())
+  if (qobject_cast<VirtualClusterLineEdit*>(_parent) &&
+      !qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause().isEmpty())
     params.append("extraClause", qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause());
 
   XSqlQuery fillq = mql.toQuery(params);
@@ -702,7 +703,8 @@ void CRMAcctSearch::sFillList()
   if (! _showInactive->isChecked())
     params.append("activeOnly");
 
-  if (!qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause().isEmpty())
+  if (qobject_cast<VirtualClusterLineEdit*>(_parent) &&
+      !qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause().isEmpty())
     params.append("extraClause", qobject_cast<VirtualClusterLineEdit*>(_parent)->extraClause());
 
   if (_searchNumber->isChecked())
