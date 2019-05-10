@@ -84,6 +84,8 @@ bool dspProjectSummary::setParams(ParameterList &params)
   params.append("active", tr("Active"));
   params.append("pending", tr("Pending"));
   params.append("closed", tr("Closed"));
+
+  return true;
 }
 
 void dspProjectSummary::sNew()
