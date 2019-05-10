@@ -983,6 +983,13 @@ void ParameterWidget::changeFilterObject(int index)
     return;
 
   QStringList split = mybox->itemData(index).toString().split(":");
+  if (split.length() < 2)
+  {
+    if (DEBUG)
+      qDebug() << objectName() << __FUNCTION__ << split << "is too short to build a filter";
+    return;
+  }
+
   QString     row   = split.at(0);
   int         type  = split.at(1).toInt();
   XSqlQuery qry;
