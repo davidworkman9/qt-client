@@ -2533,6 +2533,13 @@ void salesOrderItem::sPopulateItemSources(int pItemid)
 
 void salesOrderItem::sPopulateItemSubs()
 {
+  sPopulateItemSubs(_item->id());
+}
+
+// This version retained only for script backwards compatibility
+void salesOrderItem::sPopulateItemSubs(int pItemid)
+{
+  ENTERED << "with" << pItemid;
   if (_item->isValid() && _warehouse->isValid())
   {
     if (_item->id() == _itemsubsLastItemid && _warehouse->id() == _itemsubsLastWarehousid)
@@ -2543,7 +2550,7 @@ void salesOrderItem::sPopulateItemSubs()
     XSqlQuery subq;
     MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
     ParameterList params;
-    params.append("item_id", _item->id());
+    params.append("item_id", pItemid);
     params.append("warehous_id", _warehouse->id());
     params.append("byDate", true);
     if (_scheduledDate->isValid())
