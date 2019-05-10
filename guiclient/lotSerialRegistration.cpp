@@ -27,6 +27,7 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   _lsregid = -1;
 
   connect(_buttonBox, SIGNAL(accepted()),            this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()),            this, SLOT(sClose()));
   connect(_soldDate,  SIGNAL(newDate(const QDate&)), this, SLOT(sDateUpdated()));
   connect(_crmacct,   SIGNAL(newId(int)),            this, SLOT(sSetSoCustId()));
   connect(_so,        SIGNAL(newId(int,QString)),    this, SLOT(sSetSoId()));
@@ -146,6 +147,12 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
 
 void lotSerialRegistration::closeEvent(QCloseEvent *pEvent)
 {
+  sClose();
+  pEvent->accept();
+}
+
+void lotSerialRegistration::sClose()
+{
   XSqlQuery lotcloseEvent;
   if (_mode == cNew)
   {
@@ -157,7 +164,7 @@ void lotSerialRegistration::closeEvent(QCloseEvent *pEvent)
                          lotcloseEvent, __FILE__, __LINE__);
   }
 
-  pEvent->accept();
+  reject();
 }
 
 void lotSerialRegistration::populate()

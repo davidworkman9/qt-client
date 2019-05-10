@@ -624,21 +624,5 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>_buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>lotSerialRegistration</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>745</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
