@@ -177,6 +177,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
                                const char *pExtra,
                                const char *pName         = 0,
                                const char *pActiveColumn = 0);
+       ~VirtualClusterLineEdit();
 
        void setMenu(QMenu *menu);
        QMenu *menu() const { return _menu; }

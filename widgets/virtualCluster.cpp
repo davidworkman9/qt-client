@@ -421,7 +421,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     setMinimumHeight(height);
 
     // Set default menu with standard actions
-    QMenu* menu = new QMenu(this);
+    QMenu* menu = new QMenu;
     menu->setObjectName("menu");
     menu->addAction(_listAct);
     menu->addAction(_searchAct);
@@ -432,6 +432,11 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
     connect(menu, SIGNAL(aboutToShow()), this, SLOT(sUpdateMenu()));
   }
+
+VirtualClusterLineEdit::~VirtualClusterLineEdit()
+{
+  delete _menu;
+}
 
 bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
 {
