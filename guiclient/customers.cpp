@@ -87,6 +87,7 @@ customers::customers(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Bill Postal"),  75, Qt::AlignLeft  , false, "bill_postalcode" );
   list()->addColumn(tr("Corr. First"),  50, Qt::AlignLeft  , false, "corr_first_name" );
   list()->addColumn(tr("Corr. Last"),   -1, Qt::AlignLeft  , false, "corr_last_name" );
+  list()->addColumn(tr("Corr. Title"), 100, Qt::AlignLeft  , false, "corr_title" );
   list()->addColumn(tr("Corr. Phone"), 100, Qt::AlignLeft  , false, "corr_phone" );
   list()->addColumn(tr("Corr. Fax"),   100, Qt::AlignLeft  , false, "corr_fax" );
   list()->addColumn(tr("Corr. Email"), 100, Qt::AlignLeft  , false, "corr_email" );
@@ -95,8 +96,8 @@ customers::customers(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Corr. Addr. 3"),-1, Qt::AlignLeft  , false, "corr_line3" );
   list()->addColumn(tr("Corr. City"),   75, Qt::AlignLeft  , false, "corr_city" );
   list()->addColumn(tr("Corr. State"),  50, Qt::AlignLeft  , false, "corr_state" );
-  list()->addColumn(tr("Corr. Postal"), 75, Qt::AlignLeft  , false, "corr_postalcode" );
   list()->addColumn(tr("Corr. Country"),100, Qt::AlignLeft , false, "corr_country" );
+  list()->addColumn(tr("Corr. Postal"), 75, Qt::AlignLeft  , false, "corr_postalcode" );
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
