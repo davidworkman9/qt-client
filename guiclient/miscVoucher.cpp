@@ -698,6 +698,8 @@ void miscVoucher::sPopulateDueDate()
 
 void miscVoucher::sDistributionDateUpdated()
 {
+  if (_metrics->value("TaxService") == "N")
+    _tax->sRecalculate();
   sFillMiscList();
   sPopulateDistributed();
 }
