@@ -648,7 +648,7 @@ void WomatlCluster::setWooperid(int pWooperid)
     sql += "'M'";
   }
 
-  sql += ")) );";
+  sql += ")) ) ORDER BY item_number;";
 
   XSqlQuery query;
   query.prepare(sql);
@@ -724,7 +724,7 @@ void WomatlCluster::setWoid(int pWoid)
     sql += "'M'";
   }
 
-  sql += ")) );";
+  sql += ")) ) ORDER BY item_number;";
 
   _womatl.prepare(sql);
   _womatl.bindValue(":wo_id", pWoid);
@@ -816,7 +816,7 @@ void WomatlCluster::setId(int pWomatlid)
       sql += "'M'";
     }
 
-    sql += ")) );";
+    sql += ")) ) ORDER BY item_number;";
 
     XSqlQuery query;
     query.prepare(sql);
