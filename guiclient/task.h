@@ -55,6 +55,7 @@ private:
     QString _parenttype;
     int     _taskid;
     bool    _saved;
+    int     _numberGen;
     QString _assignedTo;
     QDate   _assigned;
     bool    _close;

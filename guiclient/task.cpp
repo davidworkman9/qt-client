@@ -102,6 +102,7 @@ task::task(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   _saved = false;
   _close = false;
   _isTemplate = false;
+  _numberGen = 0;
 }
 
 task::~task()
@@ -213,6 +214,7 @@ enum SetResponse task::set(const ParameterList &pParams)
         {
           _number->setText(numq.value("number"));
           _number->setEnabled(_metrics->value("TaskNumberGeneration") == "O");
+          _numberGen = numq.value("number").toInt();
           _name->setFocus();
         }
       }
@@ -525,7 +527,7 @@ void task::sClose()
         _metrics->value("TaskNumberGeneration") == "O")
     {
       query.prepare("SELECT releasetasknumber(:task);");
-      query.bindValue(":task", _number->text().trimmed());
+      query.bindValue(":task", QString::number(_numberGen));
       query.exec();
       if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Task Number"),
                                query, __FILE__, __LINE__))
