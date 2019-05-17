@@ -85,7 +85,7 @@ void buildCRMGroups::buildParameters()
 
   // Remove extra parameters first (if they exist) then add back if the type applies
   extras << tr("Sales Rep") << tr("Customer Types") << tr("Item Group")
-         << tr("Item") << tr("Open Quotes") ;
+         << tr("Item") << tr("Open Quotes") << tr("Customer Type Pattern");
 
   extras << _charList << _filterList;
 
@@ -102,15 +102,16 @@ void buildCRMGroups::buildParameters()
     {
       _params->appendComboBox(extras.at(0), "salesrep_id", XComboBox::SalesReps);
       _params->appendComboBox(extras.at(1), "custtype_id", XComboBox::CustomerTypes);
+      _params->append(extras.at(5),         "custtype_code_pattern", ParameterWidget::Text);
       _params->appendComboBox(extras.at(2), "itemGroup", XComboBox::ItemGroups);
-      _params->append(extras.at(3), "item_id", ParameterWidget::Item);
+      _params->append(extras.at(3),         "item_id", ParameterWidget::Item);
     }
     break;
   case crmGroups::Prospect:
     {
       _params->appendComboBox(extras.at(0), "salesrep_id", XComboBox::SalesReps);
       _params->appendComboBox(extras.at(2), "itemGroup", XComboBox::ItemGroups);
-      _params->append(extras.at(3), "item_id", ParameterWidget::Item);
+      _params->append(extras.at(3),         "item_id", ParameterWidget::Item);
       _params->appendComboBox(extras.at(4), "hasQuotes", ParameterWidget::Exists);
     }
     break;
