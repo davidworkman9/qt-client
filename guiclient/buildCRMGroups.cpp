@@ -159,7 +159,11 @@ void buildCRMGroups::addCharacteristics()
     characteristic::Type chartype = (characteristic::Type)chars.value("char_type").toInt();
     column = QString("char%1").arg(chars.value("char_id").toString());
     name = chars.value("char_name").toString();
-    _charList << name;
+    if (chartype == characteristic::Date)
+      _charList << name + " " + QApplication::translate("display", "Start Date", 0)
+                << name + " " + QApplication::translate("display", "End Date", 0);
+    else
+      _charList << name;
 
     if (chartype == characteristic::Text)
     {
