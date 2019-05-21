@@ -981,7 +981,7 @@ void project::sFillTaskList()
   params.append("inprocess",  tr("In Process"));
   params.append("new",        tr("New"));
   params.append("open",       tr("Open"));
-  params.append("planning",   tr("Concept"));
+  params.append("planning",   tr("Pending"));
   params.append("posted",     tr("Posted"));
   params.append("resolved",   tr("Resolved"));
   params.append("total", tr("Total"));
@@ -1023,7 +1023,7 @@ void project::sFillOrdersList()
   params.append("new",        tr("New"));
   params.append("open",       tr("Open"));
   params.append("deferred",   tr("Deferred"));
-  params.append("planning",   tr("Concept"));
+  params.append("planning",   tr("Pending"));
   params.append("po",         tr("Purchase Order"));
   params.append("pos",        tr("Purchase Orders"));
   params.append("posted",     tr("Posted"));
