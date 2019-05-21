@@ -1625,9 +1625,9 @@ void salesOrderItem::sSave(bool pPartial)
 
   if (!pPartial && _orderRefresh->isChecked())
   {
-    if (_mode == cNew)
+    if (ISORDER(_mode))
       omfgThis->sSalesOrdersUpdated(_soheadid);
-    else if (_mode == cNewQuote)
+    else
       omfgThis->sQuotesUpdated(_soheadid);
   }
 
@@ -4542,7 +4542,7 @@ void salesOrderItem::sChanged()
   _modified = true;
 }
 
-void salesOrderItem::reject()
+void salesOrderItem::sClose()
 {
   ENTERED;
   XSqlQuery salesreject;
@@ -4600,7 +4600,7 @@ void salesOrderItem::reject()
       omfgThis->sSalesOrdersUpdated(_soheadid);
   }
 
-  XDialog::reject();
+  done(0);
 }
 
 void salesOrderItem::sCancel()
@@ -5206,6 +5206,12 @@ void salesOrderItem::handleFieldsOnModeChange(int pMode)
   _taxtype            ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _unitCost           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
   _warranty           ->setEnabled(ISNEW(pMode) || ISEDIT(pMode));
+}
+
+void salesOrderItem::closeEvent(QCloseEvent* pEvent)
+{
+  sClose();
+  pEvent->accept();
 }
 
 //script exposure

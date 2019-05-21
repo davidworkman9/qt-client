@@ -86,6 +86,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sNext();
     virtual void        sPrev();
     virtual void        sChanged();
+    virtual void        sClose();
     virtual void        sCancel();
     virtual void        sLookupTax();
     virtual void        sTaxDetail();
@@ -96,11 +97,10 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sHandleButton();
     virtual void        sHandleScheduleDate();
     virtual void        setSaveStatus(SaveStatus status, QString msg = "");
+    virtual void        closeEvent(QCloseEvent*);
 
   protected slots:
     virtual void  languageChange();
-
-    virtual void  reject();
 
   private:
     virtual void  handleFieldsOnModeChange(int pMode);
