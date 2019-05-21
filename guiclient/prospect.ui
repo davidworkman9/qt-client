@@ -293,7 +293,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="Comments" name="_comments">
          <property name="type">
-          <number>Comments::Contact</number>
+          <enum>Comments::Contact</enum>
          </property>
         </widget>
        </item>
