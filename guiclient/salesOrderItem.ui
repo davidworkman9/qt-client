@@ -2761,7 +2761,7 @@ to be bound by its terms.</comment>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>salesOrderItem</receiver>
-   <slot>reject()</slot>
+   <slot>sClose()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>821</x>
