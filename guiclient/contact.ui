@@ -283,7 +283,7 @@ to be bound by its terms.</comment>
               <enum>Qt::StrongFocus</enum>
              </property>
              <property name="type">
-              <number>Comments::Contact</number>
+              <enum>Comments::Contact</enum>
              </property>
             </widget>
            </item>
