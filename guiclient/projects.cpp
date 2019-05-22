@@ -524,6 +524,7 @@ bool projects::setParams(ParameterList &params)
   params.append("posted", tr("Posted"));
   params.append("exploded", tr("Exploded"));
   params.append("released", tr("Released"));
+  params.append("new", tr("New"));
   params.append("planning", tr("Concept"));
   params.append("inprocess", tr("In Process"));
   params.append("complete", tr("Complete"));
