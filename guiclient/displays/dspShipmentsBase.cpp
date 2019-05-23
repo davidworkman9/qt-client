@@ -105,10 +105,12 @@ bool dspShipmentsBase::setParams(ParameterList& params)
     params.append("sohead_id", _salesOrder->id());
 
   if(_shipment->isVisibleTo(this))
+  {
     params.append("shiphead_id", _shipment->id());
 
-  if (_metrics->boolean("MultiWhs"))
-    params.append("MultiWhs", true);
+    if (_metrics->boolean("MultiWhs"))
+      params.append("MultiWhs", true);
+  }
 
   return true;
 }
