@@ -74,6 +74,7 @@ void WComboBox::setType(WComboBoxTypes pType)
       break;
 
     case Sold:
+      whsp.append("shipping");
     case NonTransit:
       whsp.append("nottransit");
       whsp.append("active");

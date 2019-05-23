@@ -28,6 +28,8 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
 {
   setupUi(this);
 
+  _siteShipping = true;
+
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckItemsite()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -924,13 +926,34 @@ bool itemSite::sSave()
 void itemSite::sCheckItemsite()
 {
   int whsCache;
+  XSqlQuery query;
+
+  // Check Site Type
+  query.prepare("SELECT warehous_shipping "
+                "  FROM whsinfo "
+                " WHERE warehous_id=:warehous_id");
+  query.bindValue(":warehous_id", _warehouse->id());
+  query.exec();
+  if (query.first())
+  {
+    _siteShipping = query.value("warehous_shipping").toBool();
+    if (!_siteShipping)
+    {
+      _sold->setChecked(_siteShipping);
+      _sold->setEnabled(_siteShipping);
+    }
+  } else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Site Information"),
+                                query, __FILE__, __LINE__))
+  {
+    return;
+  }
+
   if ( (_item->isValid()) &&
        (_updates) &&
        (_warehouse->id() != -1) )
   {
     _updates = false;
 	
-    XSqlQuery query;
     query.prepare( "SELECT itemsite_id "
                    "FROM itemsite "
                    "WHERE ( (itemsite_item_id=:item_id)"
@@ -979,7 +1002,7 @@ void itemSite::sHandleJobCost()
     _woSupply->setChecked(true);
     _woSupply->setEnabled(false);
     _createWo->setChecked(true);
-    _sold->setChecked(true);
+    _sold->setChecked(_siteShipping);
     _sold->setEnabled(false);
     _stocked->setChecked(false);
     _autoUpdateABCClass->setChecked(false);
@@ -1006,7 +1029,7 @@ void itemSite::sHandleJobCost()
     _woSupply->setChecked(false);
     _woSupply->setEnabled(false);
     _createWo->setChecked(false);
-    _sold->setChecked(true);
+    _sold->setChecked(_siteShipping);
     _sold->setEnabled(false);
     _stocked->setChecked(false);
     _autoUpdateABCClass->setChecked(false);
@@ -1306,7 +1329,7 @@ void itemSite::sCacheItemType(char pItemType)
 
     if((_itemType == 'R') || (_itemType == 'K'))
     {
-      _sold->setEnabled(true);
+      _sold->setEnabled(_siteShipping);
       _controlMethod->setCode("N");
     }
     else
@@ -1368,7 +1391,7 @@ void itemSite::sCacheItemType(char pItemType)
       _createWo->setEnabled(false);
     }
     
-    _sold->setEnabled(true);
+    _sold->setEnabled(_siteShipping);
     _stocked->setEnabled(true);
     _useDefaultLocation->setEnabled(true);
     _locationControl->setEnabled(true);
@@ -1505,7 +1528,7 @@ void itemSite::populate()
 
     _poSupply->setChecked(itemsite.value("itemsite_poSupply").toBool());
     _woSupply->setChecked(itemsite.value("itemsite_woSupply").toBool());
-    _sold->setChecked(itemsite.value("itemsite_sold").toBool());
+    _sold->setChecked(itemsite.value("itemsite_sold").toBool() && _siteShipping);
     _soldRanking->setValue(itemsite.value("itemsite_soldranking").toInt());
     _stocked->setChecked(itemsite.value("itemsite_stocked").toBool());
     _notes->setText(itemsite.value("itemsite_notes").toString());
