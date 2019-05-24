@@ -496,10 +496,10 @@ void contacts::sEdit()
     params.append("mode", "edit");
     params.append("cntct_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-    contact* newdlg = new contact(0, "", false);
+    contact* newdlg = new contact(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 
@@ -528,10 +528,10 @@ void contacts::sView()
     params.append("mode", "view");
     params.append("cntct_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-    contact* newdlg = new contact(0, "", false);
+    contact* newdlg = new contact(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 

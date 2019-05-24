@@ -222,20 +222,20 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     params.append("prj_id", item->id());
     params.append("mode", mode);
 
-    project* newdlg = new project(0, "", false);
+    project* newdlg = new project(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == TASK)
   {
     params.append("mode", mode);
     params.append("prjtask_id", item->id());
 
-    task* newdlg = new task(0, "", false);
+    task* newdlg = new task(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == QUOTE)
   {
@@ -251,10 +251,10 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     params.append("mode", mode + "Quote");
     params.append("soitem_id", item->id());
 
-    salesOrderItem* newdlg = new salesOrderItem();
+    salesOrderItem* newdlg = new salesOrderItem(this);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == SALESORDER)
   {
@@ -270,10 +270,10 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     params.append("mode", mode);
     params.append("soitem_id", item->id());
 
-    salesOrderItem* newdlg = new salesOrderItem();
+    salesOrderItem* newdlg = new salesOrderItem(this);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == INVOICE)
   {
@@ -290,7 +290,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     invoiceItem* newdlg = new invoiceItem(this);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == WORKORDER)
   {
@@ -306,10 +306,10 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     params.append("mode", "view");
     params.append("pr_id", item->id());
 
-    purchaseRequest* newdlg = new purchaseRequest(0, "", false);
+    purchaseRequest* newdlg = new purchaseRequest(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == PURCHASEORDER)
   {
@@ -325,20 +325,20 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     params.append("mode", mode);
     params.append("poitem_id", item->id());
 
-    purchaseOrderItem* newdlg = new purchaseOrderItem(0, "", false);
+    purchaseOrderItem* newdlg = new purchaseOrderItem(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->altId() == INCIDENT)
   {
     params.append("mode", mode);
     params.append("incdt_id", item->id());
 
-    incident* newdlg = new incident(0, "", false);
+    incident* newdlg = new incident(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 

@@ -149,10 +149,10 @@ void incidentWorkbench::sEdit()
     params.append("mode", "edit");
     params.append("incdt_id", item->id());
 
-    incident* newdlg = new incident(0, 0, false);
+    incident* newdlg = new incident(this, 0, false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 
@@ -164,10 +164,10 @@ void incidentWorkbench::sView()
     params.append("mode", "view");
     params.append("incdt_id", item->id());
 
-    incident* newdlg = new incident(0, 0, false);
+    incident* newdlg = new incident(this, 0, false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 

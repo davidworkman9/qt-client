@@ -638,10 +638,10 @@ void taskList::sEditIncident(int id)
   params.append("mode", "edit");
   params.append("incdt_id", id);
 
-  incident* newdlg = new incident(0, "", false);
+  incident* newdlg = new incident(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sViewIncident(int id)
@@ -650,10 +650,10 @@ void taskList::sViewIncident(int id)
   params.append("mode", "view");
   params.append("incdt_id", id);
 
-  incident* newdlg = new incident(0, "", false);
+  incident* newdlg = new incident(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sNewProject()
@@ -676,10 +676,10 @@ void taskList::sEditProject(int id)
   params.append("mode", "edit");
   params.append("prj_id", id);
 
-  project* newdlg = new project(0, "", false);
+  project* newdlg = new project(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sViewProject(int id)
@@ -688,10 +688,10 @@ void taskList::sViewProject(int id)
   params.append("mode", "view");
   params.append("prj_id", id);
 
-  project* newdlg = new project(0, "", false);
+  project* newdlg = new project(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sEditTask(int id)
@@ -700,10 +700,10 @@ void taskList::sEditTask(int id)
   params.append("mode", "edit");
   params.append("task_id", id);
 
-  task* newdlg = new task(0, "", false);
+  task* newdlg = new task(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sViewTask(int id)
@@ -712,10 +712,10 @@ void taskList::sViewTask(int id)
   params.append("mode", "view");
   params.append("task_id", id);
 
-  task* newdlg = new task(0, "", false);
+  task* newdlg = new task(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sEditCustomer()
@@ -772,10 +772,10 @@ void taskList::sEditOpportunity(int id)
   params.append("mode", "edit");
   params.append("ophead_id", id);
 
-  opportunity* newdlg = new opportunity(0, "", false);
+  opportunity* newdlg = new opportunity(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sViewOpportunity(int id)
@@ -784,10 +784,10 @@ void taskList::sViewOpportunity(int id)
   params.append("mode", "view");
   params.append("ophead_id", id);
 
-  opportunity* newdlg = new opportunity(0, "", false);
+  opportunity* newdlg = new opportunity(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void taskList::sEditAccount(int id)
