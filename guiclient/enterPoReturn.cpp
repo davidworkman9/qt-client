@@ -287,6 +287,8 @@ void enterPoReturn::sPost()
   {
     _close->setText(tr("&Close"));
     _po->setId(-1);
+    _rma->setText("");
+    sFillList();
   }
 }
 
