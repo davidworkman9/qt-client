@@ -938,10 +938,7 @@ void itemSite::sCheckItemsite()
   {
     _siteShipping = query.value("warehous_shipping").toBool();
     if (!_siteShipping)
-    {
       _sold->setChecked(_siteShipping);
-      _sold->setEnabled(_siteShipping);
-    }
   } else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Site Information"),
                                 query, __FILE__, __LINE__))
   {
@@ -1329,7 +1326,7 @@ void itemSite::sCacheItemType(char pItemType)
 
     if((_itemType == 'R') || (_itemType == 'K'))
     {
-      _sold->setEnabled(_siteShipping);
+      _sold->setEnabled(true);
       _controlMethod->setCode("N");
     }
     else
@@ -1391,7 +1388,7 @@ void itemSite::sCacheItemType(char pItemType)
       _createWo->setEnabled(false);
     }
     
-    _sold->setEnabled(_siteShipping);
+    _sold->setEnabled(true);
     _stocked->setEnabled(true);
     _useDefaultLocation->setEnabled(true);
     _locationControl->setEnabled(true);
@@ -1528,7 +1525,7 @@ void itemSite::populate()
 
     _poSupply->setChecked(itemsite.value("itemsite_poSupply").toBool());
     _woSupply->setChecked(itemsite.value("itemsite_woSupply").toBool());
-    _sold->setChecked(itemsite.value("itemsite_sold").toBool() && _siteShipping);
+    _sold->setChecked(itemsite.value("itemsite_sold").toBool());
     _soldRanking->setValue(itemsite.value("itemsite_soldranking").toInt());
     _stocked->setChecked(itemsite.value("itemsite_stocked").toBool());
     _notes->setText(itemsite.value("itemsite_notes").toString());

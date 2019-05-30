@@ -309,7 +309,7 @@ to be bound by its terms.</comment>
         </size>
        </property>
        <property name="type">
-        <enum>WComboBox::Shipping</enum>
+        <enum>WComboBox::Sold</enum>
        </property>
       </widget>
      </item>
