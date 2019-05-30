@@ -145,6 +145,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _taxExemptLit->hide();
     _taxExempt->hide();
   }
+  _cust->setFocus();
 }
 
 invoice::~invoice()
