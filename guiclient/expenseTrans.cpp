@@ -53,7 +53,16 @@ expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WindowFlags fl
   _item->setFocus();
 
   if (_metrics->value("TaxService") == "N")
+  {
     _useTax->hide();
+    _useTaxAddressOverride->hide();
+    _useTaxAddress->hide();
+  }
+  else
+  {
+    _useTaxAddressOverride->setVisible(_useTax->isChecked());
+    _useTaxAddress->setVisible(_useTaxAddressOverride->isChecked());
+  }
 }
 
 expenseTrans::~expenseTrans()
@@ -240,6 +249,29 @@ void expenseTrans::sPost()
       if (expq.first())
       {
         int invhistid = expq.value("invhist_id").toInt();
+
+        if (_useTaxAddressOverride->isChecked())
+        {
+          expq.prepare("INSERT INTO exptransaddr "
+                       "(exptransaddr_invhist_id, "
+                       " exptransaddr_line1, exptransaddr_line2, exptransaddr_line3, "
+                       " exptransaddr_city, exptransaddr_state, exptransaddr_postalcode, "
+                       " exptransaddr_country) "
+                       "VALUES (:exptransaddr_invhist_id, "
+                       "        :exptransaddr_line1, :exptransaddr_line2, :exptransaddr_line3, "
+                       "        :exptransaddr_city, :exptransaddr_state, :exptransaddr_postalcode, "
+                       "        :exptransaddr_country);");
+          expq.bindValue(":exptransaddr_invhist_id", invhistid);
+          expq.bindValue(":exptransaddr_line1", _useTaxAddress->line1());
+          expq.bindValue(":exptransaddr_line2", _useTaxAddress->line2());
+          expq.bindValue(":exptransaddr_line3", _useTaxAddress->line3());
+          expq.bindValue(":exptransaddr_city", _useTaxAddress->city());
+          expq.bindValue(":exptransaddr_state", _useTaxAddress->state());
+          expq.bindValue(":exptransaddr_postalcode", _useTaxAddress->postalCode());
+          expq.bindValue(":exptransaddr_country", _useTaxAddress->country());
+          expq.exec();
+        }
+
         if (!_taxIntegration->calculateTax("EX", invhistid, true))
         {
           rollback.exec();

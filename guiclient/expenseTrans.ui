@@ -14,13 +14,29 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>524</width>
-    <height>548</height>
+    <height>602</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Expense Transaction</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="_itemGroup">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="ItemCluster" name="_item">
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout">
      <item>
@@ -97,22 +113,6 @@ to be bound by its terms.</comment>
       </spacer>
      </item>
     </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="_itemGroup">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="ItemCluster" name="_item">
-        <property name="focusPolicy">
-         <enum>Qt::StrongFocus</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="_qtyGroup">
@@ -283,14 +283,14 @@ to be bound by its terms.</comment>
      </layout>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="_notesLit">
      <property name="text">
       <string>Notes:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
+   <item row="7" column="0" colspan="2">
     <widget class="XTextEdit" name="_notes">
      <property name="tabChangesFocus">
       <bool>true</bool>
@@ -307,10 +307,25 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="XCheckBox" name="_useTaxAddressOverride">
+     <property name="text">
+      <string>Override Use Tax Address</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="AddressCluster" name="_useTaxAddress"/>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>AddressCluster</class>
+   <extends>QWidget</extends>
+   <header>addresscluster.h</header>
+  </customwidget>
   <customwidget>
    <class>DLineEdit</class>
    <extends>QWidget</extends>
@@ -434,6 +449,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_useTax</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_useTaxAddressOverride</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>217</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_useTaxAddressOverride</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_useTaxAddress</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>362</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>217</x>
+     <y>437</y>
     </hint>
    </hints>
   </connection>
