@@ -74,6 +74,7 @@
 #include "qhostaddressproto.h"
 #include "qhostinfoproto.h"
 #include "qiconproto.h"
+#include "qinputdialogproto.h"
 #include "qintvalidatorproto.h"
 #include "qiodeviceproto.h"
 #include "qitemdelegateproto.h"
@@ -234,6 +235,7 @@ void setupScriptApi(QScriptEngine *engine, Preferences *pPreferences)
   setupQHostInfoProto(engine);
   setupQIODeviceProto(engine);
   setupQIconProto(engine);
+  setupQInputDialogProto(engine);
   setupQIntValidatorProto(engine);
   setupQItemDelegateProto(engine);
   setupQJsonDocumentProto(engine);

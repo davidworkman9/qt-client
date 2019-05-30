@@ -81,6 +81,7 @@ HEADERS += setupscriptapi.h \
     qhostaddressproto.h \
     qhostinfoproto.h \
     qiconproto.h \
+    qinputdialogproto.h \
     qintvalidatorproto.h \
     qiodeviceproto.h \
     qitemdelegateproto.h \
@@ -221,6 +222,7 @@ SOURCES += setupscriptapi.cpp \
     qhostaddressproto.cpp \
     qhostinfoproto.cpp \
     qiconproto.cpp \
+    qinputdialogproto.cpp \
     qintvalidatorproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
