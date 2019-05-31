@@ -389,7 +389,7 @@ to be bound by its terms.</comment>
                <bool>true</bool>
               </property>
               <property name="type">
-               <enum>WComboBox::Sold</enum>
+               <enum>WComboBox::Shipping</enum>
               </property>
              </widget>
             </item>
