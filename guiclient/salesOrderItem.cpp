@@ -3082,7 +3082,12 @@ void salesOrderItem::sHandleSupplyOrder()
               applychange = true;
             if (applychange)
             {
-              ordq.prepare("SELECT changeWoDates(:wo_id, calculatenextworkingdate(:whs_id, :dueDate, :leadTime), :dueDate, true) AS result; ");
+              QString sql;
+              if(_metrics->boolean("UseSiteCalendar"))
+                sql = "SELECT changeWoDates(:wo_id, calculatenextworkingdate(:whs_id, :dueDate, :leadTime), :dueDate, true) AS result; ";
+              else 
+                sql = "SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate - wo_duedate), :dueDate, true) AS result;";
+              ordq.prepare(sql);
               ordq.bindValue(":wo_id", _supplyOrderId);
               ordq.bindValue(":dueDate", _scheduledDate->date());
               ordq.bindValue(":leadTime", -1*_leadTime);
@@ -3108,7 +3113,12 @@ void salesOrderItem::sHandleSupplyOrder()
           } // end scheduled date changed
           else if (_supplyOrderDueDate->date() != _supplyOrderDueDateCache)
           { // supply ord due date changed
-            ordq.prepare("SELECT changeWoDates(:wo_id, calculatenextworkingdate(:whs_id, :dueDate, :leadTime), :dueDate, true) AS result; ");
+            QString sql;
+            if(_metrics->boolean("UseSiteCalendar"))
+              sql = "SELECT changeWoDates(:wo_id, calculatenextworkingdate(:whs_id, :dueDate, :leadTime), :dueDate, true) AS result; ";
+            else 
+              sql = "SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate - wo_duedate), :dueDate, true) AS result;";
+            ordq.prepare(sql);
             ordq.bindValue(":wo_id", _supplyOrderId);
             ordq.bindValue(":dueDate", _supplyOrderDueDate->date());
             ordq.bindValue(":leadTime", -1*_leadTime);
