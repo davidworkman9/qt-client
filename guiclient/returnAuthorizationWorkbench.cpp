@@ -69,7 +69,10 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
     _new->setEnabled(false);
     _edit->setEnabled(false);
     _editdue->setEnabled(false);
+    connect(_ra, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
+  else
+    connect(_ra, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
 
   if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
