@@ -265,9 +265,22 @@ void purchaseRequest::sSave()
     {
       _prid = purchaseCreate.value("prid").toInt();
 
+      if (_prid != -1)
+      {
+        purchaseCreate.prepare("UPDATE pr SET pr_prj_id=:prj_id WHERE (pr_id=:pr_id);");
+        purchaseCreate.bindValue(":pr_id",  _prid);
+        purchaseCreate.bindValue(":prj_id", _project->id());
+        purchaseCreate.exec();
+      }
       purchaseCreate.prepare("SELECT releasePlannedOrder(:planord_id, false) AS result;");
       purchaseCreate.bindValue(":planord_id", _planordid);
       purchaseCreate.exec();
+    }
+    else
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Request"),
+                           purchaseCreate, __FILE__, __LINE__);
+      return;
     }
   }
 
