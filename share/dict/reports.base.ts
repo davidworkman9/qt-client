@@ -7687,6 +7687,84 @@
     </message>
   </context>
   <context>
+    <name>Documents</name>
+    <message>
+      <width>40</width>
+      <source>Type</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Title / Linked To</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Created By</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Number</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>475</width>
+      <source>Documents</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Description</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>55</width>
+      <source>Created</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Title / Linked To</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>55</width>
+      <source>Created</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>40</width>
+      <source>Type</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Number</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Created By</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Description</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Page:</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
     <name>EarnedCommissions</name>
     <message>
       <width>80</width>
