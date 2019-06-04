@@ -1145,7 +1145,7 @@ void itemList::sFillList()
 {
   QStringList clauses;
   clauses = _extraClauses;
-  if (!_parent->extraClause().isEmpty())
+  if (_parent && !_parent->extraClause().isEmpty())
     clauses << _parent->extraClause();
   if(!(_itemType & ItemLineEdit::cActive) && !_showInactive->isChecked())
     clauses << "(item_active)"; 
