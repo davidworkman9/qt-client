@@ -35,7 +35,7 @@ static QString _listAndSearchQueryString(
       "<? if exists('crmaccount') ?>"
       "    SELECT crmacct_id AS id,         crmacct_number AS number,"
       "           crmacct_name AS name,     cntct_id,"
-      "           crmacct_active AS active, cntct_addr_id AS addr_id"
+      "           crmacct_active AS active, cntct_addr_id AS addr_id, crmacct_id"
       "      FROM crmacct()"
       "      LEFT OUTER JOIN crmacctcntctass ON (crmacct_id=crmacctcntctass_crmacct_id "
       "                                          AND crmacctcntctass_crmrole_id=getcrmroleid('Primary')) "
