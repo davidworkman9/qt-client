@@ -125,7 +125,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
   configureconfigureIM.exec("SELECT setval('shipment_number_seq', nextval('shipment_number_seq') -1); "
          "SELECT currval('shipment_number_seq') AS shipment_number;");
   if (configureconfigureIM.first())
-    _nextShipmentNum->setText(configureconfigureIM.value("shipment_number"));
+    _nextShipmentNum->setText(configureconfigureIM.value("shipment_number").toInt());
   else
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Settings"),
                        configureconfigureIM, __FILE__, __LINE__);
@@ -286,7 +286,7 @@ bool configureIM::sSave()
   _metrics->set("ReceiptQtyTolerancePct", _tolerance->text());
   _metrics->set("RecordPPVonReceipt", _recordPpvOnReceipt->isChecked());
 
-  configureSave.prepare("SELECT setval('shipment_number_seq', :shipmentnumber);");
+  configureSave.prepare("SELECT setval('shipment_number_seq', GREATEST(1, :shipmentnumber));");
   configureSave.bindValue(":shipmentnumber", _nextShipmentNum->text().toInt());
   configureSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Inventory Settings"),
