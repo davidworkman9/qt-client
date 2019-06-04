@@ -3112,7 +3112,9 @@ void salesOrderItem::sHandleSupplyOrder()
               if(_metrics->boolean("UseSiteCalendar"))
                 sql = "SELECT changeWoDates(:wo_id, calculatenextworkingdate(:whs_id, :dueDate, :leadTime), :dueDate, true) AS result; ";
               else 
-                sql = "SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate - wo_duedate), :dueDate, true) AS result;";
+                sql = "SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate - wo_duedate), :dueDate, true) AS result "
+                      "  FROM wo "
+                      " WHERE wo_id = :wo_id;";
               ordq.prepare(sql);
               ordq.bindValue(":wo_id", _supplyOrderId);
               ordq.bindValue(":dueDate", _scheduledDate->date());
@@ -3143,7 +3145,9 @@ void salesOrderItem::sHandleSupplyOrder()
             if(_metrics->boolean("UseSiteCalendar"))
               sql = "SELECT changeWoDates(:wo_id, calculatenextworkingdate(:whs_id, :dueDate, :leadTime), :dueDate, true) AS result; ";
             else 
-              sql = "SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate - wo_duedate), :dueDate, true) AS result;";
+              sql = "SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate - wo_duedate), :dueDate, true) AS result "
+                    "  FROM wo "
+                    " WHERE wo_id = :wo_id;";
             ordq.prepare(sql);
             ordq.bindValue(":wo_id", _supplyOrderId);
             ordq.bindValue(":dueDate", _supplyOrderDueDate->date());
