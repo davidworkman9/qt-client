@@ -146,10 +146,10 @@ void addresses::sEdit()
     params.append("mode", "edit");
     params.append("addr_id", item->id());
 
-    address* newdlg = new address(0, "", false);
+    address* newdlg = new address(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 
@@ -161,10 +161,10 @@ void addresses::sView()
     params.append("mode", "view");
     params.append("addr_id", item->id());
 
-    address* newdlg = new address(0, "", false);
+    address* newdlg = new address(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 

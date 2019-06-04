@@ -157,10 +157,10 @@ void opportunityList::sEdit()
     params.append("mode", "edit");
     params.append("ophead_id", item->id());
 
-    opportunity* newdlg = new opportunity(0, "", false);
+    opportunity* newdlg = new opportunity(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 
@@ -172,10 +172,10 @@ void opportunityList::sView()
     params.append("mode", "view");
     params.append("ophead_id", item->id());
 
-    opportunity* newdlg = new opportunity(0, "", false);
+    opportunity* newdlg = new opportunity(this, "", false);
     newdlg->set(params);
     newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    newdlg->show();
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 

@@ -578,10 +578,10 @@ void todoList::sEditIncident(int id)
   params.append("mode", "edit");
   params.append("incdt_id", id);
 
-  incident* newdlg = new incident(0, "", false);
+  incident* newdlg = new incident(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sViewIncident(int id)
@@ -590,10 +590,10 @@ void todoList::sViewIncident(int id)
   params.append("mode", "view");
   params.append("incdt_id", id);
 
-  incident* newdlg = new incident(0, "", false);
+  incident* newdlg = new incident(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sNewProject()
@@ -616,10 +616,10 @@ void todoList::sEditProject(int id)
   params.append("mode", "edit");
   params.append("prj_id", id);
 
-  project* newdlg = new project(0, "", false);
+  project* newdlg = new project(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sViewProject(int id)
@@ -628,10 +628,10 @@ void todoList::sViewProject(int id)
   params.append("mode", "view");
   params.append("prj_id", id);
 
-  project* newdlg = new project(0, "", false);
+  project* newdlg = new project(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sEditTask(int id)
@@ -640,10 +640,10 @@ void todoList::sEditTask(int id)
   params.append("mode", "edit");
   params.append("prjtask_id", id);
 
-  task* newdlg = new task(0, "", false);
+  task* newdlg = new task(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sViewTask(int id)
@@ -652,10 +652,10 @@ void todoList::sViewTask(int id)
   params.append("mode", "view");
   params.append("prjtask_id", id);
 
-  task* newdlg = new task(0, "", false);
+  task* newdlg = new task(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sEditCustomer()
@@ -712,10 +712,10 @@ void todoList::sEditOpportunity(int id)
   params.append("mode", "edit");
   params.append("ophead_id", id);
 
-  opportunity* newdlg = new opportunity(0, "", false);
+  opportunity* newdlg = new opportunity(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sViewOpportunity(int id)
@@ -724,10 +724,10 @@ void todoList::sViewOpportunity(int id)
   params.append("mode", "view");
   params.append("ophead_id", id);
 
-  opportunity* newdlg = new opportunity(0, "", false);
+  opportunity* newdlg = new opportunity(this, "", false);
   newdlg->set(params);
   newdlg->setAttribute(Qt::WA_DeleteOnClose);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void todoList::sOpen()
