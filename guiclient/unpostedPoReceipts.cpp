@@ -271,7 +271,7 @@ void unpostedPoReceipts::sPost()
       XSqlQuery closedPeriod;
       closedPeriod.prepare("SELECT period_closed "
                            "FROM recv "
-                           "  JOIN period ON COALESCE(recv_gldistdate, recv_date) BETWEEN period_start AND period_end "
+                           "  JOIN period ON COALESCE(recv_gldistdate, recv_date::DATE) BETWEEN period_start AND period_end "
                            "WHERE recv_id=:recv_id;");
       closedPeriod.bindValue(":recv_id", id);
       closedPeriod.exec();
