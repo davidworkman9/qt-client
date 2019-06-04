@@ -61,6 +61,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sDetermineAvailability(bool p = false);
     virtual void        sPopulateItemSources( int pItemid );
     virtual void        sPopulateItemSubs( int pItemid );
+    virtual void        sPopulateItemSubs();
     virtual void        sPopulateSubMenu(QMenu *menu, QTreeWidgetItem *item, int col);
     virtual void        sSubstitute();
     virtual void        sReserveStock();
