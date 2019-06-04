@@ -1842,6 +1842,7 @@ void customer::sClear()
     _partialShipments->setEnabled(_metrics->boolean("DefaultBackOrders"));
     _partialShipments->setChecked(_metrics->boolean("DefaultPartialShipments"));
     _allowFFShipto->setChecked(_metrics->boolean("DefaultFreeFormShiptos"));
+    _allowFFBillto->setChecked(_metrics->boolean("DefaultFreeFormBilltos"));
     _creditLimit->setId(CurrCluster::baseId());
     _creditLimit->setBaseValue(_metrics->value("SOCreditLimit").toDouble());
     _creditRating->setText(_metrics->value("SOCreditRate"));
@@ -1855,7 +1856,6 @@ void customer::sClear()
 
     _defaultCommissionPrcnt->setDouble(0);
     _active->setChecked(true);
-    _allowFFBillto->setChecked(false);
     _usesPOs->setChecked(false);
     _blanketPos->setEnabled(cView != _mode && _usesPOs->isChecked());
     _blanketPos->setChecked(false);
