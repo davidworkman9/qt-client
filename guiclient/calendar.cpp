@@ -100,6 +100,8 @@ enum SetResponse calendar::set(const ParameterList &pParams)
     }
   }
 
+  sFillList();
+
   return NoError;
 }
 
