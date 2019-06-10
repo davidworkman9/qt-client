@@ -106,7 +106,12 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
 
   param = pParams.value("vend_id", &valid);
   if (valid && _miscvoucher)
-    _origVoucher->setExtraClause("vohead_posted AND NOT COALESCE(vohead_misc, false)");
+    _origVoucher->setExtraClause(" vohead_posted AND NOT COALESCE(vohead_misc, false)"
+                                 " AND vohead_number NOT IN (SELECT checkitem_vouchernumber"
+                                 "                             FROM checkitem"
+                                 "                             JOIN checkhead ON checkitem_checkhead_id = checkhead_id"
+                                 "                            WHERE checkhead_void)"
+                                );
 
   return NoError;
 }
