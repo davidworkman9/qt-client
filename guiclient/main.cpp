@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
   {
     ParameterList params;
     params.append("earliest", "9.5.0");
-    params.append("latest", "11.0.0");
+    params.append("latest", "12.0.0");
     params.append("copyright", _Copyright);
     params.append("version",   _Version);
     params.append("build",     _Build.arg(__DATE__).arg(__TIME__));
