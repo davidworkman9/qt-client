@@ -203,8 +203,8 @@ void viewCheckRun::sPost()
   params.append("check_id", _check->id());
 
   postCheck newdlg(this, "", true);
-  newdlg.exec();
   newdlg.set(params);
+  newdlg.exec();
 }
 
 void viewCheckRun::sAltExchRate()
