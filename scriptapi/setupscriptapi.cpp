@@ -147,6 +147,10 @@
 #include "qwebpageproto.h"
 #include "qwebsecurityoriginproto.h"
 #include "qwebsettingsproto.h"
+#else
+#include "qwebenginepageproto.h"
+#include "qwebenginesettingsproto.h"
+#include "qwebengineviewproto.h"
 #endif
 #include "qwebsocketcorsauthenticatorproto.h"
 #include "qwebsocketproto.h"
@@ -306,6 +310,10 @@ void setupScriptApi(QScriptEngine *engine, Preferences *pPreferences)
   setupQWebPageProto(engine);
   setupQWebSecurityOriginProto(engine);
   setupQWebSettingsProto(engine);
+#else
+  setupQWebEnginePageProto(engine);
+  setupQWebEngineSettingsProto(engine);
+  setupQWebEngineViewProto(engine);
 #endif
   setupQWebSocketCorsAuthenticatorProto(engine);
   setupQWebSocketProto(engine);
