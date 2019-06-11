@@ -5,10 +5,13 @@ CONFIG += qt \
     warn_on \
     staticlib
 
-QT += core network printsupport script sql webkit webkitwidgets widgets xml
+QT += core network printsupport script sql widgets xml
+QT += websockets webchannel serialport
 
-greaterThan (QT_MAJOR_VERSION, 4) {
-  QT += websockets webchannel serialport
+lessThan (QT_MINOR_VERSION, 6) : isEqual(QT_MAJOR_VERSION, 5) {
+  QT += webkit webkitwidgets
+} else {
+  QT += webengine webenginewidgets
 }
 
 DBFILE = scriptapi.db
@@ -147,23 +150,17 @@ HEADERS += setupscriptapi.h \
     quuidproto.h \
     qvalidatorproto.h \
     qwebchannelproto.h \
-    qwebelementcollectionproto.h \
-    qwebelementproto.h \
-    qwebframeproto.h \
-    qwebpageproto.h \
-    qwebsecurityoriginproto.h \
-    qwebsettingsproto.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
     qwebsocketprotocolproto.h     \
     qwebsocketserverproto.h       \
-    qwebviewproto.h \
     qwidgetproto.h \
     webchanneltransport.h \
     xsqlqueryproto.h \
     xvariantsetup.h \
     xwebsync.h                    \
     xwebsync_p.h \
+
 
 SOURCES += setupscriptapi.cpp \
     include.cpp \
@@ -288,19 +285,37 @@ SOURCES += setupscriptapi.cpp \
     quuidproto.cpp \
     qvalidatorproto.cpp \
     qwebchannelproto.cpp \
-    qwebelementcollectionproto.cpp \
-    qwebelementproto.cpp \
-    qwebframeproto.cpp \
-    qwebpageproto.cpp \
-    qwebsecurityoriginproto.cpp \
-    qwebsettingsproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
     qwebsocketprotocolproto.cpp   \
     qwebsocketserverproto.cpp     \
-    qwebviewproto.cpp \
     qwidgetproto.cpp \
     webchanneltransport.cpp \
     xsqlqueryproto.cpp \
     xvariantsetup.cpp \
     xwebsync.cpp
+
+lessThan (QT_MINOR_VERSION, 6) : equals(QT_MAJOR_VERSION, 5) {
+  HEADERS +=  qwebelementcollectionproto.h \
+              qwebelementproto.h \
+              qwebframeproto.h \
+              qwebpageproto.h \
+              qwebsecurityoriginproto.h \
+              qwebsettingsproto.h \
+              qwebviewproto.h
+
+  SOURCES +=  qwebelementcollectionproto.cpp \
+              qwebelementproto.cpp \
+              qwebframeproto.cpp \
+              qwebpageproto.cpp \
+              qwebsecurityoriginproto.cpp \
+              qwebsettingsproto.cpp \
+} else {
+  HEADERS +=  qwebenginepageproto.h \
+              qwebengineviewproto.h \
+              qwebenginesettingsproto.h
+
+  SOURCES +=  qwebenginepageproto.cpp \
+              qwebengineviewproto.cpp \
+              qwebenginesettingsproto.cpp
+}
