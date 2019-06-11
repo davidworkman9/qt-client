@@ -310,6 +310,7 @@ lessThan (QT_MINOR_VERSION, 6) : equals(QT_MAJOR_VERSION, 5) {
               qwebpageproto.cpp \
               qwebsecurityoriginproto.cpp \
               qwebsettingsproto.cpp \
+              qwebviewproto.cpp
 } else {
   HEADERS +=  qwebenginepageproto.h \
               qwebengineviewproto.h \
