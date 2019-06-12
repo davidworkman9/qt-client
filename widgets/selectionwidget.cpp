@@ -449,12 +449,27 @@ void SelectionWidgetFromScriptValue(const QScriptValue &obj, SelectionWidget* &i
 {
   item = qobject_cast<SelectionWidget*>(obj.toQObject());
 }
+
+QScriptValue constructSelectionWidget(QScriptContext *context, QScriptEngine *engine)
+{
+  SelectionWidget *obj = 0;
+  if (context->argumentCount() >= 2 && context->argument(1).isNumber())
+    obj = new SelectionWidget(qscriptvalue_cast<QWidget *>(context->argument(0)),
+                              (Qt::WindowFlags)(context->argument(1).toInt32()));
+  else if (context->argumentCount() == 1)
+    obj = new SelectionWidget(qscriptvalue_cast<QWidget *>(context->argument(0)));
+  else
+    obj = new SelectionWidget();
+
+  return engine->toScriptValue(obj);
+}
+
 void setupSelectionWidget(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, SelectionWidgetToScriptValue, SelectionWidgetFromScriptValue);
   if (!engine->globalObject().property("SelectionWidget").isObject())
   {
-      QScriptValue ctor = engine->newObject();
+      QScriptValue ctor = engine->newFunction(constructSelectionWidget);
       QScriptValue meta = engine->newQMetaObject(&SelectionWidget::staticMetaObject, ctor);
 
       engine->globalObject().setProperty("SelectionWidget", meta, 
