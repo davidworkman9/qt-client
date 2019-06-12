@@ -7,7 +7,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
         <key>CFBundleGetInfoString</key>
-	<string>5.0.0-rc</string>
+	<string>5.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>omfg</string>
 	<key>CFBundleExecutable</key>
