@@ -10,6 +10,7 @@
 
 #include "empGroups.h"
 
+#include <QMessageBox>
 #include <QSqlError>
 
 #include <parameter.h>
@@ -59,6 +60,23 @@ void empGroups::languageChange()
 
 void empGroups::sDelete()
 {
+  XSqlQuery empCheck;
+  empCheck.prepare("SELECT COUNT(*) AS emp "
+                   "  FROM empgrpitem "
+                   " WHERE empgrpitem_empgrp_id = :grpid");
+  empCheck.bindValue(":grpid", _empgrp->id());
+  empCheck.exec();
+  if (empCheck.first() &&
+      QMessageBox::question(this, tr("Delete Employee Group?"),
+                            tr("There are %1 users in this group, "
+                               "are you sure you want to delete it?")
+                            .arg(empCheck.value("emp").toInt()),
+                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+    return;
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Employee Group"),
+                                empCheck, __FILE__, __LINE__))
+    return;
+
   XSqlQuery empDelete;
   empDelete.prepare( "SELECT deleteEmpgrp(:grpid) AS result;");
   empDelete.bindValue(":grpid", _empgrp->id());
