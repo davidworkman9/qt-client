@@ -243,6 +243,7 @@ void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client)
   setupRecurrenceWidget(engine);
   setupRevisionLineEdit(engine);
   setupScreen(engine);
+  setupSelectionWidget(engine);
   setupShipmentClusterLineEdit(engine);
   setupUsernameCluster(engine);
   setupUsernameLineEdit(engine);
