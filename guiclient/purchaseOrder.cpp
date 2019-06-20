@@ -1291,6 +1291,7 @@ void purchaseOrder::sHandleDeleteButton()
 void purchaseOrder::sHandleVendor(int pVendid)
 {
   XSqlQuery purchaseHandleVendor;
+  XSqlQuery vq;
   if ( (pVendid != -1) && (_mode == cNew) )
   {
     purchaseHandleVendor.prepare( "UPDATE pohead "
@@ -1307,7 +1308,6 @@ void purchaseOrder::sHandleVendor(int pVendid)
                              purchaseHandleVendor, __FILE__, __LINE__))
       return;
 
-    XSqlQuery vq;
     vq.prepare("SELECT addr_id, addr_line1, addr_line2, addr_line3,"
                "       addr_city, addr_state, addr_postalcode, addr_country,"
                "       cntct_id, cntct_honorific, cntct_first_name,"
@@ -1397,6 +1397,15 @@ void purchaseOrder::sHandleVendor(int pVendid)
     }
 
     _qeitem->setHeadId(_poheadid);
+  }
+  else if (pVendid != -1) {
+    vq.prepare("SELECT vend_crmacct_id "
+               "  FROM vendinfo "
+               " WHERE vend_id=:vend_id;");
+    vq.bindValue(":vend_id", pVendid);
+    vq.exec();
+    if (vq.first() && vq.value("vend_crmacct_id").toInt())
+        _vendCntct->setSearchAcct(vq.value("vend_crmacct_id").toInt());
   }
 }
 
