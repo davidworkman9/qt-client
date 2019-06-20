@@ -16,7 +16,6 @@ class XDocumentWindowPrivate : public Ui::XDocumentWindow
 public:
   XDocumentWindowPrivate(::XDocumentWindow * parent) : _parent(parent)
   {
-    setupUi(_parent);
   }
 
   ::XDocumentWindow * _parent;
