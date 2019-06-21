@@ -86,7 +86,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
     _taxzoneidCache(-1),
     _crmacctid     (-1)
 {
-  setupUi(widget());
+  setupUi(this);
   setWindowTitle(tr("Sales Order"));
 
   _dspShipmentsBySalesOrder = new dspShipmentsBySalesOrder(this, "dspShipmentsBySalesOrder", Qt::Widget);
